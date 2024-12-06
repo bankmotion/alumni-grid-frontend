@@ -38,7 +38,7 @@ const styles = makeStyles()((theme: Theme) => ({
     height: 200,
     borderRadius: "8px",
     transition: "0.3s",
-    "&: hover": {
+    "&:hover": {
       cursor: "pointer",
       backgroundColor: "#585656",
       transition: "0.3s",
@@ -68,6 +68,31 @@ const styles = makeStyles()((theme: Theme) => ({
   giveUpBtn: {
     color: "white",
     maxWidth: "200px",
+  },
+
+  collegeModal: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 300,
+    backgroundColor: "#414453",
+    border: "2px solid #c79292",
+    boxShadow: "",
+    padding: 24,
+    borderRadius: 8,
+    color: "white",
+  },
+
+  collegeList: {
+    display: "flex",
+    gap: "8px",
+    flexDirection: "column",
+  },
+
+  collegeItem: {
+    display: "flex",
+    justifyContent: "space-between",
   },
 }));
 
