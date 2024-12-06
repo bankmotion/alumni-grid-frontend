@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  List,
-  ListItem,
-  ListItemButton,
-  Modal,
-  Typography,
-} from "@mui/material";
+import { Box, Button, List, ListItem, Modal, Typography } from "@mui/material";
+import PersonIcon from "@mui/icons-material/Person";
 
 import useStyles from "./styles";
 import { College, PlayerInfo } from "../../models/interface";
@@ -219,7 +212,8 @@ const GameBoardIndex = () => {
             onClick={() => selectItem(item)}
             key={index}
           >
-            {item.name}
+            <PersonIcon className={classes.personAva} />
+            <Box className={classes.playerName}>{item.name}</Box>
           </Box>
         ))}
       </Box>

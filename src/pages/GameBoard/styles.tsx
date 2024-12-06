@@ -26,6 +26,17 @@ const styles = makeStyles()((theme: Theme) => ({
     borderRadius: "8px",
   },
 
+  personAva: {
+    position: "absolute",
+    color: "#585656",
+    fontSize: "150px",
+  },
+
+  playerName: {
+    position: "absolute",
+    bottom: "20px",
+  },
+
   gridItem: {
     display: "flex",
     alignItems: "center",
@@ -38,10 +49,14 @@ const styles = makeStyles()((theme: Theme) => ({
     height: 200,
     borderRadius: "8px",
     transition: "0.3s",
+    position: "relative",
     "&:hover": {
       cursor: "pointer",
       backgroundColor: "#585656",
       transition: "0.3s",
+      "&>svg": {
+        color: "white",
+      },
     },
   },
 
