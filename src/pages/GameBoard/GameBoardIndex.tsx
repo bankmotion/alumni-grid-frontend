@@ -45,7 +45,7 @@ const CollegeModal = ({
               college?.status?.[targetItem.id] === CollegeStatus.Wrong ? (
                 <Button
                   variant="contained"
-                  sx={{ backgroundColor: "red", minWidth: "80px" }}
+                  sx={{ backgroundColor: "red", minWidth: "100px" }}
                 >
                   Wrong
                 </Button>
@@ -53,7 +53,7 @@ const CollegeModal = ({
                 college?.status?.[targetItem.id] === CollegeStatus.Right ? (
                 <Button
                   variant="contained"
-                  sx={{ backgroundColor: "green", minWidth: "80px" }}
+                  sx={{ backgroundColor: "green", minWidth: "100px" }}
                 >
                   Right
                 </Button>
@@ -61,7 +61,7 @@ const CollegeModal = ({
                 <Button
                   onClick={() => handleCollegeSelect(college.id)}
                   variant="contained"
-                  sx={{ minWidth: "80px" }}
+                  sx={{ minWidth: "100px" }}
                 >
                   Select
                 </Button>
@@ -195,6 +195,8 @@ const GameBoardIndex = () => {
             : college;
         })
       );
+
+      setCount((count) => count - 1);
     }
   };
 
