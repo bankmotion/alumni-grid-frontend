@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -11,37 +11,61 @@ import {
 
 import useStyles from "./styles";
 import { College, PlayerInfo } from "../../models/interface";
+import { CollegeStatus } from "../../constant/const";
 
 const CollegeModal = ({
   open,
   handleOpenStatus,
   colleges,
   handleCollegeSelect,
+  targetItem,
 }: {
   open: boolean;
   handleOpenStatus: (open: boolean) => void;
   colleges: College[];
   handleCollegeSelect: (collegeId: number) => void;
+  targetItem: PlayerInfo | null;
 }) => {
   const { classes } = useStyles();
   return (
     <Modal open={open} onClose={() => handleOpenStatus(false)}>
-      <Box
-        className={classes.collegeModal}
-      >
+      <Box className={classes.collegeModal}>
         <Typography variant="h6" component="h2" gutterBottom>
           Select a College
         </Typography>
         <List className={classes.collegeList}>
           {colleges.map((college, index) => (
-            <ListItem key={index} disablePadding className={classes.collegeItem}>
+            <ListItem
+              key={index}
+              disablePadding
+              className={classes.collegeItem}
+            >
               {college.name}
-              <Button
-                onClick={() => handleCollegeSelect(college.id)}
-                variant="contained"
-              >
-                Select
-              </Button>
+              {targetItem &&
+              college?.status?.[targetItem.id] === CollegeStatus.Wrong ? (
+                <Button
+                  variant="contained"
+                  sx={{ backgroundColor: "red", minWidth: "80px" }}
+                >
+                  Wrong
+                </Button>
+              ) : targetItem &&
+                college?.status?.[targetItem.id] === CollegeStatus.Right ? (
+                <Button
+                  variant="contained"
+                  sx={{ backgroundColor: "green", minWidth: "80px" }}
+                >
+                  Right
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => handleCollegeSelect(college.id)}
+                  variant="contained"
+                  sx={{ minWidth: "80px" }}
+                >
+                  Select
+                </Button>
+              )}
             </ListItem>
           ))}
         </List>
@@ -90,6 +114,22 @@ const GameBoardIndex = () => {
     },
     {
       id: 8,
+      name: "Penn State",
+    },
+    {
+      id: 9,
+      name: "Penn State",
+    },
+    {
+      id: 10,
+      name: "Penn State",
+    },
+    {
+      id: 11,
+      name: "Penn State",
+    },
+    {
+      id: 12,
       name: "Penn State",
     },
   ]);
@@ -141,19 +181,42 @@ const GameBoardIndex = () => {
     },
   ]);
 
-  const handleCollegeSelect = (collegeId: number) => {};
+  const handleCollegeSelect = (collegeId: number) => {
+    if (targetItem) {
+      setColleges((prevColleges) =>
+        prevColleges.map((college) => {
+          const updatedStatus = [...(college.status || [])];
+          updatedStatus[targetItem.id] =
+            collegeId === targetItem.id
+              ? CollegeStatus.Right
+              : CollegeStatus.Wrong;
+          return college.id === collegeId
+            ? { ...college, status: updatedStatus }
+            : college;
+        })
+      );
+    }
+  };
 
   const selectItem = (item: PlayerInfo) => {
     setTargetItem(item);
     setOpen(true);
   };
 
+  // useEffect(() => {
+  //   setColleges(prevColleges);
+  // }, [open]);
+
   return (
     <Box className={classes.gameBoard}>
       <Box className={classes.leftPanel}></Box>
       <Box className={classes.gridBox}>
-        {items.map((item) => (
-          <Box className={classes.gridItem} onClick={() => selectItem(item)}>
+        {items.map((item, index) => (
+          <Box
+            className={classes.gridItem}
+            onClick={() => selectItem(item)}
+            key={index}
+          >
             {item.name}
           </Box>
         ))}
@@ -170,6 +233,7 @@ const GameBoardIndex = () => {
         handleOpenStatus={(open) => setOpen(open)}
         colleges={colleges}
         handleCollegeSelect={handleCollegeSelect}
+        targetItem={targetItem}
       />
     </Box>
   );
