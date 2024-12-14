@@ -1,0 +1,20 @@
+See below:
+Visuals
+Can we add a title to the top ("AlumniGrid") and have brighter colors (I imagine this is all a WIP currently)
+Can we add picture of athlete in each grid box along with first + last name?
+I know picture on these other sites is added, but if it can't no worries
+Interface
+When you click into box, I do not want any college names shown. I'd like a drop down with a line to type the college into. When you type into the drop down line, it'll show all the applicable colleges to select based on what was typed
+Score
+Can we create a scoring system that factors in time to complete + number of boxes correct? There can be an option to select start game to kick off timer for score
+This is certainly on the right track!
+
+
+Additionally, the game should lock after 9 guesses, provide score, and then unlock once the game resets with new players every midnight
+
+Here's another game for inspiration for scoring / interface: https://dailydozentrivia.com/
+
+ immaculategrid.com 
+ https://crossovergrid.com/mlb
+
+My goal is the game is out of 900. Max 100 per box. My hope is once you select start, the max score per box decreases. Was think a point every 5 seconds decreases from a 100 per box. This rewards completing it faster. So if you get all correct, and it takes you 30 seconds to complete, your score a 9 x (100-6)

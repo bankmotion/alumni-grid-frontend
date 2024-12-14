@@ -3,3 +3,8 @@ export enum CollegeStatus {
   Right,
   Wrong,
 }
+
+export enum PlayType {
+  NVA,
+  NFL
+}

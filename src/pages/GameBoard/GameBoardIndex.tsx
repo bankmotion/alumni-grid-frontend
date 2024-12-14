@@ -1,10 +1,22 @@
 import { useEffect, useState } from "react";
-import { Box, Button, List, ListItem, Modal, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  List,
+  ListItem,
+  Modal,
+  TextField,
+  Typography,
+} from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 
 import useStyles from "./styles";
 import { College, PlayerInfo } from "../../models/interface";
-import { CollegeStatus } from "../../constant/const";
+import { CollegeStatus, PlayType } from "../../constant/const";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { getCollegeList, getRandPlayerList } from "../../reducers/game.slice";
+import axios from "axios";
+import { SERVER_URL } from "../../config/config";
 
 const CollegeModal = ({
   open,
@@ -12,22 +24,49 @@ const CollegeModal = ({
   colleges,
   handleCollegeSelect,
   targetItem,
+  isConfirming,
 }: {
   open: boolean;
   handleOpenStatus: (open: boolean) => void;
   colleges: College[];
-  handleCollegeSelect: (collegeId: number) => void;
+  handleCollegeSelect: (collegeName: string) => void;
   targetItem: PlayerInfo | null;
+  isConfirming: boolean;
 }) => {
   const { classes } = useStyles();
+  const [searchKey, setSearchKey] = useState("");
+  const [collegesItems, setCollegesItems] = useState<College[]>([]);
+
+  useEffect(() => {
+    if (searchKey === "" || searchKey.length < 2) {
+      setCollegesItems([]);
+    } else {
+      setCollegesItems(
+        colleges.filter((item) =>
+          item.name.toLowerCase().includes(searchKey.toLowerCase())
+        )
+      );
+    }
+  }, [searchKey, colleges]);
+
+  useEffect(() => {
+    setSearchKey("");
+  }, [open]);
+
   return (
     <Modal open={open} onClose={() => handleOpenStatus(false)}>
       <Box className={classes.collegeModal}>
         <Typography variant="h6" component="h2" gutterBottom>
-          Select a College
+          <b>Select a College</b>
         </Typography>
+        <TextField
+          value={searchKey}
+          onChange={(e) => setSearchKey(e.target.value)}
+          className={classes.searchKey}
+          placeholder="Input the colleges"
+        />
         <List className={classes.collegeList}>
-          {colleges.map((college, index) => (
+          {collegesItems.map((college, index) => (
             <ListItem
               key={index}
               disablePadding
@@ -52,9 +91,10 @@ const CollegeModal = ({
                 </Button>
               ) : (
                 <Button
-                  onClick={() => handleCollegeSelect(college.id)}
+                  onClick={() => handleCollegeSelect(college.name)}
                   variant="contained"
                   sx={{ minWidth: "100px" }}
+                  disabled={isConfirming}
                 >
                   Select
                 </Button>
@@ -69,127 +109,46 @@ const CollegeModal = ({
 
 const GameBoardIndex = () => {
   const { classes } = useStyles();
+  const dispatch = useAppDispatch();
   const [count, setCount] = useState(10);
   const [targetItem, setTargetItem] = useState<PlayerInfo | null>(null);
   const [open, setOpen] = useState(false);
-  const [colleges, setColleges] = useState<College[]>([
-    {
-      id: 0,
-      name: "SMU",
-    },
-    {
-      id: 1,
-      name: "Oregon State",
-    },
-    {
-      id: 2,
-      name: "Georgia Southern",
-    },
-    {
-      id: 3,
-      name: "Tennessee",
-    },
-    {
-      id: 4,
-      name: "Mississippi State",
-    },
-    {
-      id: 5,
-      name: "Florida",
-    },
-    {
-      id: 6,
-      name: "Texas A&M",
-    },
-    {
-      id: 7,
-      name: "Florida Atlantic",
-    },
-    {
-      id: 8,
-      name: "Penn State",
-    },
-    {
-      id: 9,
-      name: "Penn State",
-    },
-    {
-      id: 10,
-      name: "Penn State",
-    },
-    {
-      id: 11,
-      name: "Penn State",
-    },
-    {
-      id: 12,
-      name: "Penn State",
-    },
-  ]);
-  const [items, setItems] = useState<PlayerInfo[]>([
-    {
-      id: 0,
-      name: "Morstead",
-      college: 0,
-    },
-    {
-      id: 1,
-      name: "Hekker",
-      college: 1,
-    },
-    {
-      id: 2,
-      name: "McKinnon",
-      college: 2,
-    },
-    {
-      id: 3,
-      name: "Reeves-Maybin",
-      college: 3,
-    },
-    {
-      id: 4,
-      name: "Cooke",
-      college: 4,
-    },
-    {
-      id: 5,
-      name: "Townsend",
-      college: 5,
-    },
-    {
-      id: 6,
-      name: "Mann",
-      college: 6,
-    },
-    {
-      id: 7,
-      name: "Singletary",
-      college: 7,
-    },
-    {
-      id: 8,
-      name: "Clifford",
-      college: 8,
-    },
-  ]);
+  const [colleges, setColleges] = useState<College[]>([]);
+  const [playType, setPlayType] = useState<PlayType>(PlayType.NVA);
+  const [isConfirming, setIsConfirming] = useState(false);
 
-  const handleCollegeSelect = (collegeId: number) => {
-    if (targetItem) {
-      setColleges((prevColleges) =>
-        prevColleges.map((college) => {
-          const updatedStatus = [...(college.status || [])];
-          updatedStatus[targetItem.id] =
-            collegeId === targetItem.id
+  const { collegeList, playerList } = useAppSelector((state) => state.game);
+
+  const handleCollegeSelect = async (collegeName: string) => {
+    try {
+      if (targetItem) {
+        setIsConfirming(true);
+        const response = await axios.post(`${SERVER_URL}/game/college`, {
+          id: targetItem.id,
+          college: collegeName,
+          type: playType,
+        });
+
+        const status = response.data.message as boolean;
+        console.log({ status });
+
+        setColleges((prevColleges) =>
+          prevColleges.map((college) => {
+            const updatedStatus = [...(college.status || [])];
+            updatedStatus[targetItem.id] = status
               ? CollegeStatus.Right
               : CollegeStatus.Wrong;
-          return college.id === collegeId
-            ? { ...college, status: updatedStatus }
-            : college;
-        })
-      );
+            return college.name === collegeName
+              ? { ...college, status: updatedStatus }
+              : college;
+          })
+        );
 
-      setCount((count) => count - 1);
+        setCount((count) => count - 1);
+        setIsConfirming(false);
+      }
+    } catch (err) {
+      console.error(`Fetching game/college post`);
     }
   };
 
@@ -198,6 +157,17 @@ const GameBoardIndex = () => {
     setOpen(true);
   };
 
+  useEffect(() => {
+    dispatch(getCollegeList({ playType }));
+    dispatch(getRandPlayerList({ playType }));
+  }, [dispatch, playType]);
+
+  useEffect(() => {
+    setColleges(collegeList);
+  }, [collegeList]);
+
+  console.log({ colleges });
+
   // useEffect(() => {
   //   setColleges(prevColleges);
   // }, [open]);
@@ -205,17 +175,22 @@ const GameBoardIndex = () => {
   return (
     <Box className={classes.gameBoard}>
       <Box className={classes.leftPanel}></Box>
-      <Box className={classes.gridBox}>
-        {items.map((item, index) => (
-          <Box
-            className={classes.gridItem}
-            onClick={() => selectItem(item)}
-            key={index}
-          >
-            <PersonIcon className={classes.personAva} />
-            <Box className={classes.playerName}>{item.name}</Box>
-          </Box>
-        ))}
+      <Box>
+        <Typography variant="h3" className={classes.gameTitle}>
+          AlumniGrid
+        </Typography>
+        <Box className={classes.gridBox}>
+          {playerList.map((item, index) => (
+            <Box
+              className={classes.gridItem}
+              onClick={() => selectItem(item)}
+              key={index}
+            >
+              <PersonIcon className={classes.personAva} />
+              <Box className={classes.playerName}>{item.name}</Box>
+            </Box>
+          ))}
+        </Box>
       </Box>
       <Box className={classes.rightPanel}>
         <Box className={classes.guessLeftTxt}>GUESS LEFT</Box>
@@ -230,6 +205,7 @@ const GameBoardIndex = () => {
         colleges={colleges}
         handleCollegeSelect={handleCollegeSelect}
         targetItem={targetItem}
+        isConfirming={isConfirming}
       />
     </Box>
   );

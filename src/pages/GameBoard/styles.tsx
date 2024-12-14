@@ -8,6 +8,14 @@ const styles = makeStyles()((theme: Theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    background: "url(/assets/bg.jpg)",
+    backgroundSize: "100% 100%",
+    backgroundRepeat: "no-repeat",
+  },
+
+  gameTitle: {
+    color: "#777777",
+    fontWeight: "bold",
   },
 
   leftPanel: {
@@ -21,14 +29,21 @@ const styles = makeStyles()((theme: Theme) => ({
     gridTemplateRows: "repeat(3, 1fr)",
     gap: "8px",
     margin: "auto",
-    backgroundColor: "#1e1e1e",
-    padding: "5px",
+    padding: "8px",
     borderRadius: "8px",
+    marginTop: "8px",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+    backgroundPosition: "center",
+    opacity: "0.9",
+    height: "100%",
+    boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.5)",
+    background: "#7e7e8988",
   },
 
   personAva: {
     position: "absolute",
-    color: "#585656",
+    color: "#363232",
     fontSize: "150px",
   },
 
@@ -41,9 +56,10 @@ const styles = makeStyles()((theme: Theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "#2e2e2e",
-    border: "1px solid #444",
-    color: "white",
+    // backgroundColor: "#7e7e89",
+    border: "5px solid #656565",
+    color: "#2b2a2a",
+    fontWeight: "bold",
     fontSize: "18px",
     width: 200,
     height: 200,
@@ -52,7 +68,8 @@ const styles = makeStyles()((theme: Theme) => ({
     position: "relative",
     "&:hover": {
       cursor: "pointer",
-      backgroundColor: "#585656",
+      backgroundColor: "#65656599",
+      border: "5px solid #656565",
       transition: "0.3s",
       "&>svg": {
         color: "white",
@@ -77,12 +94,14 @@ const styles = makeStyles()((theme: Theme) => ({
 
   score: {
     fontSize: "50px",
-    color: "white",
+    color: "#d93232",
+    fontWeight: "bold",
   },
 
   giveUpBtn: {
     color: "white",
     maxWidth: "200px",
+    marginTop: "32px",
   },
 
   collegeModal: {
@@ -91,7 +110,7 @@ const styles = makeStyles()((theme: Theme) => ({
     left: "50%",
     transform: "translate(-50%, -50%)",
     width: 300,
-    backgroundColor: "#414453",
+    backgroundColor: "#414453dd",
     border: "2px solid #c79292",
     boxShadow: "",
     padding: 24,
@@ -103,11 +122,28 @@ const styles = makeStyles()((theme: Theme) => ({
     display: "flex",
     gap: "8px",
     flexDirection: "column",
+    maxHeight: "500px",
+    overflowY: "auto",
+    minHeight: "500px",
   },
 
   collegeItem: {
     display: "flex",
     justifyContent: "space-between",
+  },
+
+  searchKey: {
+    border: "none",
+    minWidth: "280px",
+
+    "& .MuiOutlinedInput-input": {
+      padding: "8px 16px",
+      color: "white",
+      width: "100%",
+      border: "none",
+    },
+
+    "& fieldset": {},
   },
 }));
 
