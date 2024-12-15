@@ -11,11 +11,23 @@ const styles = makeStyles()((theme: Theme) => ({
     background: "url(/assets/bg.jpg)",
     backgroundSize: "100% 100%",
     backgroundRepeat: "no-repeat",
+
+    [theme.breakpoints.down("sm")]: {
+      height: "auto",
+      flexDirection: "column",
+      padding: "24px 0",
+      minHeight: "100vh",
+      justifyContent: "start",
+    },
   },
 
   gameTitle: {
     color: "#777777",
     fontWeight: "bold",
+
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "16px",
+    },
   },
 
   leftPanel: {
@@ -39,17 +51,29 @@ const styles = makeStyles()((theme: Theme) => ({
     height: "100%",
     boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.5)",
     background: "#7e7e8988",
+
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "12px",
+    },
   },
 
   personAva: {
     position: "absolute",
     color: "#363232",
     fontSize: "150px",
+
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "70px",
+    },
   },
 
   playerName: {
     position: "absolute",
     bottom: "20px",
+
+    [theme.breakpoints.down("sm")]: {
+      bottom: "0",
+    },
   },
 
   checkIcon: {
@@ -85,6 +109,11 @@ const styles = makeStyles()((theme: Theme) => ({
         color: "white",
       },
     },
+
+    [theme.breakpoints.down("sm")]: {
+      width: 100,
+      height: 100,
+    },
   },
 
   rightPanel: {
@@ -100,18 +129,30 @@ const styles = makeStyles()((theme: Theme) => ({
     fontSize: "32px",
     color: "white",
     fontWeight: "bold",
+
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "24px",
+    },
   },
 
   score: {
     fontSize: "50px",
     color: "#d93232",
     fontWeight: "bold",
+
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "32px",
+    },
   },
 
   giveUpBtn: {
     color: "white",
     maxWidth: "200px",
     marginTop: "32px",
+
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "18px",
+    },
   },
 
   collegeModal: {
@@ -126,6 +167,10 @@ const styles = makeStyles()((theme: Theme) => ({
     padding: 24,
     borderRadius: 8,
     color: "white",
+
+    [theme.breakpoints.down("sm")]: {
+      height: "70%",
+    },
   },
 
   collegeList: {
@@ -135,6 +180,11 @@ const styles = makeStyles()((theme: Theme) => ({
     maxHeight: "500px",
     overflowY: "auto",
     minHeight: "500px",
+
+    [theme.breakpoints.down("sm")]: {
+      maxHeight: "80%",
+      minHeight: "auto",
+    },
   },
 
   collegeItem: {

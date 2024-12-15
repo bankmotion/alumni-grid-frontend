@@ -345,11 +345,9 @@ const GameBoardIndex = () => {
             >
               Give Up
             </Button>
-            <Box className={classes.remainTime}>
-              {getRemainTimeStr(remainTime)}
-            </Box>
           </>
         )}
+        <Box className={classes.remainTime}>{getRemainTimeStr(remainTime)}</Box>
       </Box>
       <ToastContainer
         position="top-right"
