@@ -77,7 +77,8 @@ export const gameSlice = createSlice({
       state.playerList = payload.data.map((item) => ({
         id: item.id,
         name: item.firstName,
-        college: "",
+        wrongStatus: [],
+        rightStatus: "none",
       }));
     });
     builder.addCase(getRandPlayerList.rejected, (state, { error }) => {

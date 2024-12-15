@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -9,26 +9,36 @@ import {
   Typography,
 } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
+import VerifiedIcon from "@mui/icons-material/Verified";
+import HighlightOffIcon from "@mui/icons-material/HighlightOff";
+import "react-toastify/dist/ReactToastify.css";
 
 import useStyles from "./styles";
 import { College, PlayerInfo } from "../../models/interface";
-import { CollegeStatus, PlayType } from "../../constant/const";
+import { PlayType } from "../../constant/const";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getCollegeList, getRandPlayerList } from "../../reducers/game.slice";
 import axios from "axios";
-import { SERVER_URL } from "../../config/config";
+import {
+  DECREASE_TIME,
+  DURATION_TIME,
+  MAX_COUNT,
+  MAX_SCORE_PER_QUE,
+  MIN_SCORE_PER_QUE,
+  SERVER_URL,
+} from "../../config/config";
+import { getRemainTimeStr } from "../../utils/utils";
+import { toast, ToastContainer } from "react-toastify";
 
 const CollegeModal = ({
   open,
   handleOpenStatus,
-  colleges,
   handleCollegeSelect,
   targetItem,
   isConfirming,
 }: {
   open: boolean;
   handleOpenStatus: (open: boolean) => void;
-  colleges: College[];
   handleCollegeSelect: (collegeName: string) => void;
   targetItem: PlayerInfo | null;
   isConfirming: boolean;
@@ -37,17 +47,19 @@ const CollegeModal = ({
   const [searchKey, setSearchKey] = useState("");
   const [collegesItems, setCollegesItems] = useState<College[]>([]);
 
+  const { collegeList } = useAppSelector((state) => state.game);
+
   useEffect(() => {
     if (searchKey === "" || searchKey.length < 2) {
       setCollegesItems([]);
     } else {
       setCollegesItems(
-        colleges.filter((item) =>
+        collegeList.filter((item) =>
           item.name.toLowerCase().includes(searchKey.toLowerCase())
         )
       );
     }
-  }, [searchKey, colleges]);
+  }, [searchKey, collegeList]);
 
   useEffect(() => {
     setSearchKey("");
@@ -73,21 +85,22 @@ const CollegeModal = ({
               className={classes.collegeItem}
             >
               {college.name}
-              {targetItem &&
-              college?.status?.[targetItem.id] === CollegeStatus.Wrong ? (
-                <Button
-                  variant="contained"
-                  sx={{ backgroundColor: "red", minWidth: "100px" }}
-                >
-                  Wrong
-                </Button>
-              ) : targetItem &&
-                college?.status?.[targetItem.id] === CollegeStatus.Right ? (
+              {targetItem && targetItem.rightStatus === college.name ? (
                 <Button
                   variant="contained"
                   sx={{ backgroundColor: "green", minWidth: "100px" }}
                 >
                   Right
+                </Button>
+              ) : targetItem &&
+                targetItem.wrongStatus.findIndex(
+                  (item) => item === college.name
+                ) !== -1 ? (
+                <Button
+                  variant="contained"
+                  sx={{ backgroundColor: "red", minWidth: "100px" }}
+                >
+                  Wrong
                 </Button>
               ) : (
                 <Button
@@ -113,11 +126,14 @@ const GameBoardIndex = () => {
   const [count, setCount] = useState(10);
   const [targetItem, setTargetItem] = useState<PlayerInfo | null>(null);
   const [open, setOpen] = useState(false);
-  const [colleges, setColleges] = useState<College[]>([]);
-  const [playType, setPlayType] = useState<PlayType>(PlayType.NVA);
+  const [playType] = useState<PlayType>(PlayType.NVA);
   const [isConfirming, setIsConfirming] = useState(false);
+  const [loadPlayerList, setLoadPlayerList] = useState<PlayerInfo[]>([]);
+  const [remainTime, setRemainTime] = useState(0);
+  const [score, setScore] = useState(0);
+  const [isEnd, setIsEnd] = useState(false);
 
-  const { collegeList, playerList } = useAppSelector((state) => state.game);
+  const { playerList } = useAppSelector((state) => state.game);
 
   const handleCollegeSelect = async (collegeName: string) => {
     try {
@@ -130,17 +146,17 @@ const GameBoardIndex = () => {
         });
 
         const status = response.data.message as boolean;
-        console.log({ status });
 
-        setColleges((prevColleges) =>
-          prevColleges.map((college) => {
-            const updatedStatus = [...(college.status || [])];
-            updatedStatus[targetItem.id] = status
-              ? CollegeStatus.Right
-              : CollegeStatus.Wrong;
-            return college.name === collegeName
-              ? { ...college, status: updatedStatus }
-              : college;
+        setLoadPlayerList((prevPlayer) =>
+          prevPlayer.map((player) => {
+            if (player.id !== targetItem.id) return player;
+            else if (status) {
+              return { ...player, rightStatus: collegeName };
+            } else {
+              const updatedWrongStatus = [...(player.wrongStatus || [])];
+              updatedWrongStatus.push(collegeName);
+              return { ...player, wrongStatus: updatedWrongStatus };
+            }
           })
         );
 
@@ -149,28 +165,138 @@ const GameBoardIndex = () => {
       }
     } catch (err) {
       console.error(`Fetching game/college post`);
+      setIsConfirming(false);
     }
   };
 
-  const selectItem = (item: PlayerInfo) => {
-    setTargetItem(item);
-    setOpen(true);
-  };
+  const loadDataFromLocalStorage = useCallback(() => {
+    const dataStr = localStorage.getItem(`playerList${playType}`);
+    const timestamp = localStorage.getItem(`createTime${playType}`);
+    const remainCount = localStorage.getItem(`remainCount${playType}`);
+    const score = localStorage.getItem(`score${playType}`);
+    const endStatus = Number(localStorage.getItem(`endStatus${playType}`));
+    if (dataStr) {
+      try {
+        const data = JSON.parse(dataStr);
+        console.log(`load data:`, data, playType);
+        if (
+          new Date().getTime() - Number(timestamp) < DURATION_TIME * 1000 &&
+          data.length === 9
+        ) {
+          setLoadPlayerList(data as PlayerInfo[]);
+          setCount(Number(remainCount));
+          setRemainTime(
+            Math.floor((-new Date().getTime() + Number(timestamp)) / 1000) +
+              DURATION_TIME
+          );
+          setScore(Number(score));
+          setIsEnd(() => (endStatus ? true : false));
+          return true;
+        }
+        console.log("exceed timestamp or data is not existed");
+      } catch (err) {
+        console.error(`Parse error for localstorage data`);
+      }
+    }
+    return false;
+  }, [playType]);
+
+  const saveDataToLocalStorage = useCallback(
+    async (key: string, data: string) => {
+      localStorage.setItem(key, data);
+    },
+    []
+  );
+
+  const selectItem = useCallback(
+    (item: PlayerInfo) => {
+      if (isEnd) {
+        toast(
+          "The game has concluded. Please try again after the remaining time has elapsed."
+        );
+        return;
+      }
+      setTargetItem(item);
+      setOpen(true);
+    },
+    [isEnd]
+  );
+
+  const handleEndGame = useCallback(() => {
+    const score =
+      loadPlayerList.filter((item) => item.rightStatus !== "none").length *
+      Math.max(
+        MAX_SCORE_PER_QUE - remainTime / DECREASE_TIME,
+        MIN_SCORE_PER_QUE
+      );
+
+    setIsEnd(true);
+    setScore(score);
+  }, [loadPlayerList, remainTime]);
+
+  useEffect(() => {
+    const loadStatus = loadDataFromLocalStorage();
+    if (!loadStatus) {
+      dispatch(getRandPlayerList({ playType }));
+      saveDataToLocalStorage(
+        `createTime${playType}`,
+        new Date().getTime().toString()
+      );
+      setRemainTime(DURATION_TIME);
+    }
+  }, [dispatch, playType, saveDataToLocalStorage, loadDataFromLocalStorage]);
+
+  useEffect(() => {
+    if (!playerList || playerList.length !== 9) return;
+    saveDataToLocalStorage(`playerList${playType}`, JSON.stringify(playerList));
+    saveDataToLocalStorage(`remainCount${playType}`, MAX_COUNT.toString());
+    saveDataToLocalStorage(`score${playType}`, "0");
+    saveDataToLocalStorage(`endStatus${playType}`, "0");
+    setLoadPlayerList(playerList);
+  }, [playerList, saveDataToLocalStorage]);
+
+  useEffect(() => {
+    if (!loadPlayerList || loadPlayerList.length !== 9) return;
+    saveDataToLocalStorage(
+      `playerList${playType}`,
+      JSON.stringify(loadPlayerList)
+    );
+    saveDataToLocalStorage(`remainCount${playType}`, count.toString());
+    saveDataToLocalStorage(`score${playType}`, score.toString());
+    saveDataToLocalStorage(`endStatus${playType}`, isEnd ? "1" : "0");
+    if (targetItem) {
+      selectItem(loadPlayerList.find((item) => item.id === targetItem.id));
+    }
+  }, [
+    loadPlayerList,
+    playType,
+    saveDataToLocalStorage,
+    targetItem,
+    count,
+    score,
+    isEnd,
+    selectItem,
+  ]);
 
   useEffect(() => {
     dispatch(getCollegeList({ playType }));
-    dispatch(getRandPlayerList({ playType }));
-  }, [dispatch, playType]);
+  }, [playType, dispatch]);
 
   useEffect(() => {
-    setColleges(collegeList);
-  }, [collegeList]);
+    const interval = setInterval(() => {
+      setRemainTime((remainTime) => remainTime - 1);
+    }, 1000);
 
-  console.log({ colleges });
+    return () => {
+      clearInterval(interval);
+    };
+  }, [remainTime]);
 
-  // useEffect(() => {
-  //   setColleges(prevColleges);
-  // }, [open]);
+  useEffect(() => {
+    if (count === 0) {
+      handleEndGame();
+    }
+  }, [count, handleEndGame]);
 
   return (
     <Box className={classes.gameBoard}>
@@ -180,7 +306,7 @@ const GameBoardIndex = () => {
           AlumniGrid
         </Typography>
         <Box className={classes.gridBox}>
-          {playerList.map((item, index) => (
+          {loadPlayerList.map((item, index) => (
             <Box
               className={classes.gridItem}
               onClick={() => selectItem(item)}
@@ -188,21 +314,58 @@ const GameBoardIndex = () => {
             >
               <PersonIcon className={classes.personAva} />
               <Box className={classes.playerName}>{item.name}</Box>
+              <Box className={classes.checkIcon}>
+                {item.rightStatus !== "none" ? (
+                  <VerifiedIcon sx={{ color: "green" }} />
+                ) : isEnd ? (
+                  <HighlightOffIcon sx={{ color: "red" }} />
+                ) : null}
+              </Box>
             </Box>
           ))}
         </Box>
       </Box>
       <Box className={classes.rightPanel}>
-        <Box className={classes.guessLeftTxt}>GUESS LEFT</Box>
-        <Box className={classes.score}>{count}</Box>
-        <Button className={classes.giveUpBtn} variant="contained">
-          Give Up
-        </Button>
+        {!isEnd && (
+          <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
+            <Box className={classes.guessLeftTxt}>GUESS LEFT</Box>
+            <Box className={classes.score}>{count}</Box>
+          </Box>
+        )}
+        <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          <Box className={classes.guessLeftTxt}>SCORE</Box>
+          <Box className={classes.score}>{score}</Box>
+        </Box>
+        {!isEnd && (
+          <>
+            <Button
+              className={classes.giveUpBtn}
+              variant="contained"
+              onClick={handleEndGame}
+            >
+              Give Up
+            </Button>
+            <Box className={classes.remainTime}>
+              {getRemainTimeStr(remainTime)}
+            </Box>
+          </>
+        )}
       </Box>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <CollegeModal
         open={open}
         handleOpenStatus={(open) => setOpen(open)}
-        colleges={colleges}
         handleCollegeSelect={handleCollegeSelect}
         targetItem={targetItem}
         isConfirming={isConfirming}

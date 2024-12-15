@@ -52,6 +52,16 @@ const styles = makeStyles()((theme: Theme) => ({
     bottom: "20px",
   },
 
+  checkIcon: {
+    position: "absolute",
+    bottom: "10px",
+    right: "10px",
+
+    svg: {
+      fontSize: "30px",
+    },
+  },
+
   gridItem: {
     display: "flex",
     alignItems: "center",
@@ -82,7 +92,7 @@ const styles = makeStyles()((theme: Theme) => ({
     width: "100%",
     display: "flex",
     flexDirection: "column",
-    gap: "16px",
+    gap: "8px",
     alignItems: "center",
   },
 
@@ -144,6 +154,11 @@ const styles = makeStyles()((theme: Theme) => ({
     },
 
     "& fieldset": {},
+  },
+
+  remainTime: {
+    color: "white",
+    fontSize: "24px",
   },
 }));
 
