@@ -1,4 +1,4 @@
-export const SERVER_URL = `${process.env.REACT_APP_API_URL}:5000`;
+export const SERVER_URL = `${process.env.REACT_APP_API_URL}`;
 export const MAX_COUNT = 10;
 export const DURATION_TIME = 24 * 3600;
 export const MIN_SCORE_PER_QUE = 10;
