@@ -15,9 +15,9 @@ import "react-toastify/dist/ReactToastify.css";
 
 import useStyles from "./styles";
 import { College, PlayerInfo } from "../../models/interface";
-import { PlayType } from "../../constant/const";
+import { LocalStorageKeys, PlayType } from "../../constant/const";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { getCollegeList, getRandPlayerList } from "../../reducers/game.slice";
+import { getCollegeList, getHistoryList } from "../../reducers/game.slice";
 import axios from "axios";
 import {
   DECREASE_TIME,
@@ -130,7 +130,6 @@ const GameBoardIndex = () => {
   const [count, setCount] = useState(10);
   const [targetItem, setTargetItem] = useState<PlayerInfo | null>(null);
   const [open, setOpen] = useState(false);
-  const [playType] = useState<PlayType>(PlayType.NVA);
   const [isConfirming, setIsConfirming] = useState(false);
   const [loadPlayerList, setLoadPlayerList] = useState<PlayerInfo[]>([]);
   const [remainTime, setRemainTime] = useState(0);
@@ -139,6 +138,8 @@ const GameBoardIndex = () => {
 
   const { playerList } = useAppSelector((state) => state.game);
 
+  console.log("Playerlist, Starttimestamp", playerList);
+
   const handleCollegeSelect = async (collegeName: string) => {
     try {
       if (targetItem) {
@@ -146,7 +147,6 @@ const GameBoardIndex = () => {
         const response = await axios.post(`${SERVER_URL}/game/college`, {
           id: targetItem.id,
           college: collegeName,
-          type: playType,
         });
 
         const status = response.data.message as boolean;
@@ -173,44 +173,60 @@ const GameBoardIndex = () => {
     }
   };
 
-  const loadDataFromLocalStorage = useCallback(() => {
-    const dataStr = localStorage.getItem(`playerList${playType}`);
-    const timestamp = localStorage.getItem(`createTime${playType}`);
-    const remainCount = localStorage.getItem(`remainCount${playType}`);
-    const score = localStorage.getItem(`score${playType}`);
-    const endStatus = Number(localStorage.getItem(`endStatus${playType}`));
-    if (dataStr) {
-      try {
-        const data = JSON.parse(dataStr);
-        console.log(`load data:`, data, playType);
-        if (
-          new Date().getTime() - Number(timestamp) < DURATION_TIME * 1000 &&
-          data.length === 9
-        ) {
-          setLoadPlayerList(data as PlayerInfo[]);
-          setCount(Number(remainCount));
-          setRemainTime(
-            Math.floor((-new Date().getTime() + Number(timestamp)) / 1000) +
-              DURATION_TIME
-          );
-          setScore(Number(score));
-          setIsEnd(() => (endStatus ? true : false));
-          return true;
-        }
-        console.log("exceed timestamp or data is not existed");
-      } catch (err) {
-        console.error(`Parse error for localstorage data`);
-      }
-    }
-    return false;
-  }, [playType]);
-
   const saveDataToLocalStorage = useCallback(
     async (key: string, data: string) => {
       localStorage.setItem(key, data);
     },
     []
   );
+
+  const loadDataFromLocalStorage = useCallback(
+    (playerListTemp: { items: PlayerInfo[]; startTimestamp: number }) => {
+      console.log("loaded");
+      const dataStr = localStorage.getItem(LocalStorageKeys.PlayerList);
+      const timestamp = localStorage.getItem(LocalStorageKeys.CreateTime);
+      const remainCount = localStorage.getItem(LocalStorageKeys.RemainCount);
+      const score = localStorage.getItem(LocalStorageKeys.Score);
+      const endStatus = Number(
+        localStorage.getItem(LocalStorageKeys.EndStatus)
+      );
+
+      if (dataStr && playerListTemp.startTimestamp === Number(timestamp)) {
+        try {
+          const data = JSON.parse(dataStr);
+          console.log(`load data:`, data);
+          if (
+            new Date().getTime() - Number(timestamp) < DURATION_TIME * 1000 &&
+            data.length === 9
+          ) {
+            setLoadPlayerList(data as PlayerInfo[]);
+            setCount(Number(remainCount));
+            setRemainTime(
+              Math.floor((-new Date().getTime() + Number(timestamp)) / 1000) +
+                DURATION_TIME
+            );
+            setScore(Number(score));
+            setIsEnd(() => (endStatus ? true : false));
+          }
+          console.log("exceed timestamp or data is not existed");
+        } catch (err) {
+          console.error(`Parse error for localstorage data`);
+        }
+      } else {
+        setLoadPlayerList(playerListTemp.items);
+        setCount(MAX_COUNT);
+        setRemainTime(
+          Math.floor((-new Date().getTime() + Number(timestamp)) / 1000) +
+            DURATION_TIME
+        );
+        setScore(0);
+        setIsEnd(false);
+      }
+    },
+    []
+  );
+
+  useEffect(() => {}, [loadPlayerList]);
 
   const selectItem = useCallback(
     (item: PlayerInfo) => {
@@ -226,81 +242,89 @@ const GameBoardIndex = () => {
     [isEnd]
   );
 
-  const handleEndGame = useCallback(() => {
-    const score =
-      loadPlayerList.filter((item) => item.rightStatus !== "none").length *
-      Math.max(
-        MAX_SCORE_PER_QUE - remainTime / DECREASE_TIME,
-        MIN_SCORE_PER_QUE
-      );
+  // const handleEndGame = useCallback(() => {
+  //   const score =
+  //     loadPlayerList.filter((item) => item.rightStatus !== "none").length *
+  //     Math.max(
+  //       MAX_SCORE_PER_QUE - remainTime / DECREASE_TIME,
+  //       MIN_SCORE_PER_QUE
+  //     );
 
-    setIsEnd(true);
-    setScore(score);
-  }, [loadPlayerList, remainTime]);
-
-  useEffect(() => {
-    const loadStatus = loadDataFromLocalStorage();
-    if (!loadStatus) {
-      dispatch(getRandPlayerList({ playType }));
-      saveDataToLocalStorage(
-        `createTime${playType}`,
-        new Date().getTime().toString()
-      );
-      setRemainTime(DURATION_TIME);
-    }
-  }, [dispatch, playType, saveDataToLocalStorage, loadDataFromLocalStorage]);
+  //   setIsEnd(true);
+  //   setScore(score);
+  // }, [loadPlayerList, remainTime]);
 
   useEffect(() => {
-    if (!playerList || playerList.length !== 9) return;
-    saveDataToLocalStorage(`playerList${playType}`, JSON.stringify(playerList));
-    saveDataToLocalStorage(`remainCount${playType}`, MAX_COUNT.toString());
-    saveDataToLocalStorage(`score${playType}`, "0");
-    saveDataToLocalStorage(`endStatus${playType}`, "0");
-    setLoadPlayerList(playerList);
-  }, [playerList, saveDataToLocalStorage]);
+    dispatch(getHistoryList());
+  }, [dispatch]);
 
   useEffect(() => {
-    if (!loadPlayerList || loadPlayerList.length !== 9) return;
-    saveDataToLocalStorage(
-      `playerList${playType}`,
-      JSON.stringify(loadPlayerList)
-    );
-    saveDataToLocalStorage(`remainCount${playType}`, count.toString());
-    saveDataToLocalStorage(`score${playType}`, score.toString());
-    saveDataToLocalStorage(`endStatus${playType}`, isEnd ? "1" : "0");
-    if (targetItem) {
-      selectItem(loadPlayerList.find((item) => item.id === targetItem.id));
-    }
-  }, [
-    loadPlayerList,
-    playType,
-    saveDataToLocalStorage,
-    targetItem,
-    count,
-    score,
-    isEnd,
-    selectItem,
-  ]);
+    loadDataFromLocalStorage(playerList);
+  }, [playerList, loadDataFromLocalStorage]);
+
+  // useEffect(() => {
+  //   const loadStatus = loadDataFromLocalStorage();
+  //   if (!loadStatus) {
+  //     dispatch(getRandPlayerList({ playType }));
+  //     saveDataToLocalStorage(
+  //       `createTime`,
+  //       new Date().getTime().toString()
+  //     );
+  //     setRemainTime(DURATION_TIME);
+  //   }
+  // }, [dispatch, playType, saveDataToLocalStorage, loadDataFromLocalStorage]);
+
+  // useEffect(() => {
+  //   if (!playerList || playerList.length !== 9) return;
+  //   saveDataToLocalStorage(`playerList${playType}`, JSON.stringify(playerList));
+  //   saveDataToLocalStorage(`remainCount${playType}`, MAX_COUNT.toString());
+  //   saveDataToLocalStorage(`score${playType}`, "0");
+  //   saveDataToLocalStorage(`endStatus${playType}`, "0");
+  //   setLoadPlayerList(playerList);
+  // }, [playerList, saveDataToLocalStorage]);
+
+  // useEffect(() => {
+  //   if (!loadPlayerList || loadPlayerList.length !== 9) return;
+  //   saveDataToLocalStorage(
+  //     `playerList${playType}`,
+  //     JSON.stringify(loadPlayerList)
+  //   );
+  //   saveDataToLocalStorage(`remainCount${playType}`, count.toString());
+  //   saveDataToLocalStorage(`score${playType}`, score.toString());
+  //   saveDataToLocalStorage(`endStatus${playType}`, isEnd ? "1" : "0");
+  //   if (targetItem) {
+  //     selectItem(loadPlayerList.find((item) => item.id === targetItem.id));
+  //   }
+  // }, [
+  //   loadPlayerList,
+  //   playType,
+  //   saveDataToLocalStorage,
+  //   targetItem,
+  //   count,
+  //   score,
+  //   isEnd,
+  //   selectItem,
+  // ]);
 
   useEffect(() => {
-    dispatch(getCollegeList({ playType }));
-  }, [playType, dispatch]);
+    dispatch(getCollegeList());
+  }, [dispatch]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setRemainTime((remainTime) => remainTime - 1);
-    }, 1000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setRemainTime((remainTime) => remainTime - 1);
+  //   }, 1000);
 
-    return () => {
-      clearInterval(interval);
-    };
-  }, [remainTime]);
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [remainTime]);
 
-  useEffect(() => {
-    if (count === 0) {
-      handleEndGame();
-    }
-  }, [count, handleEndGame]);
+  // useEffect(() => {
+  //   if (count === 0) {
+  //     handleEndGame();
+  //   }
+  // }, [count, handleEndGame]);
 
   return (
     <Box className={classes.gameBoard}>
@@ -312,12 +336,21 @@ const GameBoardIndex = () => {
         <Box className={classes.gridBox}>
           {loadPlayerList.map((item, index) => (
             <Box
-              className={clsx(classes.gridItem, item.rightStatus !== "none" ? classes.correctBox : isEnd? classes.wrongBox : null)}
+              className={clsx(
+                classes.gridItem,
+                item.rightStatus !== "none"
+                  ? classes.correctBox
+                  : isEnd
+                  ? classes.wrongBox
+                  : null
+              )}
               onClick={() => selectItem(item)}
               key={index}
             >
               <PersonIcon className={classes.personAva} />
-              <Box className={classes.playerName}>{item.name}</Box>
+              <Box className={classes.playerName}>
+                {item.firstname} {item.lastname}
+              </Box>
             </Box>
           ))}
         </Box>
@@ -338,7 +371,7 @@ const GameBoardIndex = () => {
             <Button
               className={classes.giveUpBtn}
               variant="contained"
-              onClick={handleEndGame}
+              // onClick={handleEndGame}
             >
               Give Up
             </Button>

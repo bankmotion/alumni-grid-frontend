@@ -1,6 +1,8 @@
 export interface PlayerInfo {
   id: number;
-  name: string;
+  //name: string;
+  firstname: string;
+  lastname: string;
   wrongStatus: string[];
   rightStatus: string;
 }

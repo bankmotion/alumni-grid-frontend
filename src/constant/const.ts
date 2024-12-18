@@ -6,5 +6,13 @@ export enum CollegeStatus {
 
 export enum PlayType {
   NVA,
-  NFL
+  NFL,
+}
+
+export enum LocalStorageKeys {
+  PlayerList = "playerList",
+  CreateTime = "createTime",
+  RemainCount = "remainCount",
+  Score = "score",
+  EndStatus = "endStatus",
 }
