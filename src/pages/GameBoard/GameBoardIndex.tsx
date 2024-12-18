@@ -29,6 +29,7 @@ import {
 } from "../../config/config";
 import { getRemainTimeStr } from "../../utils/utils";
 import { toast, ToastContainer } from "react-toastify";
+import { clsx } from "clsx";
 
 const CollegeModal = ({
   open,
@@ -65,54 +66,57 @@ const CollegeModal = ({
     setSearchKey("");
   }, [open]);
 
+  const CollegeItem = ({ college }: { college: College }) => {
+    return (
+      <ListItem disablePadding className={classes.collegeItem}>
+        {college.name}
+        {targetItem && targetItem.rightStatus === college.name ? (
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: "green", minWidth: "100px" }}
+          >
+            Right
+          </Button>
+        ) : targetItem &&
+          targetItem.wrongStatus.findIndex((item) => item === college.name) !==
+            -1 ? (
+          <Button
+            variant="contained"
+            sx={{ backgroundColor: "red", minWidth: "100px" }}
+          >
+            Wrong
+          </Button>
+        ) : (
+          <Button
+            onClick={() => handleCollegeSelect(college.name)}
+            variant="contained"
+            sx={{ minWidth: "100px" }}
+            disabled={isConfirming}
+          >
+            Select
+          </Button>
+        )}
+      </ListItem>
+    );
+  };
+
   return (
     <Modal open={open} onClose={() => handleOpenStatus(false)}>
       <Box className={classes.collegeModal}>
         <Typography variant="h6" component="h2" gutterBottom>
           <b>Select a College</b>
         </Typography>
+
         <TextField
           value={searchKey}
           onChange={(e) => setSearchKey(e.target.value)}
           className={classes.searchKey}
           placeholder="Input the colleges"
         />
+
         <List className={classes.collegeList}>
           {collegesItems.map((college, index) => (
-            <ListItem
-              key={index}
-              disablePadding
-              className={classes.collegeItem}
-            >
-              {college.name}
-              {targetItem && targetItem.rightStatus === college.name ? (
-                <Button
-                  variant="contained"
-                  sx={{ backgroundColor: "green", minWidth: "100px" }}
-                >
-                  Right
-                </Button>
-              ) : targetItem &&
-                targetItem.wrongStatus.findIndex(
-                  (item) => item === college.name
-                ) !== -1 ? (
-                <Button
-                  variant="contained"
-                  sx={{ backgroundColor: "red", minWidth: "100px" }}
-                >
-                  Wrong
-                </Button>
-              ) : (
-                <Button
-                  onClick={() => handleCollegeSelect(college.name)}
-                  variant="contained"
-                  sx={{ minWidth: "100px" }}
-                  disabled={isConfirming}
-                >
-                  Select
-                </Button>
-              )}
-            </ListItem>
+            <CollegeItem college={college} key={index} />
           ))}
         </List>
       </Box>
@@ -308,19 +312,12 @@ const GameBoardIndex = () => {
         <Box className={classes.gridBox}>
           {loadPlayerList.map((item, index) => (
             <Box
-              className={classes.gridItem}
+              className={clsx(classes.gridItem, item.rightStatus !== "none" ? classes.correctBox : isEnd? classes.wrongBox : null)}
               onClick={() => selectItem(item)}
               key={index}
             >
               <PersonIcon className={classes.personAva} />
               <Box className={classes.playerName}>{item.name}</Box>
-              <Box className={classes.checkIcon}>
-                {item.rightStatus !== "none" ? (
-                  <VerifiedIcon sx={{ color: "green" }} />
-                ) : isEnd ? (
-                  <HighlightOffIcon sx={{ color: "red" }} />
-                ) : null}
-              </Box>
             </Box>
           ))}
         </Box>

@@ -47,7 +47,6 @@ const styles = makeStyles()((theme: Theme) => ({
     backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
     backgroundPosition: "center",
-    opacity: "0.9",
     height: "100%",
     boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.5)",
     background: "#7e7e8988",
@@ -76,21 +75,11 @@ const styles = makeStyles()((theme: Theme) => ({
     },
   },
 
-  checkIcon: {
-    position: "absolute",
-    bottom: "10px",
-    right: "10px",
-
-    svg: {
-      fontSize: "30px",
-    },
-  },
-
   gridItem: {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    // backgroundColor: "#7e7e89",
+    backgroundColor: "white",
     border: "5px solid #656565",
     color: "#2b2a2a",
     fontWeight: "bold",
@@ -100,20 +89,28 @@ const styles = makeStyles()((theme: Theme) => ({
     borderRadius: "8px",
     transition: "0.3s",
     position: "relative",
+    cursor: "pointer",
     "&:hover": {
-      cursor: "pointer",
-      backgroundColor: "#65656599",
+      backgroundColor: "#ffffffcc",
       border: "5px solid #656565",
       transition: "0.3s",
-      "&>svg": {
-        color: "white",
-      },
+      "&>svg": {},
     },
 
     [theme.breakpoints.down("sm")]: {
       width: 100,
       height: 100,
     },
+  },
+
+  correctBox: {
+    backgroundColor: "#4caf50",
+    borderColor: "#388e3c",
+  },
+
+  wrongBox: {
+    backgroundColor: "#f44336",
+    borderColor: "#d32f2f",
   },
 
   rightPanel: {
