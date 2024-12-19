@@ -5,6 +5,7 @@ export interface PlayerInfo {
   lastname: string;
   wrongStatus: string[];
   rightStatus: string;
+  timestamp: number;
 }
 
 export interface College {

@@ -51,7 +51,6 @@ const CollegeModal = ({
   const { collegeList } = useAppSelector((state) => state.game);
 
   useEffect(() => {
-    console.log("Search key updated:", searchKey);
     if (searchKey === "" || searchKey.length < 2) {
       setCollegesItems([]);
     } else {
@@ -64,7 +63,6 @@ const CollegeModal = ({
   }, [searchKey, collegeList]);
 
   useEffect(() => {
-    console.log("Modal opened/closed. Resetting search key.");
     setSearchKey("");
   }, [open]);
 
@@ -141,7 +139,6 @@ const GameBoardIndex = () => {
   const { playerList } = useAppSelector((state) => state.game);
 
   const handleCollegeSelect = async (collegeName: string) => {
-    console.log("College selected:", collegeName);
     try {
       if (targetItem) {
         setIsConfirming(true);
@@ -151,7 +148,6 @@ const GameBoardIndex = () => {
         });
 
         const status = response.data.message as boolean;
-        console.log("Selection status:", status);
 
         setLoadPlayerList((prevPlayer) => {
           const updatedList = prevPlayer.map((player) => {
@@ -169,7 +165,6 @@ const GameBoardIndex = () => {
             LocalStorageKeys.PlayerList,
             JSON.stringify(updatedList)
           );
-          console.log("Updated player list:", updatedList);
           return updatedList;
         });
 
@@ -177,50 +172,53 @@ const GameBoardIndex = () => {
         setIsConfirming(false);
       }
     } catch (err) {
-      console.error("Error fetching game/college post:", err);
+      console.error(`Fetching game/college post`);
       setIsConfirming(false);
     }
   };
 
+  // const saveDataToLocalStorage = useCallback(
+  //   async (key: string, data: string) => {
+  //     localStorage.setItem(key, data);
+  //   },
+  //   []
+  // );
+
   const loadDataFromLocalStorage = useCallback(
     (playerListTemp: { items: PlayerInfo[]; startTimestamp: number }) => {
-      console.log("Loading data from local storage...");
       if (playerListTemp.items.length === 0) return;
+      console.log("Loading data from localStorage...");
+      console.log("starttimestamp", playerListTemp.startTimestamp);
 
       const dataStr = localStorage.getItem(LocalStorageKeys.PlayerList);
+      console.log("------datastr from localstorage------", JSON.parse(dataStr));
       const localTimestamp = localStorage.getItem(LocalStorageKeys.CreateTime);
+      console.log("timestamp", Number(localTimestamp));
       const remainCount = localStorage.getItem(LocalStorageKeys.RemainCount);
+      console.log("remaincount", remainCount);
       const score = localStorage.getItem(LocalStorageKeys.Score);
+      console.log("score", score);
       const endStatus = Number(
         localStorage.getItem(LocalStorageKeys.EndStatus)
       );
-
-      console.log("Local storage values:", {
-        dataStr,
-        localTimestamp,
-        remainCount,
-        score,
-        endStatus,
-      });
+      console.log("endstatus", endStatus);
 
       if (
         dataStr &&
         localTimestamp &&
+        //playerListTemp.items.length > 0
         playerListTemp.startTimestamp === Number(localTimestamp)
       ) {
         try {
           const data: PlayerInfo[] = JSON.parse(dataStr);
-          console.log("Parsed player data:", data);
+          console.log("=====updated data=======", data);
+          // if (
+          //   new Date().getTime() - Number(timestamp) < DURATION_TIME * 1000 &&
+          //   data.length === 9
+          // ) {
           setLoadPlayerList(data);
           setCreateTime(Number(localTimestamp));
-          if (Number(remainCount) !== 10) {
-            setCount(Number(remainCount));
-          }
-          if (remainCount !== null) {
-            setCount(Number(remainCount)); // Always set the count if remainCount is defined
-          } else {
-            setCount(MAX_COUNT); // Fallback to MAX_COUNT if remainCount is not in localStorage
-          }
+          setCount(Number(remainCount));
           setRemainTime(
             Math.floor(
               (-new Date().getTime() + Number(localTimestamp)) / 1000
@@ -228,16 +226,20 @@ const GameBoardIndex = () => {
           );
           setScore(Number(score));
           setIsEnd(() => (endStatus ? true : false));
-          console.log("Data loaded successfully from localStorage.");
+          console.log("Successfully loaded data from localStorage.");
+          // }
         } catch (err) {
-          console.error("Error parsing local storage data:", err);
+          console.error(`Parse error for localstorage data`);
         }
       } else {
-        console.log("Using fallback backend data.");
+        console.log("Fallback to backend data.");
         setLoadPlayerList(playerListTemp.items);
         setCreateTime(playerListTemp.startTimestamp);
         setCount(MAX_COUNT);
-        setRemainTime(DURATION_TIME);
+        setRemainTime(
+          Math.floor((-new Date().getTime() + Number(localTimestamp)) / 1000) +
+            DURATION_TIME
+        );
         setScore(0);
         setIsEnd(false);
       }
@@ -246,49 +248,39 @@ const GameBoardIndex = () => {
   );
 
   useEffect(() => {
-    console.log("Loading data from backend or local storage...");
     loadDataFromLocalStorage(playerList);
   }, [playerList, loadDataFromLocalStorage]);
 
   useEffect(() => {
     if (loadPlayerList.length === 0) return;
-    console.log("Saving updated player list to localStorage:", loadPlayerList);
     localStorage.setItem(
       LocalStorageKeys.PlayerList,
       JSON.stringify(loadPlayerList)
     );
+    console.log("save loadPlyerList in localstorage", loadPlayerList);
   }, [loadPlayerList]);
 
   useEffect(() => {
     if (createTime === 0) return;
-    console.log("Saving createTime to localStorage:", createTime);
     localStorage.setItem(LocalStorageKeys.CreateTime, String(createTime));
+    console.log("createTime", createTime);
   }, [createTime]);
 
-  console.log("Current guess count:", count);
+  console.log("*count", count);
   useEffect(() => {
-    //if (Number(localStorage.getItem(LocalStorageKeys.RemainCount)) === 10) {
-    if (count === 10) return;
-    console.log("Saving remainCount to localStorage:", count);
     localStorage.setItem(LocalStorageKeys.RemainCount, String(count));
-
-    //}
   }, [count]);
 
   useEffect(() => {
-    console.log("Saving score to localStorage:", score);
     localStorage.setItem(LocalStorageKeys.Score, String(score));
   }, [score]);
 
   useEffect(() => {
-    if (isEnd === false) return;
-    console.log("Saving end status to localStorage:", isEnd);
     localStorage.setItem(LocalStorageKeys.EndStatus, String(isEnd ? 1 : 0));
   }, [isEnd]);
 
   const selectItem = useCallback(
     (item: PlayerInfo) => {
-      console.log("Selecting item:", item);
       if (isEnd) {
         toast(
           "The game has concluded. Please try again after the remaining time has elapsed."
@@ -302,7 +294,6 @@ const GameBoardIndex = () => {
   );
 
   const handleEndGame = useCallback(() => {
-    console.log("Game is ending...");
     const score =
       loadPlayerList.filter((item) => item.rightStatus !== "none").length *
       Math.max(
@@ -312,11 +303,9 @@ const GameBoardIndex = () => {
 
     setIsEnd(true);
     setScore(score);
-    console.log("Final score:", score);
   }, [loadPlayerList, remainTime]);
 
   useEffect(() => {
-    console.log("Fetching history list...");
     dispatch(getHistoryList());
   }, [dispatch]);
 
@@ -329,14 +318,57 @@ const GameBoardIndex = () => {
     }
   }, [loadPlayerList, targetItem]);
 
+  // useEffect(() => {
+  //   const loadStatus = loadDataFromLocalStorage();
+  //   if (!loadStatus) {
+  //     dispatch(getRandPlayerList({ playType }));
+  //     saveDataToLocalStorage(
+  //       `createTime`,
+  //       new Date().getTime().toString()
+  //     );
+  //     setRemainTime(DURATION_TIME);
+  //   }
+  // }, [dispatch, playType, saveDataToLocalStorage, loadDataFromLocalStorage]);
+
+  // useEffect(() => {
+  //   if (!loadPlayerList || loadPlayerList.length !== 9) return;
+  //   saveDataToLocalStorage(
+  //     `playerList${playType}`,
+  //     JSON.stringify(loadPlayerList)
+  //   );
+  //   saveDataToLocalStorage(`remainCount${playType}`, count.toString());
+  //   saveDataToLocalStorage(`score${playType}`, score.toString());
+  //   saveDataToLocalStorage(`endStatus${playType}`, isEnd ? "1" : "0");
+  //   if (targetItem) {
+  //     selectItem(loadPlayerList.find((item) => item.id === targetItem.id));
+  //   }
+  // }, [
+  //   loadPlayerList,
+  //   playType,
+  //   saveDataToLocalStorage,
+  //   targetItem,
+  //   count,
+  //   score,
+  //   isEnd,
+  //   selectItem,
+  // ]);
+
   useEffect(() => {
-    console.log("Fetching college list...");
     dispatch(getCollegeList());
   }, [dispatch]);
 
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setRemainTime((remainTime) => remainTime - 1);
+  //   }, 1000);
+
+  //   return () => {
+  //     clearInterval(interval);
+  //   };
+  // }, [remainTime]);
+
   useEffect(() => {
     if (count === 0) {
-      console.log("Count reached zero. Ending game.");
       handleEndGame();
     }
   }, [count, handleEndGame]);

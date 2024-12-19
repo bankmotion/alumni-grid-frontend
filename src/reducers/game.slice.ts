@@ -3,6 +3,7 @@ import axios from "axios";
 import { SERVER_URL } from "../config/config";
 import { College, PlayerInfo } from "../models/interface";
 import { PlayType } from "../constant/const";
+import { timeStamp } from "console";
 
 export interface GameState {
   collegeList: College[];
@@ -62,46 +63,6 @@ export const getHistoryList = createAsyncThunk(
   }
 );
 
-// export const gameSlice = createSlice({
-//   name: "game",
-//   initialState,
-//   reducers: {},
-//   extraReducers: (builder) => {
-//     builder.addCase(getCollegeList.pending, (state) => {
-//       state.isGettingCollegeList = true;
-//     });
-//     builder.addCase(getCollegeList.fulfilled, (state, { payload }) => {
-//       state.isGettingCollegeList = false;
-//       state.collegeList = payload.colleges
-//         .filter((item) => item !== "")
-//         .map((item) => ({
-//           name: item.college,
-//           status: [],
-//         }));
-//     });
-//     builder.addCase(getCollegeList.rejected, (state, { error }) => {
-//       state.isGettingCollegeList = false;
-//     });
-
-//     builder.addCase(getRandPlayerList.pending, (state) => {
-//       state.isGettingPlayerList = true;
-//     });
-//     builder.addCase(getRandPlayerList.fulfilled, (state, { payload }) => {
-//       state.isGettingPlayerList = false;
-//       state.playerList = payload.data.map((item) => ({
-//         id: item.id,
-//         firstname: item.firstName,
-//         lastname: item.lastName,
-//         wrongStatus: [],
-//         rightStatus: "none",
-//       }));
-//     });
-//     builder.addCase(getRandPlayerList.rejected, (state, { error }) => {
-//       state.isGettingPlayerList = false;
-//     });
-//   },
-// });
-
 export const gameSlice = createSlice({
   name: "game",
   initialState,
@@ -128,13 +89,13 @@ export const gameSlice = createSlice({
     });
     builder.addCase(getHistoryList.fulfilled, (state, { payload }) => {
       state.isGettingPlayerList = false;
-      console.log("=========payload========", payload);
       state.playerList = {
         items: payload.data.map((item) => ({
           id: item.id,
           playerid: item.playerId,
           firstname: item.NBAPlayer.firstName,
           lastname: item.NBAPlayer.lastName,
+          timestamp: item.timestamp,
           wrongStatus: [],
           rightStatus: "none",
         })),
