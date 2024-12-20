@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { College, PlayerInfo } from "../../models/interface";
-import { useAppSelector } from "../../app/hooks";
 import axios from "axios";
 import { Box, Modal, Typography } from "@mui/material";
 import useStyles from "./styles";
@@ -22,14 +20,9 @@ const AnswerModal = ({
     if (open && itemId) {
       (async () => {
         try {
-          //   const response = await axios.post(
-          //     `${SERVER_URL}/game/answerCollege`,
-          //     {
-          //       id: itemId,
-          //     }
-          //   );
-          //   setCollegeName(response.data);
-          setCollegeName("MMMMMMMM");
+          const response = await axios.get(`${SERVER_URL}/game/${itemId}`);
+          console.log("data", response.data.data.college);
+          setCollegeName(response.data.data.college);
         } catch (error) {
           console.error("Error fetching college name:", error);
         }
@@ -39,23 +32,32 @@ const AnswerModal = ({
 
   return (
     <Modal open={open} onClose={() => handleOpenStatus(false)}>
-      <Box className={classes.collegeModal}>
+      <Box className={classes.answerModal}>
         <Typography variant="h5" component="h2" gutterBottom>
           <b>College Information</b>
         </Typography>
-        <Typography
-          variant="body1"
-          sx={{ margin: "16px 0", textAlign: "center" }}
-        >
-          The player attended:{" "}
+        {collegeName ? (
           <Typography
-            variant="h6"
-            component="span"
-            sx={{ color: "primary.main", fontWeight: "bold" }}
+            variant="body1"
+            sx={{ margin: "16px 0", textAlign: "center" }}
           >
-            {collegeName}
+            The player attended:{" "}
+            <Typography
+              variant="h6"
+              component="span"
+              sx={{ color: "primary.main", fontWeight: "bold" }}
+            >
+              {collegeName}
+            </Typography>
           </Typography>
-        </Typography>
+        ) : (
+          <Typography
+            variant="body1"
+            sx={{ margin: "16px 0", textAlign: "center" }}
+          >
+            No college information available for this player.
+          </Typography>
+        )}
       </Box>
     </Modal>
   );

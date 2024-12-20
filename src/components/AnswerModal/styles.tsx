@@ -2,7 +2,7 @@ import { Theme } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
 
 const styles = makeStyles()((theme: Theme) => ({
-  collegeModal: {
+  answerModal: {
     position: "absolute",
     top: "50%",
     left: "50%",

@@ -3,7 +3,6 @@ import { Box, Button, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
 import { clsx } from "clsx";
 
 import CollegeModal from "../../components/CollegeModal/CollegeModal";
@@ -154,8 +153,8 @@ const GameBoardIndex = () => {
   const handleEndGame = useCallback(() => {
     const score =
       gameSetting.playerList.filter((item) => item.rightStatus !== "none")
-        .length *
-      Math.max(MAX_SCORE_PER_QUE / DECREASE_TIME, MIN_SCORE_PER_QUE);
+        .length * MAX_SCORE_PER_QUE;
+    //Math.max(MAX_SCORE_PER_QUE / DECREASE_TIME, MIN_SCORE_PER_QUE);
 
     setGameSetting((prevSetting) => ({
       ...prevSetting,
@@ -253,18 +252,7 @@ const GameBoardIndex = () => {
         )}
         <Box className={classes.remainTime}>{getRemainTimeStr(remainTime)}</Box>
       </Box>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+
       <CollegeModal
         open={open}
         handleOpenStatus={(open) => setOpen(open)}
