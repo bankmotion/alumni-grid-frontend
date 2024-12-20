@@ -7,6 +7,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { clsx } from "clsx";
 
 import CollegeModal from "../../components/CollegeModal/CollegeModal";
+import AnswerModal from "../../components/AnswerModal/AnswerModal";
 
 import useStyles from "./styles";
 import { GameSetting, PlayerInfo } from "../../models/interface";
@@ -28,6 +29,8 @@ const GameBoardIndex = () => {
 
   const [targetItem, setTargetItem] = useState<PlayerInfo | null>(null);
   const [open, setOpen] = useState(false);
+  const [answerOpen, setAnswerOpen] = useState(false);
+
   const [isConfirming, setIsConfirming] = useState(false);
   const [remainTime, setRemainTime] = useState(0);
 
@@ -44,8 +47,6 @@ const GameBoardIndex = () => {
   const handleCollegeSelect = async (collegeName: string) => {
     try {
       if (targetItem) {
-        console.log(targetItem);
-
         setIsConfirming(true);
         const response = await axios.post(`${SERVER_URL}/game/college`, {
           id: targetItem.playerId,
@@ -131,13 +132,12 @@ const GameBoardIndex = () => {
   const selectItem = useCallback(
     (item: PlayerInfo) => {
       if (gameSetting.endStatus) {
-        toast(
-          "The game has concluded. Please try again after the remaining time has elapsed."
-        );
-        return;
+        setAnswerOpen(true);
+        setTargetItem(item);
+      } else {
+        setTargetItem(item);
+        setOpen(true);
       }
-      setTargetItem(item);
-      setOpen(true);
     },
     [gameSetting.endStatus]
   );
@@ -271,6 +271,11 @@ const GameBoardIndex = () => {
         handleCollegeSelect={handleCollegeSelect}
         targetItem={targetItem}
         isConfirming={isConfirming}
+      />
+      <AnswerModal
+        open={answerOpen}
+        itemId={targetItem?.playerId}
+        handleOpenStatus={(answerOpen) => setAnswerOpen(answerOpen)}
       />
     </Box>
   );

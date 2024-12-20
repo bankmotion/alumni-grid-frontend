@@ -8,7 +8,7 @@ const styles = makeStyles()((theme: Theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "url(/assets/bg.jpg)",
+    background: "url(/assets/background.jpg)",
     backgroundSize: "100% 100%",
     backgroundRepeat: "no-repeat",
 
