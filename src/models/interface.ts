@@ -1,6 +1,6 @@
 export interface PlayerInfo {
-  id: number;
-  //name: string;
+  historyId: number;
+  playerId: number;
   firstname: string;
   lastname: string;
   wrongStatus: string[];
@@ -11,4 +11,12 @@ export interface PlayerInfo {
 export interface College {
   id: number;
   name: string;
+}
+
+export interface GameSetting {
+  createTime: number;
+  remainCount: number;
+  score: number;
+  endStatus: boolean;
+  playerList: PlayerInfo[];
 }

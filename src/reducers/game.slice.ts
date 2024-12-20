@@ -8,21 +8,21 @@ import { timeStamp } from "console";
 export interface GameState {
   collegeList: College[];
   isGettingCollegeList: boolean;
-  playerList: {
+  history: {
     items: PlayerInfo[];
     startTimestamp: number;
   };
-  isGettingPlayerList: boolean;
+  isGettingHistory: boolean;
 }
 
 const initialState: GameState = {
   collegeList: [],
   isGettingCollegeList: false,
-  playerList: {
+  history: {
     items: [],
     startTimestamp: 0,
   },
-  isGettingPlayerList: false,
+  isGettingHistory: false,
 };
 
 export const getCollegeList = createAsyncThunk(
@@ -36,20 +36,6 @@ export const getCollegeList = createAsyncThunk(
     }
   }
 );
-
-// export const getRandPlayerList = createAsyncThunk(
-//   "game/getRandPlayerList",
-//   async ({ playType }: { playType: PlayType }, { rejectWithValue }) => {
-//     try {
-//       const response = await axios.get(
-//         `${SERVER_URL}/game/randplayer/${playType}`
-//       );
-//       return response.data;
-//     } catch (err) {
-//       return rejectWithValue(err.response.data);
-//     }
-//   }
-// );
 
 export const getHistoryList = createAsyncThunk(
   "game/getRandPlayerList",
@@ -85,25 +71,28 @@ export const gameSlice = createSlice({
     });
 
     builder.addCase(getHistoryList.pending, (state) => {
-      state.isGettingPlayerList = true;
+      state.isGettingHistory = true;
     });
     builder.addCase(getHistoryList.fulfilled, (state, { payload }) => {
-      state.isGettingPlayerList = false;
-      state.playerList = {
-        items: payload.data.map((item) => ({
-          id: item.id,
-          playerid: item.playerId,
-          firstname: item.NBAPlayer.firstName,
-          lastname: item.NBAPlayer.lastName,
-          timestamp: item.timestamp,
-          wrongStatus: [],
-          rightStatus: "none",
-        })),
+      state.isGettingHistory = false;
+      state.history = {
+        items: payload.data.map(
+          (item: any) =>
+            ({
+              historyId: item.id,
+              playerId: item.playerId,
+              firstname: item.NBAPlayer.firstName,
+              lastname: item.NBAPlayer.lastName,
+              timestamp: item.timestamp,
+              wrongStatus: [],
+              rightStatus: "none",
+            } as PlayerInfo)
+        ),
         startTimestamp: payload.timestamp,
       };
     });
     builder.addCase(getHistoryList.rejected, (state, { error }) => {
-      state.isGettingPlayerList = false;
+      state.isGettingHistory = false;
     });
   },
 });

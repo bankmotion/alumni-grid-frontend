@@ -184,25 +184,6 @@ const styles = makeStyles()((theme: Theme) => ({
     },
   },
 
-  collegeItem: {
-    display: "flex",
-    justifyContent: "space-between",
-  },
-
-  searchKey: {
-    border: "none",
-    minWidth: "280px",
-
-    "& .MuiOutlinedInput-input": {
-      padding: "8px 16px",
-      color: "white",
-      width: "100%",
-      border: "none",
-    },
-
-    "& fieldset": {},
-  },
-
   remainTime: {
     color: "white",
     fontSize: "24px",
