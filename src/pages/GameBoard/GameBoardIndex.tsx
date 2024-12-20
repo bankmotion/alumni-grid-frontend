@@ -39,7 +39,7 @@ const GameBoardIndex = () => {
     playerList: [],
   });
 
-  const { history } = useAppSelector((state) => state.game);
+  const { history, isGettingHistory } = useAppSelector((state) => state.game);
 
   const handleCollegeSelect = async (collegeName: string) => {
     try {
@@ -155,10 +155,7 @@ const GameBoardIndex = () => {
     const score =
       gameSetting.playerList.filter((item) => item.rightStatus !== "none")
         .length *
-      Math.max(
-        MAX_SCORE_PER_QUE / DECREASE_TIME,
-        MIN_SCORE_PER_QUE
-      );
+      Math.max(MAX_SCORE_PER_QUE / DECREASE_TIME, MIN_SCORE_PER_QUE);
 
     setGameSetting((prevSetting) => ({
       ...prevSetting,
@@ -207,25 +204,29 @@ const GameBoardIndex = () => {
           AlumniGrid
         </Typography>
         <Box className={classes.gridBox}>
-          {gameSetting.playerList.map((item, index) => (
-            <Box
-              className={clsx(
-                classes.gridItem,
-                item.rightStatus !== "none"
-                  ? classes.correctBox
-                  : gameSetting.endStatus
-                  ? classes.wrongBox
-                  : null
-              )}
-              onClick={() => selectItem(item)}
-              key={index}
-            >
-              <PersonIcon className={classes.personAva} />
-              <Box className={classes.playerName}>
-                {item.firstname} {item.lastname}
+          {isGettingHistory ? (
+            <></>
+          ) : (
+            gameSetting.playerList.map((item, index) => (
+              <Box
+                className={clsx(
+                  classes.gridItem,
+                  item.rightStatus !== "none"
+                    ? classes.correctBox
+                    : gameSetting.endStatus
+                    ? classes.wrongBox
+                    : null
+                )}
+                onClick={() => selectItem(item)}
+                key={index}
+              >
+                <PersonIcon className={classes.personAva} />
+                <Box className={classes.playerName}>
+                  {item.firstname} {item.lastname}
+                </Box>
               </Box>
-            </Box>
-          ))}
+            ))
+          )}
         </Box>
       </Box>
       <Box className={classes.rightPanel}>
