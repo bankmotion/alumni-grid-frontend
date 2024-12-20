@@ -19,4 +19,5 @@ export interface GameSetting {
   score: number;
   endStatus: boolean;
   playerList: PlayerInfo[];
+  gameStartTime: number;
 }

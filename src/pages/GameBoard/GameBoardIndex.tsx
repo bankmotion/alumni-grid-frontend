@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import "react-toastify/dist/ReactToastify.css";
@@ -13,11 +13,9 @@ import { GameSetting, PlayerInfo } from "../../models/interface";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getCollegeList, getHistoryList } from "../../reducers/game.slice";
 import {
-  DECREASE_TIME,
   DURATION_TIME,
   MAX_COUNT,
   MAX_SCORE_PER_QUE,
-  MIN_SCORE_PER_QUE,
   SERVER_URL,
 } from "../../config/config";
 import { getRemainTimeStr } from "../../utils/utils";
@@ -32,6 +30,7 @@ const GameBoardIndex = () => {
 
   const [isConfirming, setIsConfirming] = useState(false);
   const [remainTime, setRemainTime] = useState(0);
+  const [spentTime, setSpentTime] = useState(0);
 
   const [gameSetting, setGameSetting] = useState<GameSetting>({
     createTime: 0,
@@ -39,6 +38,7 @@ const GameBoardIndex = () => {
     score: 0,
     endStatus: false,
     playerList: [],
+    gameStartTime: 0,
   });
 
   const { history, isGettingHistory } = useAppSelector((state) => state.game);
@@ -97,6 +97,7 @@ const GameBoardIndex = () => {
             score: data.score,
             createTime: data.createTime,
             endStatus: data.endStatus,
+            gameStartTime: data.gameStartTime,
           });
         } else {
           setGameSetting({
@@ -105,6 +106,7 @@ const GameBoardIndex = () => {
             score: 0,
             createTime: history.startTimestamp,
             endStatus: false,
+            gameStartTime: Math.floor(new Date().getTime() / 1000),
           });
         }
       } catch (err) {
@@ -115,6 +117,7 @@ const GameBoardIndex = () => {
           score: 0,
           createTime: history.startTimestamp,
           endStatus: false,
+          gameStartTime: Math.floor(new Date().getTime() / 1000),
         });
       }
     } else {
@@ -124,6 +127,7 @@ const GameBoardIndex = () => {
         score: 0,
         createTime: history.startTimestamp,
         endStatus: false,
+        gameStartTime: Math.floor(new Date().getTime() / 1000),
       });
     }
   }, [history]);
@@ -154,7 +158,6 @@ const GameBoardIndex = () => {
     const score =
       gameSetting.playerList.filter((item) => item.rightStatus !== "none")
         .length * MAX_SCORE_PER_QUE;
-    //Math.max(MAX_SCORE_PER_QUE / DECREASE_TIME, MIN_SCORE_PER_QUE);
 
     setGameSetting((prevSetting) => ({
       ...prevSetting,
@@ -183,12 +186,13 @@ const GameBoardIndex = () => {
       setRemainTime(
         DURATION_TIME - new Date().getTime() / 1000 + gameSetting.createTime
       );
+      setSpentTime(new Date().getTime() / 1000 - gameSetting.gameStartTime);
     }, 1000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [gameSetting.createTime]);
+  }, [gameSetting.createTime, gameSetting.gameStartTime]);
 
   useEffect(() => {
     dispatch(getCollegeList());
@@ -250,7 +254,7 @@ const GameBoardIndex = () => {
             </Button>
           </>
         )}
-        <Box className={classes.remainTime}>{getRemainTimeStr(remainTime)}</Box>
+        <Box className={classes.remainTime}>{getRemainTimeStr(spentTime)}</Box>
       </Box>
 
       <CollegeModal
