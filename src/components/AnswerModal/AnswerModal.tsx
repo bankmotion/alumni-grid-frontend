@@ -14,7 +14,7 @@ const AnswerModal = ({
   handleOpenStatus: (answerOpen: boolean) => void;
 }) => {
   const { classes } = useStyles();
-  const [collegeName, setCollegeName] = useState<string>("");
+  const [collegeName, setCollegeName] = useState<string>("none");
 
   useEffect(() => {
     if (open && itemId) {
@@ -42,28 +42,28 @@ const AnswerModal = ({
         <Typography variant="h5" component="h2" gutterBottom>
           <b>College Information</b>
         </Typography>
-        {collegeName ? (
-          <Typography
-            variant="body1"
-            sx={{ margin: "16px 0", textAlign: "center" }}
+        <Box
+          sx={{
+            margin: "16px 0",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "baseline",
+            gap: "8px"
+          }}
+        >
+          The player attended:{" "}
+          <Box
+            sx={{
+              color: "primary.main",
+              fontWeight: "bold",
+              opacity: collegeName !== "none" ? 1 : 0,
+              minWidth: "120px",
+              fontSize: "24px",
+            }}
           >
-            The player attended:{" "}
-            <Typography
-              variant="h6"
-              component="span"
-              sx={{ color: "primary.main", fontWeight: "bold" }}
-            >
-              {collegeName}
-            </Typography>
-          </Typography>
-        ) : (
-          <Typography
-            variant="body1"
-            sx={{ margin: "16px 0", textAlign: "center" }}
-          >
-            No college information available for this player.
-          </Typography>
-        )}
+            {collegeName}
+          </Box>
+        </Box>
       </Box>
     </Modal>
   );

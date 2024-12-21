@@ -13,6 +13,7 @@ import { GameSetting, PlayerInfo } from "../../models/interface";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getCollegeList, getHistoryList } from "../../reducers/game.slice";
 import {
+  DECREASE_TIME,
   DURATION_TIME,
   MAX_COUNT,
   MAX_SCORE_PER_QUE,
@@ -44,42 +45,56 @@ const GameBoardIndex = () => {
 
   const { history, isGettingHistory } = useAppSelector((state) => state.game);
 
-  const handleCollegeSelect = async (collegeName: string) => {
-    try {
-      if (targetItem) {
-        setIsConfirming(true);
-        const response = await axios.post(`${SERVER_URL}/game/college`, {
-          id: targetItem.playerId,
-          college: collegeName,
-        });
-        setIsConfirming(false);
+  const handleCollegeSelect = useCallback(
+    async (collegeName: string) => {
+      try {
+        if (targetItem) {
+          setIsConfirming(true);
+          const response = await axios.post(`${SERVER_URL}/game/college`, {
+            id: targetItem.playerId,
+            college: collegeName,
+          });
+          setIsConfirming(false);
 
-        const status = response.data.message as boolean;
+          const status = response.data.message as boolean;
 
-        setGameSetting((prevSetting: GameSetting) => {
-          const updatedList = prevSetting.playerList.map((player) => {
-            if (player.playerId !== targetItem.playerId) return player;
-            else if (status) {
-              return { ...player, rightStatus: collegeName };
-            } else {
-              const updatedWrongStatus = [...(player.wrongStatus || [])];
-              updatedWrongStatus.push(collegeName);
-              return { ...player, wrongStatus: updatedWrongStatus };
-            }
+          setGameSetting((prevSetting: GameSetting) => {
+            const updatedList = prevSetting.playerList.map((player) => {
+              if (player.playerId !== targetItem.playerId) return player;
+              else if (status) {
+                return {
+                  ...player,
+                  rightStatus: collegeName,
+                };
+              } else {
+                const updatedWrongStatus = [...(player.wrongStatus || [])];
+                updatedWrongStatus.push(collegeName);
+                return { ...player, wrongStatus: updatedWrongStatus };
+              }
+            });
+
+            return {
+              ...prevSetting,
+              playerList: updatedList,
+              remainCount: prevSetting.remainCount - 1,
+              score: status
+                ? prevSetting.score +
+                  Math.max(100 - Math.floor(spentTime / DECREASE_TIME), 0)
+                : prevSetting.score,
+            };
           });
 
-          return {
-            ...prevSetting,
-            playerList: updatedList,
-            remainCount: prevSetting.remainCount - 1,
-          };
-        });
+          if (status) {
+            setOpen(false);
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching game/college post:", err);
+        setIsConfirming(false);
       }
-    } catch (err) {
-      console.error("Error fetching game/college post:", err);
-      setIsConfirming(false);
-    }
-  };
+    },
+    [spentTime, targetItem]
+  );
 
   const loadDataFromLocalStorage = useCallback(() => {
     if (history.items.length === 0) return;
@@ -134,16 +149,11 @@ const GameBoardIndex = () => {
   }, [history]);
 
   const handleEndGame = useCallback(() => {
-    const score =
-      gameSetting.playerList.filter((item) => item.rightStatus !== "none")
-        .length * MAX_SCORE_PER_QUE;
-
     setGameSetting((prevSetting) => ({
       ...prevSetting,
       endStatus: true,
-      score,
     }));
-  }, [gameSetting.playerList]);
+  }, []);
 
   const selectItem = useCallback(
     (item: PlayerInfo) => {
@@ -258,7 +268,11 @@ const GameBoardIndex = () => {
             </Button>
           </>
         )}
-        <Box className={classes.remainTime}>{getRemainTimeStr(spentTime)}</Box>
+        <Box className={classes.remainTime}>
+          {gameSetting.endStatus
+            ? `Try again in ${getRemainTimeStr(remainTime)}`
+            : getRemainTimeStr(spentTime)}
+        </Box>
       </Box>
 
       <CollegeModal
