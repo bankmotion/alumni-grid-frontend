@@ -19,6 +19,7 @@ import {
   SERVER_URL,
 } from "../../config/config";
 import { getRemainTimeStr } from "../../utils/utils";
+import { Link } from "react-router-dom";
 
 const GameBoardIndex = () => {
   const { classes } = useStyles();
@@ -132,6 +133,18 @@ const GameBoardIndex = () => {
     }
   }, [history]);
 
+  const handleEndGame = useCallback(() => {
+    const score =
+      gameSetting.playerList.filter((item) => item.rightStatus !== "none")
+        .length * MAX_SCORE_PER_QUE;
+
+    setGameSetting((prevSetting) => ({
+      ...prevSetting,
+      endStatus: true,
+      score,
+    }));
+  }, [gameSetting.playerList]);
+
   const selectItem = useCallback(
     (item: PlayerInfo) => {
       if (gameSetting.endStatus) {
@@ -153,18 +166,6 @@ const GameBoardIndex = () => {
     if (gameSetting.createTime === 0) return;
     localStorage.setItem("Data", JSON.stringify(gameSetting));
   }, [gameSetting]);
-
-  const handleEndGame = useCallback(() => {
-    const score =
-      gameSetting.playerList.filter((item) => item.rightStatus !== "none")
-        .length * MAX_SCORE_PER_QUE;
-
-    setGameSetting((prevSetting) => ({
-      ...prevSetting,
-      endStatus: true,
-      score,
-    }));
-  }, [gameSetting.playerList]);
 
   useEffect(() => {
     if (gameSetting.playerList.length > 0 && targetItem) {
@@ -201,6 +202,9 @@ const GameBoardIndex = () => {
 
   return (
     <Box className={classes.gameBoard}>
+      <Link to={"/"} className={classes.backButton}>
+        <Button variant="contained">Back</Button>
+      </Link>
       <Box className={classes.leftPanel}></Box>
       <Box>
         <Typography variant="h3" className={classes.gameTitle}>

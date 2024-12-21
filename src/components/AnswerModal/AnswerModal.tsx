@@ -30,6 +30,12 @@ const AnswerModal = ({
     }
   }, [open, itemId]);
 
+  useEffect(() => {
+    if (!open) {
+      setCollegeName("");
+    }
+  }, [open]);
+
   return (
     <Modal open={open} onClose={() => handleOpenStatus(false)}>
       <Box className={classes.answerModal}>

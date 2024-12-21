@@ -188,6 +188,12 @@ const styles = makeStyles()((theme: Theme) => ({
     color: "white",
     fontSize: "24px",
   },
+
+  backButton: {
+    position: "absolute",
+    right: 20,
+    top: 20,
+  },
 }));
 
 export default styles;
