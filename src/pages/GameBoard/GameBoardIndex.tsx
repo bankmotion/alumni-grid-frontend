@@ -237,7 +237,7 @@ const GameBoardIndex = () => {
                 onClick={() => selectItem(item)}
                 key={index}
               >
-                <PersonIcon className={classes.personAva} />
+                {/* <PersonIcon className={classes.personAva} /> */}
                 <Box className={classes.playerName}>
                   {item.firstname} {item.lastname}
                 </Box>

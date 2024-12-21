@@ -67,11 +67,12 @@ const styles = makeStyles()((theme: Theme) => ({
   },
 
   playerName: {
-    position: "absolute",
-    bottom: "20px",
+    // position: "absolute",
+    // bottom: "20px",
+    fontSize: "30px",
 
     [theme.breakpoints.down("sm")]: {
-      bottom: "0",
+      // bottom: "0",
     },
   },
 
@@ -91,7 +92,8 @@ const styles = makeStyles()((theme: Theme) => ({
     position: "relative",
     cursor: "pointer",
     "&:hover": {
-      backgroundColor: "#ffffffcc",
+      backgroundColor: "#ffffff",
+      opacity: "0.9",
       border: "5px solid #656565",
       transition: "0.3s",
       "&>svg": {},
@@ -106,11 +108,18 @@ const styles = makeStyles()((theme: Theme) => ({
   correctBox: {
     backgroundColor: "#4caf50",
     borderColor: "#388e3c",
+
+    "&:hover": {
+      backgroundColor: "#4caf50",
+    },
   },
 
   wrongBox: {
     backgroundColor: "#f44336",
     borderColor: "#d32f2f",
+    "&:hover": {
+      backgroundColor: "#f44336",
+    },
   },
 
   rightPanel: {
