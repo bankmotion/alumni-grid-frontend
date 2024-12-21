@@ -198,10 +198,28 @@ const styles = makeStyles()((theme: Theme) => ({
     fontSize: "24px",
   },
 
-  backButton: {
+  buttonContainer: {
+    display: "flex",
+    justifyContent: "flex-end",
+    gap: "10px", // Space between the buttons
     position: "absolute",
     right: 20,
     top: 20,
+  },
+
+  backButton: {
+    backgroundColor: "#0077b6",
+    color: "#fff",
+    "&:hover": {
+      backgroundColor: "#005f8a",
+    },
+  },
+  leaderBoard: {
+    backgroundColor: "#f76c6c",
+    color: "#fff",
+    "&:hover": {
+      backgroundColor: "#d45c5c",
+    },
   },
 }));
 

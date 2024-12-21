@@ -212,10 +212,21 @@ const GameBoardIndex = () => {
 
   return (
     <Box className={classes.gameBoard}>
-      <Link to={"/"} className={classes.backButton}>
-        <Button variant="contained">Back</Button>
-      </Link>
+      <Box className={classes.buttonContainer}>
+        <Link to={"/leaderboard"}>
+          <Button className={classes.leaderBoard} variant="contained">
+            Leaderboard
+          </Button>
+        </Link>
+        <Link to={"/"}>
+          <Button className={classes.backButton} variant="contained">
+            Back
+          </Button>
+        </Link>
+      </Box>
+
       <Box className={classes.leftPanel}></Box>
+
       <Box>
         <Typography variant="h3" className={classes.gameTitle}>
           AlumniGrid
