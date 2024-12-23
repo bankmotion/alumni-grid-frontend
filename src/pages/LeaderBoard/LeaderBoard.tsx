@@ -136,14 +136,14 @@ const LeaderBoard = () => {
           ))}
         </Box>
         <Box className={classes.shareButtonContainer}>
-          <Button
+          {/* <Button
             variant="contained"
             startIcon={<ShareIcon />}
             className={classes.shareButton}
             //onClick={() => handleShare()}
           >
             Share Grid
-          </Button>
+          </Button> */}
         </Box>
       </Box>
 
@@ -167,7 +167,7 @@ const LeaderBoard = () => {
               console.log(entry);
               return (
                 <tr key={index}>
-                  <td>{`Grid ${index + 1}`}</td>
+                  <td>{index + 1}</td>
                   <td>
                     {new Date(entry.timeStamp * 1000).toLocaleDateString()}
                   </td>

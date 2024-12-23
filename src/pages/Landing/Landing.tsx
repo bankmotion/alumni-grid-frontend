@@ -31,6 +31,10 @@ const Landing = () => {
           The faster you complete, the higher the possible score.
           <br />
           <br />
+          When you click "play now" or "continuing" button on leaderboard, you
+          can play the game on that date.
+          <br />
+          <br />
           <strong>Come back tomorrow for a new game!</strong>
         </Typography>
         <Button

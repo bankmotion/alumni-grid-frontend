@@ -249,7 +249,7 @@ const GameBoardIndex = () => {
   useEffect(() => {
     dispatch(getCollegeList());
     dispatch(getHistoryList(Number(timeStampParam)));
-  }, [dispatch, timeStampParam]);
+  }, [dispatch, searchParams]);
 
   return (
     <Box className={classes.gameBoard}>
@@ -338,7 +338,7 @@ const GameBoardIndex = () => {
         )}
         <Box className={classes.remainTime}>
           {gameSetting.endStatus
-            ? `Try again in ${getRemainTimeStr(remainTime)}`
+            ? `Restart Game in ${getRemainTimeStr(remainTime)}`
             : getRemainTimeStr(spentTime)}
         </Box>
       </Box>
