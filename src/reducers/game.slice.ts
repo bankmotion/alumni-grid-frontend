@@ -1,9 +1,16 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  isRejectedWithValue,
+} from "@reduxjs/toolkit";
 import axios from "axios";
 import { SERVER_URL } from "../config/config";
-import { College, PlayerInfo } from "../models/interface";
-import { PlayType } from "../constant/const";
-import { timeStamp } from "console";
+import {
+  AllHistory,
+  AllPlayer,
+  College,
+  PlayerInfo,
+} from "../models/interface";
 
 export interface GameState {
   collegeList: College[];
@@ -13,6 +20,9 @@ export interface GameState {
     startTimestamp: number;
   };
   isGettingHistory: boolean;
+
+  allLeaderHistory: AllHistory[];
+  isGettingAllLeaderHistory: boolean;
 }
 
 const initialState: GameState = {
@@ -23,6 +33,9 @@ const initialState: GameState = {
     startTimestamp: 0,
   },
   isGettingHistory: false,
+
+  allLeaderHistory: [],
+  isGettingAllLeaderHistory: false,
 };
 
 export const getCollegeList = createAsyncThunk(
@@ -37,14 +50,40 @@ export const getCollegeList = createAsyncThunk(
   }
 );
 
+// export const getHistoryList = createAsyncThunk(
+//   "game/getRandPlayerList",
+//   async (_, { rejectWithValue }) => {
+//     try {
+//       const response = await axios.get(`${SERVER_URL}/history`);
+//       return response.data;
+//     } catch (err) {
+//       return rejectWithValue(err.response.data);
+//     }
+//   }
+// );
+
 export const getHistoryList = createAsyncThunk(
   "game/getRandPlayerList",
-  async (_, { rejectWithValue }) => {
+  async (timeStamp: number, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${SERVER_URL}/history`);
+      const response = await axios.get(
+        `${SERVER_URL}/history/timestamp/${timeStamp}`
+      );
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getLeaderHistory = createAsyncThunk(
+  "leaderboard/getAllLeaderHistory",
+  async (__dirname, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(`${SERVER_URL}/history/all`);
+      return response.data;
+    } catch (error) {
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -83,7 +122,6 @@ export const gameSlice = createSlice({
               playerId: item.playerId,
               firstname: item.NBAPlayer.firstName,
               lastname: item.NBAPlayer.lastName,
-              timestamp: item.timestamp,
               wrongStatus: [],
               rightStatus: "none",
             } as PlayerInfo)
@@ -93,6 +131,32 @@ export const gameSlice = createSlice({
     });
     builder.addCase(getHistoryList.rejected, (state, { error }) => {
       state.isGettingHistory = false;
+    });
+
+    builder.addCase(getLeaderHistory.pending, (state) => {
+      state.isGettingAllLeaderHistory = true;
+    });
+    builder.addCase(getLeaderHistory.fulfilled, (state, { payload }) => {
+      state.isGettingAllLeaderHistory = false;
+      // state.allLeaderHistory = payload.data.map((historyItem: any) => ({
+      //   players: historyItem.players.map((player: any) => ({
+      //     id: player.id,
+      //     firstName: player.firstName,
+      //     lastName: player.lastName,
+      //   })),
+      //   timeStamp: historyItem.timestamp,
+      // }));
+      state.allLeaderHistory = payload.data.map(
+        (historyItem: any) =>
+          ({
+            players: historyItem.players,
+            timeStamp: historyItem.timestamp,
+          } as AllHistory)
+      );
+    });
+
+    builder.addCase(getLeaderHistory.rejected, (state, { error }) => {
+      state.isGettingAllLeaderHistory = false;
     });
   },
 });

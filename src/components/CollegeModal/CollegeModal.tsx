@@ -54,7 +54,7 @@ const CollegeModal = ({
         {targetItem && targetItem.rightStatus === college.name ? (
           <Button
             variant="contained"
-            sx={{ backgroundColor: "green", minWidth: "100px" }}
+            sx={{ backgroundColor: "green", minWidth: "100%" }}
           >
             Right
           </Button>
@@ -63,7 +63,7 @@ const CollegeModal = ({
             -1 ? (
           <Button
             variant="contained"
-            sx={{ backgroundColor: "red", minWidth: "100px" }}
+            sx={{ backgroundColor: "red", minWidth: "100%" }}
           >
             Wrong
           </Button>
@@ -71,7 +71,8 @@ const CollegeModal = ({
           <Button
             onClick={() => handleCollegeSelect(college.name)}
             variant="contained"
-            sx={{ minWidth: "100px" }}
+            className={classes.button}
+            sx={{ maxWidth: "100%" }}
             disabled={isConfirming}
           >
             Select
@@ -92,7 +93,7 @@ const CollegeModal = ({
           value={searchKey}
           onChange={(e) => setSearchKey(e.target.value)}
           className={classes.searchKey}
-          placeholder="Input the colleges"
+          placeholder="select the college"
         />
 
         <List className={classes.collegeList}>

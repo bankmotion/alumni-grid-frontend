@@ -20,10 +20,22 @@ import {
   SERVER_URL,
 } from "../../config/config";
 import { getRemainTimeStr } from "../../utils/utils";
-import { Link } from "react-router-dom";
+import {
+  Link,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from "react-router-dom";
 
 const GameBoardIndex = () => {
   const { classes } = useStyles();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const timeStampParam = searchParams.get("timestamp")
+    ? Number(searchParams.get("timestamp"))
+    : Math.floor(new Date().getTime() / 1000);
+
   const dispatch = useAppDispatch();
 
   const [targetItem, setTargetItem] = useState<PlayerInfo | null>(null);
@@ -99,12 +111,15 @@ const GameBoardIndex = () => {
   const loadDataFromLocalStorage = useCallback(() => {
     if (history.items.length === 0) return;
 
-    const dataStr = localStorage.getItem("Data");
+    const dataStr = localStorage.getItem("dataList");
 
     if (dataStr) {
       try {
-        const data = JSON.parse(dataStr) as GameSetting;
-        console.log("Parsed localstorage data:", data);
+        const dataList = JSON.parse(dataStr) as GameSetting[];
+        console.log("Parsed localstorage data:", dataList);
+        const data = dataList.find(
+          (item) => item.createTime === history.startTimestamp
+        );
 
         if (data.createTime && history.startTimestamp === data.createTime) {
           setGameSetting({
@@ -168,6 +183,31 @@ const GameBoardIndex = () => {
     [gameSetting.endStatus]
   );
 
+  const getDataList = () => {
+    const dataListStr = localStorage.getItem("dataList");
+    return dataListStr ? JSON.parse(dataListStr) : [];
+  };
+
+  const saveDailyData = useCallback((data: GameSetting) => {
+    const dataList = getDataList();
+
+    const existingIndex = dataList.findIndex(
+      (entry: GameSetting) => entry.createTime === data.createTime
+    );
+
+    if (existingIndex !== -1) {
+      dataList[existingIndex] = data;
+    } else {
+      dataList.push(data);
+    }
+
+    localStorage.setItem("dataList", JSON.stringify(dataList));
+  }, []);
+
+  const handleNavigateToLeaderboard = () => {
+    navigate("/leaderboard");
+  };
+
   useEffect(() => {
     loadDataFromLocalStorage();
   }, [loadDataFromLocalStorage]);
@@ -175,7 +215,8 @@ const GameBoardIndex = () => {
   useEffect(() => {
     if (gameSetting.createTime === 0) return;
     localStorage.setItem("Data", JSON.stringify(gameSetting));
-  }, [gameSetting]);
+    saveDailyData(gameSetting);
+  }, [gameSetting, saveDailyData]);
 
   useEffect(() => {
     if (gameSetting.playerList.length > 0 && targetItem) {
@@ -207,17 +248,20 @@ const GameBoardIndex = () => {
 
   useEffect(() => {
     dispatch(getCollegeList());
-    dispatch(getHistoryList());
-  }, [dispatch]);
+    dispatch(getHistoryList(Number(timeStampParam)));
+  }, [dispatch, timeStampParam]);
 
   return (
     <Box className={classes.gameBoard}>
       <Box className={classes.buttonContainer}>
-        <Link to={"/leaderboard"}>
-          <Button className={classes.leaderBoard} variant="contained">
-            Leaderboard
-          </Button>
-        </Link>
+        <Button
+          className={classes.leaderBoard}
+          variant="contained"
+          onClick={handleNavigateToLeaderboard}
+        >
+          Leaderboard
+        </Button>
+
         <Link to={"/"}>
           <Button className={classes.backButton} variant="contained">
             Back
@@ -232,29 +276,42 @@ const GameBoardIndex = () => {
           AlumniGrid
         </Typography>
         <Box className={classes.gridBox}>
-          {isGettingHistory ? (
-            <></>
-          ) : (
-            gameSetting.playerList.map((item, index) => (
-              <Box
-                className={clsx(
-                  classes.gridItem,
-                  item.rightStatus !== "none"
-                    ? classes.correctBox
-                    : gameSetting.endStatus
-                    ? classes.wrongBox
-                    : null
-                )}
-                onClick={() => selectItem(item)}
-                key={index}
-              >
-                {/* <PersonIcon className={classes.personAva} /> */}
-                <Box className={classes.playerName}>
-                  {item.firstname} {item.lastname}
+          {isGettingHistory
+            ? gameSetting.playerList.map((item, index) => (
+                <Box
+                  className={clsx(
+                    classes.gridItem,
+                    item.rightStatus !== "none"
+                      ? classes.correctBox
+                      : gameSetting.endStatus
+                      ? classes.wrongBox
+                      : null
+                  )}
+                  onClick={() => selectItem(item)}
+                  key={index}
+                >
+                  <PersonIcon className={classes.personAva} />
                 </Box>
-              </Box>
-            ))
-          )}
+              ))
+            : gameSetting.playerList.map((item, index) => (
+                <Box
+                  className={clsx(
+                    classes.gridItem,
+                    item.rightStatus !== "none"
+                      ? classes.correctBox
+                      : gameSetting.endStatus
+                      ? classes.wrongBox
+                      : null
+                  )}
+                  onClick={() => selectItem(item)}
+                  key={index}
+                >
+                  {/* <PersonIcon className={classes.personAva} /> */}
+                  <Box className={classes.playerName}>
+                    {item.firstname} {item.lastname}
+                  </Box>
+                </Box>
+              ))}
         </Box>
       </Box>
       <Box className={classes.rightPanel}>

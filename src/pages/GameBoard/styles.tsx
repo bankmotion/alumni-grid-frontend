@@ -9,70 +9,72 @@ const styles = makeStyles()((theme: Theme) => ({
     justifyContent: "center",
     alignItems: "center",
     background: "url(/assets/background.jpg)",
-    backgroundSize: "100% 100%",
+    backgroundSize: "cover",
     backgroundRepeat: "no-repeat",
+    padding: "16px",
 
     [theme.breakpoints.down("sm")]: {
       height: "auto",
       flexDirection: "column",
-      padding: "24px 0",
+      padding: "16px",
       minHeight: "100vh",
-      justifyContent: "start",
+      justifyContent: "flex-start",
     },
   },
 
   gameTitle: {
-    color: "#777777",
+    fontSize: "clamp(30px, 32px, 36px)",
     fontWeight: "bold",
-
-    [theme.breakpoints.down("sm")]: {
-      marginTop: "16px",
-    },
+    //color: "#bdc3c7",
+    color: "#f39c12",
+    textAlign: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    padding: "8px",
+    borderRadius: "4px",
   },
 
   leftPanel: {
     minWidth: "200px",
     width: "100%",
+
+    [theme.breakpoints.down("sm")]: {
+      width: "90%",
+      marginBottom: "16px",
+    },
   },
 
   gridBox: {
     display: "grid",
     gridTemplateColumns: "repeat(3, 1fr)",
-    gridTemplateRows: "repeat(3, 1fr)",
-    gap: "8px",
-    margin: "auto",
+    gridGap: "8px",
     padding: "8px",
     borderRadius: "8px",
-    marginTop: "8px",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
-    backgroundPosition: "center",
-    height: "100%",
+    marginTop: "16px",
+    background: "rgba(126, 126, 137, 0.55)",
     boxShadow: "0px 6px 12px rgba(0, 0, 0, 0.5)",
-    background: "#7e7e8988",
 
     [theme.breakpoints.down("sm")]: {
+      gridTemplateColumns: "repeat(3, 1fr)", // Adjust grid for smaller screens
       marginTop: "12px",
+      gap: "4px",
     },
   },
 
   personAva: {
     position: "absolute",
     color: "#363232",
-    fontSize: "150px",
+    fontSize: "clamp(70px, 10vw, 150px)",
 
     [theme.breakpoints.down("sm")]: {
-      fontSize: "70px",
+      fontSize: "clamp(50px, 8vw, 100px)",
     },
   },
 
   playerName: {
-    // position: "absolute",
-    // bottom: "20px",
-    fontSize: "30px",
+    fontSize: "clamp(18px, 2.5vw, 30px)",
 
     [theme.breakpoints.down("sm")]: {
-      // bottom: "0",
+      fontSize: "clamp(14px, 2vw, 24px)",
     },
   },
 
@@ -84,24 +86,23 @@ const styles = makeStyles()((theme: Theme) => ({
     border: "5px solid #656565",
     color: "#2b2a2a",
     fontWeight: "bold",
-    fontSize: "18px",
-    width: 200,
-    height: 200,
+    fontSize: "clamp(14px, 1.5vw, 18px)",
+    width: "clamp(80px, 12vw, 200px)",
+    height: "clamp(80px, 12vw, 200px)",
     borderRadius: "8px",
     transition: "0.3s",
     position: "relative",
     cursor: "pointer",
+
     "&:hover": {
       backgroundColor: "#ffffff",
       opacity: "0.9",
-      border: "5px solid #656565",
-      transition: "0.3s",
-      "&>svg": {},
+      borderColor: "#656565",
     },
 
     [theme.breakpoints.down("sm")]: {
-      width: 100,
-      height: 100,
+      width: "clamp(60px, 8vw, 100px)",
+      height: "clamp(60px, 8vw, 100px)",
     },
   },
 
@@ -117,6 +118,7 @@ const styles = makeStyles()((theme: Theme) => ({
   wrongBox: {
     backgroundColor: "#f44336",
     borderColor: "#d32f2f",
+
     "&:hover": {
       backgroundColor: "#f44336",
     },
@@ -127,96 +129,81 @@ const styles = makeStyles()((theme: Theme) => ({
     width: "100%",
     display: "flex",
     flexDirection: "column",
-    gap: "8px",
-    alignItems: "center",
+    gap: "16px",
+    alignItems: "center", // Center the contents
+    justifyContent: "center", // Center vertically
+
+    [theme.breakpoints.down("sm")]: {
+      width: "90%",
+      alignItems: "center", // Ensure alignment on small screens
+    },
   },
 
   guessLeftTxt: {
-    fontSize: "32px",
+    fontSize: "clamp(18px, 3vw, 32px)",
     color: "white",
     fontWeight: "bold",
-
-    [theme.breakpoints.down("sm")]: {
-      fontSize: "24px",
-    },
+    textAlign: "center", // Center text for better alignment
   },
 
   score: {
-    fontSize: "50px",
+    fontSize: "clamp(28px, 5vw, 50px)",
     color: "#d93232",
     fontWeight: "bold",
-
-    [theme.breakpoints.down("sm")]: {
-      fontSize: "32px",
-    },
+    textAlign: "center", // Center score text
   },
 
   giveUpBtn: {
     color: "white",
     maxWidth: "200px",
     marginTop: "32px",
+    padding: "8px 16px",
+    fontSize: "clamp(12px, 1.5vw, 16px)",
 
     [theme.breakpoints.down("sm")]: {
       marginTop: "18px",
-    },
-  },
-
-  collegeModal: {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    width: 300,
-    backgroundColor: "#414453dd",
-    border: "2px solid #c79292",
-    boxShadow: "",
-    padding: 24,
-    borderRadius: 8,
-    color: "white",
-
-    [theme.breakpoints.down("sm")]: {
-      height: "70%",
-    },
-  },
-
-  collegeList: {
-    display: "flex",
-    gap: "8px",
-    flexDirection: "column",
-    maxHeight: "500px",
-    overflowY: "auto",
-    minHeight: "500px",
-
-    [theme.breakpoints.down("sm")]: {
-      maxHeight: "80%",
-      minHeight: "auto",
+      fontSize: "clamp(10px, 1.5vw, 14px)", // Adjust font size for small screens
     },
   },
 
   remainTime: {
     color: "white",
-    fontSize: "24px",
+    fontSize: "clamp(18px, 2vw, 24px)",
+    textAlign: "center", // Center text for remain time
   },
 
   buttonContainer: {
     display: "flex",
     justifyContent: "flex-end",
-    gap: "10px", // Space between the buttons
+    gap: "10px",
     position: "absolute",
     right: 20,
     top: 20,
+
+    [theme.breakpoints.down("sm")]: {
+      justifyContent: "center", // Center buttons on small devices
+      position: "static", // Adjust position
+      marginTop: "16px",
+      flexDirection: "column", // Stack buttons vertically
+      gap: "8px", // Adjust spacing between buttons
+    },
   },
 
   backButton: {
     backgroundColor: "#0077b6",
     color: "#fff",
+    fontSize: "clamp(12px, 1.5vw, 14px)",
+
     "&:hover": {
       backgroundColor: "#005f8a",
     },
   },
+
   leaderBoard: {
     backgroundColor: "#f76c6c",
     color: "#fff",
+    fontSize: "clamp(12px, 1.5vw, 14px)",
+
     "&:hover": {
       backgroundColor: "#d45c5c",
     },

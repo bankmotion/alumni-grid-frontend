@@ -48,7 +48,7 @@ const AnswerModal = ({
             display: "flex",
             justifyContent: "center",
             alignItems: "baseline",
-            gap: "8px"
+            gap: "8px",
           }}
         >
           The player attended:{" "}

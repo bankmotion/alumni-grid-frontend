@@ -8,6 +8,8 @@ import Landing from "./pages/Landing/Landing";
 import { Provider } from "react-redux";
 import { store } from "./app/store";
 import AdminBoardNBA from "./pages/AdminBoardNBA/AdminBoardNBA";
+import AdminBoardNFL from "./pages/AdminBoardNFL/AdminBoardNFL";
+import { timeStamp } from "console";
 
 function App() {
   return (
@@ -16,9 +18,10 @@ function App() {
         <Router>
           <Routes>
             <Route path="/game" element={<GameBoardIndex />}></Route>
+            {/* <Route path="/game/:timeStamp" element={<GameBoardIndex />}></Route> */}
             <Route path="/leaderboard" element={<LeaderBoard />}></Route>
             <Route path="/adminboard/NBA" element={<AdminBoardNBA />}></Route>
-            {/* <Route path="/adminboard/NFL" element={<AdminBoardNFL />}></Route> */}
+            <Route path="/adminboard/NFL" element={<AdminBoardNFL />}></Route>
             <Route path="/" element={<Landing />}></Route>
           </Routes>
         </Router>
