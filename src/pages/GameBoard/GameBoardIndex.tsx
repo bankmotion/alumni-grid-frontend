@@ -4,6 +4,8 @@ import PersonIcon from "@mui/icons-material/Person";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { clsx } from "clsx";
+import ReplyAllIcon from "@mui/icons-material/ReplyAll";
+import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 
 import CollegeModal from "../../components/CollegeModal/CollegeModal";
 import AnswerModal from "../../components/AnswerModal/AnswerModal";
@@ -16,25 +18,25 @@ import {
   DECREASE_TIME,
   DURATION_TIME,
   MAX_COUNT,
-  MAX_SCORE_PER_QUE,
   SERVER_URL,
 } from "../../config/config";
-import { getRemainTimeStr } from "../../utils/utils";
 import {
-  Link,
-  useNavigate,
-  useParams,
-  useSearchParams,
-} from "react-router-dom";
+  getRemainTimeStr,
+  getStartTimeByTimestampDaily,
+} from "../../utils/utils";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 const GameBoardIndex = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
 
-  const timeStampParam = searchParams.get("timestamp")
-    ? Number(searchParams.get("timestamp"))
-    : Math.floor(new Date().getTime() / 1000);
+  const timeStampParam = getStartTimeByTimestampDaily(
+    searchParams.get("timestamp")
+      ? Number(searchParams.get("timestamp"))
+      : Math.floor(new Date().getTime() / 1000)
+  );
+  console.log(timeStampParam);
 
   const dispatch = useAppDispatch();
 
@@ -45,6 +47,7 @@ const GameBoardIndex = () => {
   const [isConfirming, setIsConfirming] = useState(false);
   const [remainTime, setRemainTime] = useState(0);
   const [spentTime, setSpentTime] = useState(0);
+  console.log(remainTime);
 
   const [gameSetting, setGameSetting] = useState<GameSetting>({
     createTime: 0,
@@ -259,19 +262,29 @@ const GameBoardIndex = () => {
           variant="contained"
           onClick={handleNavigateToLeaderboard}
         >
-          Leaderboard
+          <Box component={"span"}>
+            <LeaderboardIcon />
+          </Box>{" "}
+          <Box component={"span"} className={classes.onlyDesktop}>
+            Leaderboard
+          </Box>
         </Button>
 
         <Link to={"/"}>
           <Button className={classes.backButton} variant="contained">
-            Back
+            <Box component={"span"}>
+              <ReplyAllIcon />
+            </Box>{" "}
+            <Box component={"span"} className={classes.onlyDesktop}>
+              Back
+            </Box>
           </Button>
         </Link>
       </Box>
 
       <Box className={classes.leftPanel}></Box>
 
-      <Box>
+      <Box className={classes.middlePanel}>
         <Typography variant="h3" className={classes.gameTitle}>
           AlumniGrid
         </Typography>

@@ -33,10 +33,10 @@ const styles = makeStyles()((theme: Theme) => ({
   title: {
     fontWeight: "bold",
     color: theme.palette.primary.main,
-    fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+    fontSize: "clamp(3rem, 3vw, 2.5rem)",
 
     [theme.breakpoints.down("sm")]: {
-      fontSize: "clamp(1.2rem, 2.5vw, 2rem)",
+      fontSize: "clamp(1.5rem, 2.5vw, 2rem)",
     },
   },
 
@@ -47,6 +47,21 @@ const styles = makeStyles()((theme: Theme) => ({
     fontSize: "clamp(0.875rem, 1.5vw, 1rem)",
     "&:hover": {
       backgroundColor: theme.palette.secondary.dark,
+    },
+
+    [theme.breakpoints.down("sm")]: {
+      padding: "8px",
+      position: "fixed",
+      right: 10,
+      top: 10,
+      width: "40px",
+      height: "40px",
+      minWidth: "40px",
+      borderRadius: "50%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 1,
     },
   },
 
@@ -81,7 +96,7 @@ const styles = makeStyles()((theme: Theme) => ({
     marginTop: theme.spacing(2),
 
     [theme.breakpoints.down("sm")]: {
-      gridTemplateColumns: "repeat(2, 1fr)", // 2 columns for smaller screens
+      gridTemplateColumns: "repeat(3, 1fr)", // 2 columns for smaller screens
       gap: theme.spacing(1.5),
     },
   },
@@ -204,6 +219,12 @@ const styles = makeStyles()((theme: Theme) => ({
       fontSize: "clamp(0.7rem, 1vw, 0.85rem)",
       padding: theme.spacing(0.5, 0.5),
       borderRadius: "4px",
+    },
+  },
+
+  onlyDesktop: {
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
     },
   },
 }));

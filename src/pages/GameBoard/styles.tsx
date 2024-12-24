@@ -3,7 +3,7 @@ import { makeStyles } from "tss-react/mui";
 
 const styles = makeStyles()((theme: Theme) => ({
   gameBoard: {
-    width: "100%",
+    // width: "100%",
     height: "100vh",
     display: "flex",
     justifyContent: "center",
@@ -38,8 +38,14 @@ const styles = makeStyles()((theme: Theme) => ({
     width: "100%",
 
     [theme.breakpoints.down("sm")]: {
-      width: "90%",
       marginBottom: "16px",
+    },
+  },
+
+  middlePanel: {
+    [theme.breakpoints.down("sm")]: {
+      marginTop: "16px",
+      width: "100%",
     },
   },
 
@@ -55,8 +61,9 @@ const styles = makeStyles()((theme: Theme) => ({
 
     [theme.breakpoints.down("sm")]: {
       gridTemplateColumns: "repeat(3, 1fr)", // Adjust grid for smaller screens
-      marginTop: "12px",
-      gap: "4px",
+      marginTop: "32px",
+      gap: "2px",
+      padding: "2px",
     },
   },
 
@@ -101,8 +108,8 @@ const styles = makeStyles()((theme: Theme) => ({
     },
 
     [theme.breakpoints.down("sm")]: {
-      width: "clamp(60px, 8vw, 100px)",
-      height: "clamp(60px, 8vw, 100px)",
+      width: "26vw",
+      height: "26vw",
     },
   },
 
@@ -130,12 +137,13 @@ const styles = makeStyles()((theme: Theme) => ({
     display: "flex",
     flexDirection: "column",
     gap: "16px",
-    alignItems: "center", // Center the contents
-    justifyContent: "center", // Center vertically
+    alignItems: "center",
+    justifyContent: "center",
 
     [theme.breakpoints.down("sm")]: {
       width: "90%",
-      alignItems: "center", // Ensure alignment on small screens
+      alignItems: "center",
+      gap: "8px",
     },
   },
 
@@ -143,14 +151,14 @@ const styles = makeStyles()((theme: Theme) => ({
     fontSize: "clamp(18px, 3vw, 32px)",
     color: "white",
     fontWeight: "bold",
-    textAlign: "center", // Center text for better alignment
+    textAlign: "center",
   },
 
   score: {
     fontSize: "clamp(28px, 5vw, 50px)",
     color: "#d93232",
     fontWeight: "bold",
-    textAlign: "center", // Center score text
+    textAlign: "center",
   },
 
   giveUpBtn: {
@@ -161,8 +169,8 @@ const styles = makeStyles()((theme: Theme) => ({
     fontSize: "clamp(12px, 1.5vw, 16px)",
 
     [theme.breakpoints.down("sm")]: {
-      marginTop: "18px",
-      fontSize: "clamp(10px, 1.5vw, 14px)", // Adjust font size for small screens
+      marginTop: "8px",
+      fontSize: "clamp(10px, 1.5vw, 14px)",
     },
   },
 
@@ -181,11 +189,15 @@ const styles = makeStyles()((theme: Theme) => ({
     top: 20,
 
     [theme.breakpoints.down("sm")]: {
-      justifyContent: "center", // Center buttons on small devices
-      position: "static", // Adjust position
-      marginTop: "16px",
-      flexDirection: "column", // Stack buttons vertically
-      gap: "8px", // Adjust spacing between buttons
+      flexDirection: "column",
+      alignItems: "flex-end",
+      gap: "8px",
+    },
+  },
+
+  onlyDesktop: {
+    [theme.breakpoints.down("sm")]: {
+      display: "none",
     },
   },
 
@@ -197,6 +209,17 @@ const styles = makeStyles()((theme: Theme) => ({
     "&:hover": {
       backgroundColor: "#005f8a",
     },
+
+    [theme.breakpoints.down("sm")]: {
+      width: "40px",
+      height: "40px",
+      borderRadius: "50%",
+      padding: 0,
+      minWidth: "30px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
   },
 
   leaderBoard: {
@@ -206,6 +229,17 @@ const styles = makeStyles()((theme: Theme) => ({
 
     "&:hover": {
       backgroundColor: "#d45c5c",
+    },
+
+    [theme.breakpoints.down("sm")]: {
+      width: "40px",
+      height: "40px",
+      borderRadius: "50%",
+      padding: 0,
+      minWidth: "30px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
     },
   },
 }));
