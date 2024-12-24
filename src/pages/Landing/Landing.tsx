@@ -13,7 +13,7 @@ const Landing = () => {
     <Box className={classes.landingBoard}>
       <Box className={classes.content}>
         <Typography variant="h3" className={classes.gameTitle}>
-          Welcome to the AlmuniGrid
+          Welcome to the AlumniGrid
         </Typography>
         <Typography variant="body1" className={classes.description}>
           9 new players each day with a mix between NBA and NFL.
