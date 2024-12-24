@@ -247,7 +247,7 @@ const AdminBoardNFL = () => {
           color="secondary"
           onClick={handleFilterPlayers}
         >
-          Filter Players
+          Save options
         </Button>
       </Box>
 
@@ -369,13 +369,6 @@ const AdminBoardNFL = () => {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-
-      {/* Save Button */}
-      <Box mt={2} style={{ display: "flex", justifyContent: "flex-end" }}>
-        <Button variant="contained" color="primary" onClick={handleSave}>
-          Save
-        </Button>
-      </Box>
     </Paper>
   );
 };
