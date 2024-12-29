@@ -1,14 +1,18 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useStyles from "./styles";
 import ReplyAllIcon from "@mui/icons-material/ReplyAll";
+import ShareIcon from "@mui/icons-material/Share";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getLeaderHistory } from "../../reducers/game.slice";
 
 import { GameSetting } from "../../models/interface";
 import { convertPSTTime } from "../../utils/utils";
+import { Version } from "../../config/config";
 
 const LeaderBoard = () => {
   const { classes } = useStyles();
@@ -18,6 +22,7 @@ const LeaderBoard = () => {
 
   const [dataList, setDataList] = useState<GameSetting[]>([]);
   const [currentData, setCurrentData] = useState<GameSetting | null>(null);
+  const [shareText, setShareText] = useState<string>("");
   const { allLeaderHistory } = useAppSelector((state) => state.game);
 
   useEffect(() => {
@@ -49,7 +54,7 @@ const LeaderBoard = () => {
   useEffect(() => {
     let data: GameSetting[] = [];
     try {
-      data = JSON.parse(localStorage.getItem("dataList")) || [];
+      data = JSON.parse(localStorage.getItem(`dataList${Version}`)) || [];
     } catch (err) {}
 
     setDataList(data);
@@ -58,7 +63,7 @@ const LeaderBoard = () => {
   useEffect(() => {
     let data: GameSetting | null = null;
     try {
-      const storedData = localStorage.getItem("Data");
+      const storedData = localStorage.getItem(`Data${Version}`);
       data = storedData ? JSON.parse(storedData) : null;
     } catch (error) {
       console.error("Error parsing local storage data:", error);
@@ -68,8 +73,86 @@ const LeaderBoard = () => {
   }, []);
   console.log("currentdata", currentData);
 
-  console.log({combineData, allLeaderHistory})
+  const calculatePercentitle = (score: number) => {
+    const allScores = combineData
+      .map((entry) => entry.gameSetting?.score || 0)
+      .sort((a, b) => b - a);
 
+    const rank = allScores.findIndex((score) => score === currentData?.score);
+
+    if (rank === -1 || allScores.length == 0) {
+      return 0;
+    }
+
+    const percentile = (rank / allScores.length) * 100;
+    return Math.min(Math.round(100 - percentile), 100);
+  };
+
+  const userPercentitle = calculatePercentitle(currentData?.score || 0);
+
+  const calculatePlayerPercentile = (score: number) => {
+    const allScores = combineData
+      .map((entry) => entry.gameSetting?.score || 0)
+      .sort((a, b) => b - a);
+
+    const rank = allScores.findIndex((playerScore) => playerScore === score);
+
+    if (rank === -1 || allScores.length == 0) {
+      return 0;
+    }
+
+    const percentile = (rank / allScores.length) * 100;
+    return Math.min(Math.round(100 - percentile), 100);
+  };
+
+  console.log({ combineData, allLeaderHistory });
+
+  const generateShareableText = () => {
+    if (!currentData) return;
+
+    const gridVisualization = currentData.playerList
+      .map((player) => (player.rightStatus === "none" ? "⬜" : "🟩"))
+      .reduce((rows, current, index) => {
+        if (index % 3 === 0) rows.push([]);
+        rows[rows.length - 1].push(current);
+        return rows;
+      }, [])
+      .map((row) => " " + row.join(" "))
+      .join("\n");
+
+    const text =
+      `🏀 Alumni Grid \n` +
+      ` Score: ${currentData.score}\n` +
+      ` Rarity: ${900}\n` +
+      `${gridVisualization}\n` +
+      ` Play at:\n` +
+      ` ` +
+      `https://alumnigrid.com/game`.trim();
+
+    setShareText(text);
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard
+      .writeText(shareText)
+      .then(() => {
+        Toastify({
+          text: "Grid details copied to clipboard!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+        }).showToast();
+      })
+      .catch((error) => {
+        console.error("Failed to copy text:", error);
+      });
+  };
+
+  useEffect(() => {
+    generateShareableText();
+  }, [currentData]);
   return (
     <Box className={classes.leaderboardPage}>
       <Box className={classes.header}>
@@ -96,7 +179,7 @@ const LeaderBoard = () => {
         </Typography>
         <Typography variant="h4">
           Percentile:
-          {Math.min(Math.round(((currentData?.score || 0) / 1000) * 100), 100)}
+          {userPercentitle}
           th Percentile
         </Typography>
       </Box>
@@ -122,14 +205,14 @@ const LeaderBoard = () => {
           ))}
         </Box>
         <Box className={classes.shareButtonContainer}>
-          {/* <Button
+          <Button
             variant="contained"
             startIcon={<ShareIcon />}
             className={classes.shareButton}
-            //onClick={() => handleShare()}
+            onClick={copyToClipboard}
           >
             Share Grid
-          </Button> */}
+          </Button>
         </Box>
       </Box>
 
@@ -143,7 +226,7 @@ const LeaderBoard = () => {
               <th>Grid</th>
               <th>Date</th>
               <th>Score</th>
-              <th>Rarity</th>
+              <th>Percentile</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -155,9 +238,7 @@ const LeaderBoard = () => {
                   <td>{index + 1}</td>
                   <td>{convertPSTTime(entry.timeStamp)}</td>
                   <td>{entry.gameSetting?.score || 0}</td>
-                  <td>
-                    {entry.players.length * 100} {/* Example score */}
-                  </td>
+                  <td>{calculatePlayerPercentile(entry.gameSetting?.score)}</td>
                   <td>
                     <Button
                       variant="contained"

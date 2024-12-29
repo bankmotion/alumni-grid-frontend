@@ -8,7 +8,7 @@ const styles = makeStyles()((theme: Theme) => ({
     borderRadius: "16px",
     boxShadow: "0px 6px 20px rgba(0, 0, 0, 0.15)",
     maxWidth: "760px",
-    margin: "50px auto", // Center the board with some margin
+    margin: "50px auto",
     textAlign: "center",
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
     "&:hover": {
@@ -17,10 +17,6 @@ const styles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down("sm")]: {
       padding: "24px",
       margin: "30px auto",
-    },
-    [theme.breakpoints.down("xs")]: {
-      padding: "16px",
-      margin: "20px auto",
     },
   },
   headerContainer: {
@@ -35,18 +31,18 @@ const styles = makeStyles()((theme: Theme) => ({
   },
   title: {
     fontWeight: "bold",
-    fontSize: "clamp(1.5rem, 2.5vw, 2rem)", // Responsive font size
+    fontSize: "clamp(1.5rem, 2.5vw, 2rem)",
     color: "#004d40",
   },
   toggleButton: {
     cursor: "pointer",
-    fontSize: "clamp(0.875rem, 1.5vw, 1rem)", // Responsive font size
+    fontSize: "clamp(0.875rem, 1.5vw, 1rem)",
   },
   formControl: {
     marginBottom: theme.spacing(2),
     width: "100%",
     [theme.breakpoints.down("sm")]: {
-      marginBottom: theme.spacing(1), // Adjust margin for small screens
+      marginBottom: theme.spacing(1),
     },
   },
   checkboxContainer: {
@@ -54,7 +50,7 @@ const styles = makeStyles()((theme: Theme) => ({
     "& .MuiTypography-root": {
       fontWeight: 500,
       color: "#004d40",
-      fontSize: "clamp(0.875rem, 1.5vw, 1rem)", // Responsive font size
+      fontSize: "clamp(0.875rem, 1.5vw, 1rem)",
     },
     "& .MuiCheckbox-root": {
       color: "#00796b",
@@ -70,7 +66,7 @@ const styles = makeStyles()((theme: Theme) => ({
     marginBottom: "16px",
     "& .MuiFormControlLabel-root": {
       color: "#004d40",
-      fontSize: "clamp(0.875rem, 1.5vw, 1rem)", // Responsive font size
+      fontSize: "clamp(0.875rem, 1.5vw, 1rem)",
     },
   },
   yearInput: {
@@ -80,7 +76,7 @@ const styles = makeStyles()((theme: Theme) => ({
     },
     "& .MuiInputLabel-root": {
       color: "#00796b",
-      fontSize: "clamp(0.875rem, 1.5vw, 1rem)", // Responsive font size
+      fontSize: "clamp(0.875rem, 1.5vw, 1rem)",
     },
     "& .MuiOutlinedInput-root": {
       "& fieldset": {
@@ -100,7 +96,7 @@ const styles = makeStyles()((theme: Theme) => ({
     background: "linear-gradient(135deg, #00796b, #004d40)",
     color: "#fff",
     fontWeight: 700,
-    fontSize: "clamp(1rem, 2vw, 1.125rem)", // Responsive font size
+    fontSize: "clamp(1rem, 2vw, 1.125rem)",
     textTransform: "none",
     borderRadius: "12px",
     transition: "background 0.3s ease, transform 0.2s ease",
@@ -109,11 +105,11 @@ const styles = makeStyles()((theme: Theme) => ({
       transform: "translateY(-2px)",
     },
     [theme.breakpoints.down("sm")]: {
-      padding: "10px 20px", // Smaller padding for mobile
-      fontSize: "clamp(0.875rem, 1.5vw, 1rem)", // Smaller font size for mobile
+      padding: "10px 20px",
+      fontSize: "clamp(0.875rem, 1.5vw, 1rem)",
     },
     [theme.breakpoints.down("xs")]: {
-      marginTop: "16px", // Less margin for smaller screens
+      marginTop: "16px",
     },
   },
 }));

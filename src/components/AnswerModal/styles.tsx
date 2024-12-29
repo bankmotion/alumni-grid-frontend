@@ -17,7 +17,9 @@ const styles = makeStyles()((theme: Theme) => ({
     fontWeight: "bold",
 
     [theme.breakpoints.down("sm")]: {
-      height: "70%",
+      height: "20%",
+      width: "80%",
+      maxHeight: "100px",
     },
   },
 }));

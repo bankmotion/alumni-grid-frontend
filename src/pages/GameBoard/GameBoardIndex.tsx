@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
-import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { clsx } from "clsx";
 import ReplyAllIcon from "@mui/icons-material/ReplyAll";
@@ -19,6 +18,7 @@ import {
   DURATION_TIME,
   MAX_COUNT,
   SERVER_URL,
+  Version,
 } from "../../config/config";
 import {
   getRemainTimeStr,
@@ -114,7 +114,7 @@ const GameBoardIndex = () => {
   const loadDataFromLocalStorage = useCallback(() => {
     if (history.items.length === 0) return;
 
-    const dataStr = localStorage.getItem("dataList");
+    const dataStr = localStorage.getItem(`dataList${Version}`);
 
     if (dataStr) {
       try {
@@ -187,7 +187,7 @@ const GameBoardIndex = () => {
   );
 
   const getDataList = () => {
-    const dataListStr = localStorage.getItem("dataList");
+    const dataListStr = localStorage.getItem(`dataList${Version}`);
     return dataListStr ? JSON.parse(dataListStr) : [];
   };
 
@@ -204,7 +204,7 @@ const GameBoardIndex = () => {
       dataList.push(data);
     }
 
-    localStorage.setItem("dataList", JSON.stringify(dataList));
+    localStorage.setItem(`dataList${Version}`, JSON.stringify(dataList));
   }, []);
 
   const handleNavigateToLeaderboard = () => {
@@ -217,7 +217,7 @@ const GameBoardIndex = () => {
 
   useEffect(() => {
     if (gameSetting.createTime === 0) return;
-    localStorage.setItem("Data", JSON.stringify(gameSetting));
+    localStorage.setItem(`Data${Version}`, JSON.stringify(gameSetting));
     saveDailyData(gameSetting);
   }, [gameSetting, saveDailyData]);
 

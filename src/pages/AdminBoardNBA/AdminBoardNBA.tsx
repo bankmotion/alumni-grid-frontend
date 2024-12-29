@@ -1,4 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Toastify from "toastify-js";
+import "toastify-js/src/toastify.css";
 import {
   FormControl,
   InputLabel,
@@ -7,131 +10,118 @@ import {
   Button,
   Typography,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TablePagination,
   Grid,
   Box,
   TextField,
-  ButtonGroup,
   IconButton,
+  CircularProgress,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
 import { SelectChangeEvent } from "@mui/material";
 import { Tooltip } from "@mui/material";
-import useStyles from "./styles";
+import {
+  getAllPlayers,
+  savePlayerOptions,
+  getPlayerOptions,
+} from "../../reducers/game.slice";
 
-interface Player {
-  id: number;
-  firstName: string;
-  lastName: string;
-  position: string;
-  draftYear: number;
-  isActive: boolean;
-}
+import useStyles from "./styles";
+import NBAConfirmationModal from "../../components/NBAConfirmationModal/NBAConfirmationModal";
+import { AppDispatch, RootState } from "../../app/store";
+import NBAPlayerTableContainer from "../../components/NBAPlayerTableContainer/NBAPlayerTableContainer";
+import NBAOptionTableContainer from "../../components/NBAOptionTableContainer/NBAOptionTableContainer";
+import { PlayerOption } from "../../models/interface";
 
 const AdminBoardNBA = () => {
   const { classes } = useStyles();
+  const dispatch = useDispatch<AppDispatch>();
 
+  const { isSavingOptions, saveOptions } = useSelector(
+    (state: RootState) => state.game
+  );
+  const { isFetchingPlayers, allPlayerList, errorFetchingPlayers, optionList } =
+    useSelector((state: RootState) => state.game);
+  console.log("allplayerlist", allPlayerList);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
-  const [draftYear, setDraftYear] = useState<number | "">("");
+  const [draftYear, setDraftYear] = useState<number>(1900);
   const [position, setPosition] = useState<string>("");
-  const [statusFilter, setStatusFilter] = useState<
-    "All" | "Active" | "Inactive"
-  >("All");
+  const [college, setCollege] = useState<string>("");
   const [toggleState, setToggleState] = useState<boolean>(false);
 
-  const [players, setPlayers] = useState<Player[]>([
-    {
-      id: 1,
-      firstName: "LeBron",
-      lastName: "James",
-      position: "SF",
-      draftYear: 2003,
-      isActive: true,
-    },
-    {
-      id: 2,
-      firstName: "Kevin",
-      lastName: "Durant",
-      position: "PF",
-      draftYear: 2007,
-      isActive: true,
-    },
-    {
-      id: 3,
-      firstName: "Stephen",
-      lastName: "Curry",
-      position: "PG",
-      draftYear: 2009,
-      isActive: false,
-    },
-    // Add more players...
-  ]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [optionedPlayersCount, setOptionedPlayersCount] = useState(0);
 
-  const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [filteredPlayers, setFilteredPlayers] = useState(allPlayerList);
 
-  const [idFilter, setIdFilter] = useState("");
-  const [firstNameFilter, setFirstNameFilter] = useState("");
-  const [lastNameFilter, setLastNameFilter] = useState("");
-  const [positionFilter, setPositionFilter] = useState("");
-  const [draftYearFilter, setDraftYearFilter] = useState("");
-
-  const searchedPlayers = players.filter((player) => {
-    return (
-      (idFilter === "" || player.id.toString().includes(idFilter)) &&
-      (firstNameFilter === "" ||
-        player.firstName
-          .toLowerCase()
-          .includes(firstNameFilter.toLowerCase())) &&
-      (lastNameFilter === "" ||
-        player.lastName.toLowerCase().includes(lastNameFilter.toLowerCase())) &&
-      (positionFilter === "" ||
-        player.position.toLowerCase().includes(positionFilter.toLowerCase())) &&
-      (draftYearFilter === "" ||
-        player.draftYear.toString().includes(draftYearFilter))
-    );
-  });
+  // const [savedOptions, setSavedOptions] = useState<PlayerOption[]>([]);
 
   const handleCountryChange = (event: SelectChangeEvent<string>) => {
     setSelectedCountry(event.target.value);
   };
 
   const handleFilterPlayers = () => {
-    console.log("Filtering players with:", {
-      selectedCountry,
-      draftYear,
-      position,
-      statusFilter,
+    dispatch(
+      savePlayerOptions({
+        position,
+        country: selectedCountry,
+        draft: draftYear,
+        college,
+      })
+    ).then(() => {
+      dispatch(getPlayerOptions());
     });
+
+    setDialogOpen(false);
+    //dispatch(getPlayerOptions());
   };
 
-  const handleSave = () => {
-    console.log("Saving data...");
+  useEffect(() => {
+    dispatch(getPlayerOptions());
+  }, [dispatch]);
+
+  const handleSaveOption = () => {
+    setDialogOpen(true);
   };
 
-  const filteredPlayers = players.filter((player) => {
-    if (statusFilter === "Active") return player.isActive;
-    if (statusFilter === "Inactive") return !player.isActive;
-    return true;
-  });
-
-  const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
+  const handleDialogClose = () => {
+    setDialogOpen(false);
   };
 
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handleViewFilteredPlayers = (option: PlayerOption) => {
+    console.log("allplayerlist", allPlayerList);
+    console.log("option", option);
+    const filtered = allPlayerList.filter((player) => {
+      const positionMatch =
+        option.position === "-1" || player.position === option.position;
+
+      const countryMatch =
+        option.country === "-1" || player.country === option.country;
+      const draftMatch =
+        option.draft === -1 || player.draftYear >= option.draft;
+
+      return positionMatch && countryMatch && draftMatch;
+    });
+
+    console.log(filtered.length);
+    if (filtered.length === 0) {
+      Toastify({
+        text: "No data matches the selected options!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+      }).showToast();
+    }
+
+    setFilteredPlayers(filtered);
   };
+
+  useEffect(() => {
+    dispatch(getAllPlayers());
+    setFilteredPlayers(allPlayerList);
+  }, []);
 
   return (
     <Paper className={classes.adminBoard}>
@@ -189,6 +179,7 @@ const AdminBoardNBA = () => {
               onChange={handleCountryChange}
               label="Country"
             >
+              <MenuItem value="-1">USA & Canada</MenuItem>
               <MenuItem value="USA">USA</MenuItem>
               <MenuItem value="Canada">Canada</MenuItem>
             </Select>
@@ -201,7 +192,7 @@ const AdminBoardNBA = () => {
             variant="subtitle1"
             style={{ fontWeight: 600, marginBottom: "8px" }}
           >
-            Draft Year
+            Draft Year(From)
           </Typography>
           <TextField
             fullWidth
@@ -230,133 +221,59 @@ const AdminBoardNBA = () => {
               onChange={(e) => setPosition(e.target.value)}
               label="Position"
             >
-              <MenuItem value="PG">Point Guard</MenuItem>
-              <MenuItem value="SG">Shooting Guard</MenuItem>
-              <MenuItem value="SF">Small Forward</MenuItem>
-              <MenuItem value="PF">Power Forward</MenuItem>
-              <MenuItem value="C">Center</MenuItem>
+              <MenuItem value="-1">All</MenuItem>
+              <MenuItem value="C">C</MenuItem>
+              <MenuItem value="CF">C-F</MenuItem>
+              <MenuItem value="F">F</MenuItem>
+              <MenuItem value="FC">F-C</MenuItem>
+              <MenuItem value="FG">F-G</MenuItem>
+              <MenuItem value="G">G</MenuItem>
+              <MenuItem value="GF">G-F</MenuItem>
             </Select>
           </FormControl>
         </Grid>
       </Grid>
 
-      {/* Filter Players Button */}
       <Box mt={2}>
         <Button
           variant="contained"
           color="secondary"
-          onClick={handleFilterPlayers}
+          onClick={handleSaveOption}
+          disabled={isSavingOptions}
         >
-          Save options
+          {isSavingOptions ? (
+            <CircularProgress size={24} color="primary" />
+          ) : (
+            "Save options"
+          )}
         </Button>
       </Box>
 
-      {/* Status Filter Buttons */}
-      <ButtonGroup variant="contained" style={{ marginTop: "20px" }}>
-        <Button
-          variant={statusFilter === "All" ? "contained" : "outlined"}
-          onClick={() => setStatusFilter("All")}
-        >
-          All
-        </Button>
-        <Button
-          variant={statusFilter === "Active" ? "contained" : "outlined"}
-          onClick={() => setStatusFilter("Active")}
-        >
-          Active
-        </Button>
-        <Button
-          variant={statusFilter === "Inactive" ? "contained" : "outlined"}
-          onClick={() => setStatusFilter("Inactive")}
-        >
-          Inactive
-        </Button>
-      </ButtonGroup>
+      <Box mt={4}>
+        <Typography variant="h6" gutterBottom>
+          Saved Options
+        </Typography>
 
-      {/* Player Table */}
-      <TableContainer component={Paper} style={{ marginTop: "20px" }}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>First Name</TableCell>
-              <TableCell>Last Name</TableCell>
-              <TableCell>Position</TableCell>
-              <TableCell>Draft Year</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  placeholder="ID"
-                  onChange={(e) => setIdFilter(e.target.value)}
-                />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  placeholder="First Name"
-                  onChange={(e) => setFirstNameFilter(e.target.value)}
-                />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  placeholder="Last Name"
-                  onChange={(e) => setLastNameFilter(e.target.value)}
-                />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  placeholder="Position"
-                  onChange={(e) => setPositionFilter(e.target.value)}
-                />
-              </TableCell>
-              <TableCell>
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  size="small"
-                  placeholder="Draft Year"
-                  onChange={(e) => setDraftYearFilter(e.target.value)}
-                />
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredPlayers
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((player) => (
-                <TableRow key={player.id}>
-                  <TableCell>{player.id}</TableCell>
-                  <TableCell>{player.firstName}</TableCell>
-                  <TableCell>{player.lastName}</TableCell>
-                  <TableCell>{player.position}</TableCell>
-                  <TableCell>{player.draftYear}</TableCell>
-                </TableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+        <NBAOptionTableContainer
+          savedOptions={optionList}
+          onViewFilteredPlayers={handleViewFilteredPlayers}
+        />
+      </Box>
 
-      {/* Pagination */}
-      <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
-        component="div"
-        count={filteredPlayers.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onPageChange={handleChangePage}
-        onRowsPerPageChange={handleChangeRowsPerPage}
+      {/* <NBAPlayerTableContainer allPlayerList={allPlayerList} />
+       */}
+
+      <NBAPlayerTableContainer
+        allPlayerList={allPlayerList}
+        viewedPlayers={filteredPlayers}
+        savedOption={optionList}
+      />
+
+      <NBAConfirmationModal
+        open={dialogOpen}
+        optionedPlayersCount={optionedPlayersCount}
+        onConfirm={handleFilterPlayers}
+        onCancel={handleDialogClose}
       />
     </Paper>
   );
