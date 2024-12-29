@@ -18,7 +18,7 @@ const styles = makeStyles()((theme: Theme) => ({
     color: "white",
 
     [theme.breakpoints.down("sm")]: {
-      height: "50%",
+      height: "70%",
       padding: theme.spacing(2),
     },
   },
@@ -26,13 +26,10 @@ const styles = makeStyles()((theme: Theme) => ({
   collegeItem: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "center", // Center items vertically
-    padding: theme.spacing(1, 2), // Add padding for spacing
+    alignItems: "center",
+    padding: 0,
 
-    [theme.breakpoints.down("sm")]: {
-      flexDirection: "column", // Stack items on small screens
-      alignItems: "flex-start", // Align left on small screens
-    },
+    [theme.breakpoints.down("sm")]: {},
   },
 
   searchKey: {
@@ -51,7 +48,6 @@ const styles = makeStyles()((theme: Theme) => ({
 
   collegeList: {
     display: "flex",
-    gap: "8px",
     flexDirection: "column",
     maxHeight: "80%",
     overflowY: "auto",
@@ -64,7 +60,6 @@ const styles = makeStyles()((theme: Theme) => ({
   },
 
   button: {
-    backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     "&:hover": {
       backgroundColor: theme.palette.primary.dark,

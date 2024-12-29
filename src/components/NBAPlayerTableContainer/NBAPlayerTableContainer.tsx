@@ -121,7 +121,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
   return (
     <Box>
       <TableContainer className={classes.tableContainer}>
-        <ButtonGroup variant="contained" style={{ marginTop: "20px" }}>
+        {/* <ButtonGroup variant="contained" style={{ marginTop: "20px" }}>
           <Button
             variant={statusFilter === "All" ? "contained" : "outlined"}
             color={viewMode === "viewed" ? "inherit" : "primary"}
@@ -143,8 +143,8 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
           >
             Inactive
           </Button>
-        </ButtonGroup>
-        <Table>
+        </ButtonGroup> */}
+        <Table sx={{ marginTop: "48px" }}>
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
@@ -231,7 +231,11 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={allPlayerList.length}
+            count={
+              viewMode === "viewed"
+                ? viewFilteredPlayers.length
+                : filteredPlayers.length
+            }
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

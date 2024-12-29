@@ -50,7 +50,9 @@ const NBAOptionTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
     <TableContainer>
       <Table>
         <TableHead>
-          <TableRow>
+          <TableRow
+            sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr" }}
+          >
             <TableCell>Position</TableCell>
             <TableCell>Country</TableCell>
             <TableCell>Draft Year</TableCell>
@@ -59,14 +61,23 @@ const NBAOptionTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
         </TableHead>
         <TableBody>
           {savedOptions.length === 0 ? (
-            <TableRow>
+            <TableRow
+              sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr" }}
+            >
               <TableCell colSpan={5}>No saved options available.</TableCell>
             </TableRow>
           ) : (
             savedOptions.map((option, index) => (
-              <TableRow key={index}>
-                <TableCell>{option.position}</TableCell>
-                <TableCell>{option.country}</TableCell>
+              <TableRow
+                key={index}
+                sx={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr" }}
+              >
+                <TableCell>
+                  {option.position === "-1" ? "All" : option.position}
+                </TableCell>
+                <TableCell>
+                  {option.country === "-1" ? "USA & Canada" : option.country}
+                </TableCell>
                 <TableCell>{option.draft}</TableCell>
                 <TableCell>
                   <Button

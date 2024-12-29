@@ -117,7 +117,6 @@ export const savePlayerOptions = createAsyncThunk(
       position: string;
       country: string;
       draft: number;
-      college: string;
     },
     { rejectWithValue }
   ) => {

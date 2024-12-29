@@ -53,8 +53,9 @@ const CollegeModal = ({
         {college.name}
         {targetItem && targetItem.rightStatus === college.name ? (
           <Button
+            className={classes.button}
             variant="contained"
-            sx={{ backgroundColor: "green", minWidth: "100%" }}
+            sx={{ backgroundColor: "green", maxWidth: "80px" }}
           >
             Right
           </Button>
@@ -62,8 +63,9 @@ const CollegeModal = ({
           targetItem.wrongStatus.findIndex((item) => item === college.name) !==
             -1 ? (
           <Button
+            className={classes.button}
             variant="contained"
-            sx={{ backgroundColor: "red", minWidth: "100%" }}
+            sx={{ backgroundColor: "red", maxWidth: "80px" }}
           >
             Wrong
           </Button>
@@ -72,7 +74,7 @@ const CollegeModal = ({
             onClick={() => handleCollegeSelect(college.name)}
             variant="contained"
             className={classes.button}
-            sx={{ maxWidth: "100%" }}
+            sx={{ maxWidth: "80px" }}
             disabled={isConfirming}
           >
             Select

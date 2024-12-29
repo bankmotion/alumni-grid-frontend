@@ -47,7 +47,6 @@ const GameBoardIndex = () => {
   const [isConfirming, setIsConfirming] = useState(false);
   const [remainTime, setRemainTime] = useState(0);
   const [spentTime, setSpentTime] = useState(0);
-  console.log(remainTime);
 
   const [gameSetting, setGameSetting] = useState<GameSetting>({
     createTime: 0,

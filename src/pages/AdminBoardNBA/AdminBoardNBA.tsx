@@ -63,10 +63,9 @@ const AdminBoardNBA = () => {
   const handleFilterPlayers = () => {
     dispatch(
       savePlayerOptions({
-        position,
-        country: selectedCountry,
+        position: position ? position : "-1",
+        country: selectedCountry ? selectedCountry : "-1",
         draft: draftYear,
-        college,
       })
     ).then(() => {
       dispatch(getPlayerOptions());
@@ -120,8 +119,11 @@ const AdminBoardNBA = () => {
 
   useEffect(() => {
     dispatch(getAllPlayers());
+  }, [dispatch]);
+
+  useEffect(() => {
     setFilteredPlayers(allPlayerList);
-  }, []);
+  }, [allPlayerList]);
 
   return (
     <Paper className={classes.adminBoard}>
