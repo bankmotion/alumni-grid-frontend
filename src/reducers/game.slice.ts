@@ -15,6 +15,7 @@ import {
   NFLPlayerOption,
 } from "../models/interface";
 import { json } from "stream/consumers";
+import { PlayType } from "../constant/const";
 
 export interface GameState {
   collegeList: College[];
@@ -151,9 +152,9 @@ export const saveNFLPlayerOptions = createAsyncThunk(
 
 export const getPlayerOptions = createAsyncThunk(
   "game/getNBAOptionList",
-  async (_, { rejectWithValue }) => {
+  async ({ playerType }: { playerType: PlayType }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${SERVER_URL}/admin/0`);
+      const response = await axios.get(`${SERVER_URL}/admin/${playerType}`);
       return response.data; // Assuming your API response is an array of players
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -201,7 +202,7 @@ export const deletePlayerOption = createAsyncThunk(
   "game/NBAdeletePlayerOption",
   async (id: number, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`${SERVER_URL}/admin/${id}`);
+      await axios.delete(`${SERVER_URL}/admin/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -213,7 +214,7 @@ export const deleteNFLPlayerOption = createAsyncThunk(
   "game/NFLdeletePlayerOption",
   async (id: number, { rejectWithValue }) => {
     try {
-      const response = await axios.delete(`${SERVER_URL}/admin/${id}`);
+      await axios.delete(`${SERVER_URL}/admin/${id}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.message);

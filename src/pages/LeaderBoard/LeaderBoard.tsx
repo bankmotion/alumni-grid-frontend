@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { Box, Button, TextField, Typography } from "@mui/material";
+import { useCallback, useEffect, useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useStyles from "./styles";
 import ReplyAllIcon from "@mui/icons-material/ReplyAll";
@@ -73,23 +73,6 @@ const LeaderBoard = () => {
   }, []);
   console.log("currentdata", currentData);
 
-  const calculatePercentitle = (score: number) => {
-    const allScores = combineData
-      .map((entry) => entry.gameSetting?.score || 0)
-      .sort((a, b) => b - a);
-
-    const rank = allScores.findIndex((score) => score === currentData?.score);
-
-    if (rank === -1 || allScores.length == 0) {
-      return 0;
-    }
-
-    const percentile = (rank / allScores.length) * 100;
-    return Math.min(Math.round(100 - percentile), 100);
-  };
-
-  const userPercentitle = calculatePercentitle(currentData?.score || 0);
-
   const calculatePlayerPercentile = (score: number) => {
     const allScores = combineData
       .map((entry) => entry.gameSetting?.score || 0)
@@ -97,7 +80,7 @@ const LeaderBoard = () => {
 
     const rank = allScores.findIndex((playerScore) => playerScore === score);
 
-    if (rank === -1 || allScores.length == 0) {
+    if (rank === -1 || allScores.length === 0) {
       return 0;
     }
 
@@ -106,8 +89,9 @@ const LeaderBoard = () => {
   };
 
   console.log({ combineData, allLeaderHistory });
+  const userPercentitle = calculatePlayerPercentile(currentData?.score || 0);
 
-  const generateShareableText = () => {
+  const generateShareableText = useCallback(() => {
     if (!currentData) return;
 
     const gridVisualization = currentData.playerList
@@ -130,7 +114,7 @@ const LeaderBoard = () => {
       `https://alumnigrid.com/game`.trim();
 
     setShareText(text);
-  };
+  }, [currentData]);
 
   const copyToClipboard = () => {
     navigator.clipboard
@@ -152,7 +136,7 @@ const LeaderBoard = () => {
 
   useEffect(() => {
     generateShareableText();
-  }, [currentData]);
+  }, [generateShareableText]);
   return (
     <Box className={classes.leaderboardPage}>
       <Box className={classes.header}>

@@ -5,6 +5,6 @@ export enum CollegeStatus {
 }
 
 export enum PlayType {
-  NVA,
+  NBA,
   NFL,
 }

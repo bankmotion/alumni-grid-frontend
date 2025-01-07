@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import axios from "axios";
@@ -251,7 +251,7 @@ const GameBoardIndex = () => {
   useEffect(() => {
     dispatch(getCollegeList());
     dispatch(getHistoryList(Number(timeStampParam)));
-  }, [dispatch, searchParams]);
+  }, [dispatch, searchParams, timeStampParam]);
 
   return (
     <Box className={classes.gameBoard}>

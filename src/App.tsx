@@ -9,7 +9,6 @@ import { Provider } from "react-redux";
 import { store } from "./app/store";
 import AdminBoardNBA from "./pages/AdminBoardNBA/AdminBoardNBA";
 import AdminBoardNFL from "./pages/AdminBoardNFL/AdminBoardNFL";
-import { timeStamp } from "console";
 
 function App() {
   return (
@@ -17,12 +16,17 @@ function App() {
       <div className="App">
         <Router>
           <Routes>
-            <Route path="/game" element={<GameBoardIndex />}></Route>
-            {/* <Route path="/game/:timeStamp" element={<GameBoardIndex />}></Route> */}
-            <Route path="/leaderboard" element={<LeaderBoard />}></Route>
-            <Route path="/adminboard/NBA" element={<AdminBoardNBA />}></Route>
-            <Route path="/adminboard/NFL" element={<AdminBoardNFL />}></Route>
-            <Route path="/" element={<Landing />}></Route>
+            <Route path="/" element={<Landing />} />
+
+            <Route path="/game" element={<GameBoardIndex />} />
+
+            {/* <Route path="/game/:timeStamp" element={<GameBoardIndex />}/> */}
+
+            <Route path="/leaderboard" element={<LeaderBoard />} />
+
+            <Route path="/adminboard/NBA" element={<AdminBoardNBA />} />
+
+            <Route path="/adminboard/NFL" element={<AdminBoardNFL />} />
           </Routes>
         </Router>
       </div>

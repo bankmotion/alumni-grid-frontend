@@ -22,6 +22,7 @@ import { PlayerOption } from "../../models/interface";
 import { AppDispatch, RootState } from "../../app/store";
 import { deletePlayerOption } from "../../reducers/game.slice";
 import { getPlayerOptions } from "../../reducers/game.slice";
+import { PlayType } from "../../constant/const";
 
 interface NBAPlayerTableContainerProps {
   savedOptions: PlayerOption[];
@@ -38,12 +39,12 @@ const NBAOptionTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
 
   const handleDeleteOption = (id: number) => {
     dispatch(deletePlayerOption(id)).then(() => {
-      dispatch(getPlayerOptions());
+      dispatch(getPlayerOptions({ playerType: PlayType.NBA }));
     });
   };
 
   useEffect(() => {
-    dispatch(getPlayerOptions());
+    dispatch(getPlayerOptions({ playerType: PlayType.NBA }));
   }, [dispatch]);
 
   return (

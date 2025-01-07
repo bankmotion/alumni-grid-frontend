@@ -32,29 +32,26 @@ import { AppDispatch, RootState } from "../../app/store";
 import NBAPlayerTableContainer from "../../components/NBAPlayerTableContainer/NBAPlayerTableContainer";
 import NBAOptionTableContainer from "../../components/NBAOptionTableContainer/NBAOptionTableContainer";
 import { PlayerOption } from "../../models/interface";
+import { PlayType } from "../../constant/const";
 
 const AdminBoardNBA = () => {
   const { classes } = useStyles();
   const dispatch = useDispatch<AppDispatch>();
 
-  const { isSavingOptions, saveOptions } = useSelector(
+  const { isSavingOptions } = useSelector((state: RootState) => state.game);
+  const { allPlayerList, optionList } = useSelector(
     (state: RootState) => state.game
   );
-  const { isFetchingPlayers, allPlayerList, errorFetchingPlayers, optionList } =
-    useSelector((state: RootState) => state.game);
   console.log("allplayerlist", allPlayerList);
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [draftYear, setDraftYear] = useState<number>(1900);
   const [position, setPosition] = useState<string>("");
-  const [college, setCollege] = useState<string>("");
   const [toggleState, setToggleState] = useState<boolean>(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [optionedPlayersCount, setOptionedPlayersCount] = useState(0);
+  const [optionedPlayersCount] = useState(0);
 
   const [filteredPlayers, setFilteredPlayers] = useState(allPlayerList);
-
-  // const [savedOptions, setSavedOptions] = useState<PlayerOption[]>([]);
 
   const handleCountryChange = (event: SelectChangeEvent<string>) => {
     setSelectedCountry(event.target.value);
@@ -68,7 +65,7 @@ const AdminBoardNBA = () => {
         draft: draftYear,
       })
     ).then(() => {
-      dispatch(getPlayerOptions());
+      dispatch(getPlayerOptions({ playerType: PlayType.NBA }));
     });
 
     setDialogOpen(false);
@@ -76,7 +73,7 @@ const AdminBoardNBA = () => {
   };
 
   useEffect(() => {
-    dispatch(getPlayerOptions());
+    dispatch(getPlayerOptions({ playerType: PlayType.NBA }));
   }, [dispatch]);
 
   const handleSaveOption = () => {
