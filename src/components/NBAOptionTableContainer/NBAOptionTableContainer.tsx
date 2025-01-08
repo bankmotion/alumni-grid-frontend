@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import {
-  Paper,
-  Box,
   Button,
-  ButtonGroup,
   Table,
   TableBody,
   TableCell,
@@ -17,25 +14,30 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import useStyles from "./styles";
 import { PlayerOption } from "../../models/interface";
-import { AppDispatch, RootState } from "../../app/store";
 import { deletePlayerOption } from "../../reducers/game.slice";
 import { getPlayerOptions } from "../../reducers/game.slice";
 import { PlayType } from "../../constant/const";
+import { useAppDispatch } from "../../app/hooks";
 
 interface NBAPlayerTableContainerProps {
   savedOptions: PlayerOption[];
   onViewFilteredPlayers: (option: PlayerOption) => void;
+  setStatusFilter: (
+    statusFilter: "All" | "Active" | "Inactive" | "None"
+  ) => void;
+  activeViewId: number | null;
+  setActiveViewId: (activeViewId: number | null) => void;
 }
 
 const NBAOptionTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
   savedOptions,
   onViewFilteredPlayers,
+  setStatusFilter,
+  activeViewId,
+  setActiveViewId,
 }) => {
-  const { classes } = useStyles();
-  const dispatch = useDispatch<AppDispatch>();
-  const [activeViewId, setActiveViewId] = useState<number | null>(null);
+  const dispatch = useAppDispatch();
 
   const handleDeleteOption = (id: number) => {
     dispatch(deletePlayerOption(id)).then(() => {
@@ -89,6 +91,7 @@ const NBAOptionTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
                     onClick={() => {
                       setActiveViewId(option.id);
                       onViewFilteredPlayers(option);
+                      setStatusFilter("None");
                     }}
                   >
                     View

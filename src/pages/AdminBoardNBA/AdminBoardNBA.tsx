@@ -15,6 +15,7 @@ import {
   TextField,
   IconButton,
   CircularProgress,
+  ButtonGroup,
 } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 import CloseIcon from "@mui/icons-material/Close";
@@ -31,7 +32,7 @@ import NBAConfirmationModal from "../../components/NBAConfirmationModal/NBAConfi
 import { AppDispatch, RootState } from "../../app/store";
 import NBAPlayerTableContainer from "../../components/NBAPlayerTableContainer/NBAPlayerTableContainer";
 import NBAOptionTableContainer from "../../components/NBAOptionTableContainer/NBAOptionTableContainer";
-import { PlayerOption } from "../../models/interface";
+import { AllPlayer, PlayerOption } from "../../models/interface";
 import { PlayType } from "../../constant/const";
 
 const AdminBoardNBA = () => {
@@ -52,6 +53,11 @@ const AdminBoardNBA = () => {
   const [optionedPlayersCount] = useState(0);
 
   const [filteredPlayers, setFilteredPlayers] = useState(allPlayerList);
+  const [activeViewId, setActiveViewId] = useState<number | null>(null);
+
+  const [statusFilter, setStatusFilter] = useState<
+    "All" | "Active" | "Inactive" | "None"
+  >("All");
 
   const handleCountryChange = (event: SelectChangeEvent<string>) => {
     setSelectedCountry(event.target.value);
@@ -84,22 +90,22 @@ const AdminBoardNBA = () => {
     setDialogOpen(false);
   };
 
+  const isMatchForPlayerOption = (player: AllPlayer, option: PlayerOption) => {
+    const positionMatch =
+      option.position === "-1" || player.position === option.position;
+
+    const countryMatch =
+      option.country === "-1" || player.country === option.country;
+    const draftMatch = option.draft === -1 || player.draftYear >= option.draft;
+
+    return positionMatch && countryMatch && draftMatch;
+  };
+
   const handleViewFilteredPlayers = (option: PlayerOption) => {
-    console.log("allplayerlist", allPlayerList);
-    console.log("option", option);
-    const filtered = allPlayerList.filter((player) => {
-      const positionMatch =
-        option.position === "-1" || player.position === option.position;
+    const filtered = allPlayerList.filter((player) =>
+      isMatchForPlayerOption(player, option)
+    );
 
-      const countryMatch =
-        option.country === "-1" || player.country === option.country;
-      const draftMatch =
-        option.draft === -1 || player.draftYear >= option.draft;
-
-      return positionMatch && countryMatch && draftMatch;
-    });
-
-    console.log(filtered.length);
     if (filtered.length === 0) {
       Toastify({
         text: "No data matches the selected options!",
@@ -115,12 +121,30 @@ const AdminBoardNBA = () => {
   };
 
   useEffect(() => {
-    dispatch(getAllPlayers());
-  }, [dispatch]);
+    if (statusFilter === "None") return;
+
+    if (statusFilter === "All") setFilteredPlayers(allPlayerList);
+
+    if (statusFilter === "Active") {
+      setFilteredPlayers(
+        allPlayerList.filter((player) =>
+          optionList.some((option) => isMatchForPlayerOption(player, option))
+        )
+      );
+    }
+
+    if (statusFilter === "Inactive") {
+      setFilteredPlayers(
+        allPlayerList.filter((player) =>
+          optionList.every((option) => !isMatchForPlayerOption(player, option))
+        )
+      );
+    }
+  }, [statusFilter, allPlayerList, optionList]);
 
   useEffect(() => {
-    setFilteredPlayers(allPlayerList);
-  }, [allPlayerList]);
+    dispatch(getAllPlayers());
+  }, [dispatch]);
 
   return (
     <Paper className={classes.adminBoard}>
@@ -256,17 +280,49 @@ const AdminBoardNBA = () => {
         <NBAOptionTableContainer
           savedOptions={optionList}
           onViewFilteredPlayers={handleViewFilteredPlayers}
+          setStatusFilter={setStatusFilter}
+          activeViewId={activeViewId}
+          setActiveViewId={setActiveViewId}
         />
       </Box>
 
       {/* <NBAPlayerTableContainer allPlayerList={allPlayerList} />
        */}
 
-      <NBAPlayerTableContainer
-        allPlayerList={allPlayerList}
-        viewedPlayers={filteredPlayers}
-        savedOption={optionList}
-      />
+      <ButtonGroup variant="contained" style={{ marginTop: "20px" }}>
+        <Button
+          variant={statusFilter === "All" ? "contained" : "outlined"}
+          color={statusFilter === "All" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("All");
+            setActiveViewId(null);
+          }}
+        >
+          All Players
+        </Button>
+        <Button
+          variant={statusFilter === "Active" ? "contained" : "outlined"}
+          color={statusFilter === "Active" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("Active");
+            setActiveViewId(null);
+          }}
+        >
+          Active
+        </Button>
+        <Button
+          variant={statusFilter === "Inactive" ? "contained" : "outlined"}
+          color={statusFilter === "Inactive" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("Inactive");
+            setActiveViewId(null);
+          }}
+        >
+          Inactive
+        </Button>
+      </ButtonGroup>
+
+      <NBAPlayerTableContainer viewedPlayers={filteredPlayers} />
 
       <NBAConfirmationModal
         open={dialogOpen}
