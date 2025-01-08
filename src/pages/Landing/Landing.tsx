@@ -12,16 +12,20 @@ const Landing = () => {
   return (
     <Box className={classes.landingBoard}>
       <Box className={classes.content}>
-        <Typography variant="h3" className={classes.gameTitle}>
+        <Typography className={classes.gameTitle}>
           Welcome to the AlumniGrid
         </Typography>
-        <Typography variant="body1" className={classes.description}>
-          9 new players each day with a mix between NBA and NFL.
+        <Box className={classes.description}>
+          AlumniGrid is a daily sports trivia game.
           <br />
-          Tap a Square and guess the college the player went to.
+          Each day 9 athletes are prompted and tap a Square to guess the college
+          the player went to.
           <br />
-          If they didn’t attend college, name the high school or last form of
-          education attended.
+          If they didn’t attend college, name the high school or last school
+          attended.
+          <br />
+          If they attended to multiple colleges, select the most recent school
+          attended.
           <br />
           <br />
           Max 9 guesses per day.
@@ -31,12 +35,20 @@ const Landing = () => {
           The faster you complete, the higher the possible score.
           <br />
           <br />
-          When you click "play now" or "continuing" button on leaderboard, you
-          can play the game on that date.
+          Head over to the summary page to share your grid with friends, view
+          statistics, and play prior day grids!
           <br />
           <br />
-          <strong>Come back tomorrow for a new game!</strong>
-        </Typography>
+          <strong>
+            Come back tomorrow for a new grid! Refreshes at 12am PST
+          </strong>
+          <br />
+          <br />
+          <strong>
+            Note: The game is currently in beta. Only the NBA grid is available
+            at this time. Stay tuned…
+          </strong>
+        </Box>
         <Button
           variant="contained"
           color="primary"

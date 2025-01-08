@@ -9,7 +9,9 @@ import {
   Modal,
   TextField,
   Typography,
+  IconButton,
 } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import useStyles from "./styles";
 
 const CollegeModal = ({
@@ -87,15 +89,24 @@ const CollegeModal = ({
   return (
     <Modal open={open} onClose={() => handleOpenStatus(false)}>
       <Box className={classes.collegeModal}>
-        <Typography variant="h6" component="h2" gutterBottom>
-          <b>Select a College</b>
-        </Typography>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Typography variant="h6" component="h2" gutterBottom>
+            <b>Select a College</b>
+          </Typography>
+          <IconButton
+            aria-label="close"
+            onClick={() => handleOpenStatus(false)}
+            className={classes.closeButton}
+          >
+            <CloseIcon />
+          </IconButton>
+        </Box>
 
         <TextField
           value={searchKey}
           onChange={(e) => setSearchKey(e.target.value)}
           className={classes.searchKey}
-          placeholder="select the college"
+          placeholder="Search..."
         />
 
         <List className={classes.collegeList}>

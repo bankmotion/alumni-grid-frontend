@@ -3,7 +3,7 @@ import { Box, Button, Typography } from "@mui/material";
 import PersonIcon from "@mui/icons-material/Person";
 import axios from "axios";
 import { clsx } from "clsx";
-import ReplyAllIcon from "@mui/icons-material/ReplyAll";
+import InfoIcon from "@mui/icons-material/Info";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 
 import CollegeModal from "../../components/CollegeModal/CollegeModal";
@@ -265,14 +265,14 @@ const GameBoardIndex = () => {
             <LeaderboardIcon />
           </Box>{" "}
           <Box component={"span"} className={classes.onlyDesktop}>
-            Leaderboard
+            Summary
           </Box>
         </Button>
 
         <Link to={"/"}>
           <Button className={classes.backButton} variant="contained">
-            <Box component={"span"}>
-              <ReplyAllIcon />
+            <Box component={"span"} className={classes.infoIcon}>
+              <InfoIcon />
             </Box>{" "}
             <Box component={"span"} className={classes.onlyDesktop}>
               Back
@@ -329,7 +329,7 @@ const GameBoardIndex = () => {
       <Box className={classes.rightPanel}>
         {!gameSetting.endStatus && (
           <Box sx={{ display: "flex", alignItems: "center", gap: "16px" }}>
-            <Box className={classes.guessLeftTxt}>GUESS LEFT</Box>
+            <Box className={classes.guessLeftTxt}>GUESSES LEFT</Box>
             <Box className={classes.score}>{gameSetting.remainCount}</Box>
           </Box>
         )}
@@ -348,9 +348,21 @@ const GameBoardIndex = () => {
             </Button>
           </>
         )}
+        {gameSetting.endStatus && (
+          <Box sx={{ marginTop: "12px", textAlign: "center", color: "white" }}>
+            <Typography variant="body2" sx={{ marginBottom: "8px" }}>
+              Click into boxes to see the correct answer.
+            </Typography>
+            <Typography variant="body2">
+              Head to the <strong>Summary Page</strong> to share scores and play
+              prior day grids.
+            </Typography>
+          </Box>
+        )}
+
         <Box className={classes.remainTime}>
           {gameSetting.endStatus
-            ? `Restart Game in ${getRemainTimeStr(remainTime)}`
+            ? `New Grid in ${getRemainTimeStr(remainTime)}`
             : getRemainTimeStr(spentTime)}
         </Box>
       </Box>

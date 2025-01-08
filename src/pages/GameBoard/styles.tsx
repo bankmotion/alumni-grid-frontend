@@ -156,7 +156,8 @@ const styles = makeStyles()((theme: Theme) => ({
 
   score: {
     fontSize: "clamp(28px, 5vw, 50px)",
-    color: "#d93232",
+    // color: "#d93232",
+    color: "#f39c12",
     fontWeight: "bold",
     textAlign: "center",
   },
@@ -177,7 +178,7 @@ const styles = makeStyles()((theme: Theme) => ({
   remainTime: {
     color: "white",
     fontSize: "clamp(18px, 2vw, 24px)",
-    textAlign: "center", // Center text for remain time
+    textAlign: "center",
   },
 
   buttonContainer: {
@@ -220,6 +221,11 @@ const styles = makeStyles()((theme: Theme) => ({
       justifyContent: "center",
       alignItems: "center",
     },
+  },
+
+  infoIcon: {
+    fontSize: "100%",
+    paddingTop: "5px",
   },
 
   leaderBoard: {

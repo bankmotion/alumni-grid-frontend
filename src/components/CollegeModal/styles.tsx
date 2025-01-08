@@ -72,6 +72,16 @@ const styles = makeStyles()((theme: Theme) => ({
       height: "100%",
     },
   },
+
+  closeButton: {
+    color: "white",
+    position: "absolute",
+    top: theme.spacing(1),
+    right: theme.spacing(1),
+    "&:hover": {
+      color: theme.palette.error.main,
+    },
+  },
 }));
 
 export default styles;

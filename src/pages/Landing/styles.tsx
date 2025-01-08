@@ -38,7 +38,7 @@ const styles = makeStyles()((theme: Theme) => ({
     marginBottom: "24px",
     [theme.breakpoints.down("sm")]: {
       marginBottom: "16px",
-      fontSize: "clamp(2rem, 2.5vw, 3rem)",
+      fontSize: "clamp(1.5rem, 2.5vw, 3rem)",
     },
   },
   description: {
@@ -48,7 +48,7 @@ const styles = makeStyles()((theme: Theme) => ({
     marginBottom: "24px",
     padding: "0 80px",
     [theme.breakpoints.down("sm")]: {
-      fontSize: "clamp(1rem, 1.5vw, 1.2rem)",
+      fontSize: "clamp(12px, 1.5vw, 1.2rem)",
       lineHeight: "1.5",
       marginBottom: "16px",
       padding: "0 10px",
@@ -66,7 +66,7 @@ const styles = makeStyles()((theme: Theme) => ({
     },
     [theme.breakpoints.down("sm")]: {
       padding: "10px 20px",
-      fontSize: "clamp(0.9rem, 1vw, 1.1rem)",
+      fontSize: "clamp(0.8rem, 1vw, 1.1rem)",
     },
   },
 }));

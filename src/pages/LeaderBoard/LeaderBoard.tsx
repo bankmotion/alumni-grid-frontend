@@ -107,7 +107,6 @@ const LeaderBoard = () => {
     const text =
       `🏀 Alumni Grid \n` +
       ` Score: ${currentData.score}\n` +
-      ` Rarity: ${900}\n` +
       `${gridVisualization}\n` +
       ` Play at:\n` +
       ` ` +
@@ -141,7 +140,7 @@ const LeaderBoard = () => {
     <Box className={classes.leaderboardPage}>
       <Box className={classes.header}>
         <Typography variant="h4" className={classes.title}>
-          Leaderboard
+          Summary
         </Typography>
         <Button
           className={classes.backButton}
@@ -180,11 +179,11 @@ const LeaderBoard = () => {
                   : classes.correctBox
               }`}
             >
-              <Box className={classes.gridContent}>
+              {/* <Box className={classes.gridContent}>
                 <Typography variant="body1">
                   {player.firstname} {player.lastname}
                 </Typography>
-              </Box>
+              </Box> */}
             </Box>
           ))}
         </Box>
@@ -238,10 +237,10 @@ const LeaderBoard = () => {
                       }}
                     >
                       {entry.gameSetting?.endStatus
-                        ? "Archived"
+                        ? "Completed"
                         : !entry.gameSetting?.createTime
                         ? "Play Now!"
-                        : "Continuing"}
+                        : "In-Game"}
                     </Button>
                   </td>
                 </tr>

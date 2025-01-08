@@ -25,7 +25,7 @@ export const convertPSTTime = (timestamp: number) => {
     year: "numeric",
   };
 
-  const formatter = new Intl.DateTimeFormat("en-GB", options);
+  const formatter = new Intl.DateTimeFormat("en-US", options);
   return formatter.format(date);
 };
 

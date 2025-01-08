@@ -79,6 +79,8 @@ const styles = makeStyles()((theme: Theme) => ({
     width: "100%",
     maxWidth: "600px",
     textAlign: "center",
+    justifyContent: "center",
+    alignItems: "center",
     fontSize: "clamp(0.875rem, 1.5vw, 1rem)",
 
     [theme.breakpoints.down("sm")]: {
@@ -87,13 +89,16 @@ const styles = makeStyles()((theme: Theme) => ({
   },
 
   gridContainer: {
+    position: "relative",
     display: "grid",
+    width: "70%",
     gridTemplateColumns: "repeat(3, 1fr)", // 3 columns
     gridTemplateRows: "repeat(3, 1fr)", // 3 rows
     gap: theme.spacing(2),
     justifyContent: "center",
     alignItems: "center",
     marginTop: theme.spacing(2),
+    marginLeft: "15%",
 
     [theme.breakpoints.down("sm")]: {
       gridTemplateColumns: "repeat(3, 1fr)", // 2 columns for smaller screens
@@ -105,6 +110,7 @@ const styles = makeStyles()((theme: Theme) => ({
     position: "relative",
     width: "100%",
     paddingTop: "100%", // Makes the grid item a square
+    maxHeight: "70px",
     backgroundColor: theme.palette.grey[200],
     border: `2px solid ${theme.palette.primary.main}`,
     borderRadius: "8px",
