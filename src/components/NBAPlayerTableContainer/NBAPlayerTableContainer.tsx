@@ -29,13 +29,10 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
 
   const [idFilter, setIdFilter] = useState("");
   const [firstNameFilter, setFirstNameFilter] = useState("");
+  const [collegeFilter, setCollegeFilter] = useState("");
   const [lastNameFilter, setLastNameFilter] = useState("");
   const [positionFilter, setPositionFilter] = useState("");
   const [draftYearFilter, setDraftYearFilter] = useState("");
-
-  const [statusFilter, setStatusFilter] = useState<
-    "All" | "Active" | "Inactive"
-  >("All");
 
   const filterPlayers = (playerList: AllPlayer[]) => {
     return playerList.filter((player) => {
@@ -54,7 +51,9 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
             .toLowerCase()
             .includes(positionFilter.toLowerCase())) &&
         (draftYearFilter === "" ||
-          player.draftYear.toString().includes(draftYearFilter))
+          player?.draftYear?.toString()?.includes(draftYearFilter)) &&
+        (collegeFilter === "" ||
+          player?.college?.toLowerCase()?.includes(collegeFilter.toLowerCase()))
       );
     });
   };
@@ -81,6 +80,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
               <TableCell>ID</TableCell>
               <TableCell>First Name</TableCell>
               <TableCell>Last Name</TableCell>
+              <TableCell>College</TableCell>
               <TableCell>Position</TableCell>
               <TableCell>Draft Year</TableCell>
             </TableRow>
@@ -117,6 +117,15 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
                   fullWidth
                   variant="outlined"
                   size="small"
+                  placeholder="College"
+                  onChange={(e) => setCollegeFilter(e.target.value)}
+                />
+              </TableCell>
+              <TableCell>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  size="small"
                   placeholder="Position"
                   onChange={(e) => setPositionFilter(e.target.value)}
                 />
@@ -140,6 +149,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
                   <TableCell>{player.id}</TableCell>
                   <TableCell>{player.firstName}</TableCell>
                   <TableCell>{player.lastName}</TableCell>
+                  <TableCell>{player.college}</TableCell>
                   <TableCell>{player.position}</TableCell>
                   <TableCell>{player.draftYear}</TableCell>
                 </TableRow>
