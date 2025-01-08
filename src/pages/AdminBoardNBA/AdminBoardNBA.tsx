@@ -50,7 +50,7 @@ const AdminBoardNBA = () => {
   const [toggleState, setToggleState] = useState<boolean>(false);
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [optionedPlayersCount] = useState(0);
+  const [optionedPlayersCount, setOptionedPlayersCount] = useState(0);
 
   const [filteredPlayers, setFilteredPlayers] = useState(allPlayerList);
   const [activeViewId, setActiveViewId] = useState<number | null>(null);
@@ -141,6 +141,18 @@ const AdminBoardNBA = () => {
       );
     }
   }, [statusFilter, allPlayerList, optionList]);
+
+  useEffect(() => {
+    setOptionedPlayersCount(
+      allPlayerList.filter((player) =>
+        isMatchForPlayerOption(player, {
+          country: selectedCountry,
+          draft: draftYear,
+          position,
+        } as PlayerOption)
+      ).length
+    );
+  }, [selectedCountry, draftYear, position, allPlayerList]);
 
   useEffect(() => {
     dispatch(getAllPlayers());
