@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { Box, Modal, Typography } from "@mui/material";
+import { Box, Modal, Typography, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 import useStyles from "./styles";
 import { SERVER_URL } from "../../config/config";
 
@@ -42,6 +43,13 @@ const AnswerModal = ({
         <Typography variant="h5" component="h2" gutterBottom>
           <b>College Information</b>
         </Typography>
+        <IconButton
+          aria-label="close"
+          onClick={() => handleOpenStatus(false)}
+          className={classes.closeButton}
+        >
+          <CloseIcon />
+        </IconButton>
         <Box
           sx={{
             margin: "16px 0",

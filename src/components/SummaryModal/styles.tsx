@@ -2,12 +2,16 @@ import { Theme } from "@mui/material";
 import { makeStyles } from "tss-react/mui";
 
 const styles = makeStyles()((theme: Theme) => ({
-  answerModal: {
+  summaryModal: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "column",
     position: "absolute",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    background: "linear-gradient(135deg, #FFD60A, #FF5733)",
+    background: "white",
     color: theme.palette.getContrastText("#FFD60A"),
     borderRadius: "12px",
     boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.3)",
@@ -17,14 +21,11 @@ const styles = makeStyles()((theme: Theme) => ({
     fontWeight: "bold",
 
     [theme.breakpoints.down("sm")]: {
-      height: "20%",
       width: "70%",
-      maxHeight: "100px",
     },
   },
-
   closeButton: {
-    color: "white",
+    color: theme.palette.secondary.main,
     position: "absolute",
     top: theme.spacing(1),
     right: theme.spacing(1),

@@ -71,25 +71,6 @@ const LeaderBoard = () => {
 
     setCurrentData(data);
   }, []);
-  console.log("currentdata", currentData);
-
-  const calculatePlayerPercentile = (score: number) => {
-    const allScores = combineData
-      .map((entry) => entry.gameSetting?.score || 0)
-      .sort((a, b) => b - a);
-
-    const rank = allScores.findIndex((playerScore) => playerScore === score);
-
-    if (rank === -1 || allScores.length === 0) {
-      return 0;
-    }
-
-    const percentile = (rank / allScores.length) * 100;
-    return Math.min(Math.round(100 - percentile), 100);
-  };
-
-  console.log({ combineData, allLeaderHistory });
-  const userPercentitle = calculatePlayerPercentile(currentData?.score || 0);
 
   const generateShareableText = useCallback(() => {
     if (!currentData) return;
@@ -136,6 +117,7 @@ const LeaderBoard = () => {
   useEffect(() => {
     generateShareableText();
   }, [generateShareableText]);
+
   return (
     <Box className={classes.leaderboardPage}>
       <Box className={classes.header}>
@@ -147,12 +129,10 @@ const LeaderBoard = () => {
           variant="contained"
           onClick={goGameBoard}
         >
-          <Box component={"span"}>
+          <Box className={classes.backIcon}>
             <ReplyAllIcon />
-          </Box>{" "}
-          <Box component={"span"} className={classes.onlyDesktop}>
-            Back
           </Box>
+          <Box className={classes.onlyDesktop}>Back</Box>
         </Button>
       </Box>
 
@@ -160,11 +140,6 @@ const LeaderBoard = () => {
         <Typography className={classes.score}>
           Your Score: {currentData?.score || 0}
         </Typography>
-        {/* <Typography variant="h4">
-          Percentile:
-          {userPercentitle}
-          th Percentile
-        </Typography> */}
       </Box>
 
       <Box className={classes.gridSummary}>
@@ -178,13 +153,7 @@ const LeaderBoard = () => {
                   ? classes.gridItem
                   : classes.correctBox
               }`}
-            >
-              {/* <Box className={classes.gridContent}>
-                <Typography variant="body1">
-                  {player.firstname} {player.lastname}
-                </Typography>
-              </Box> */}
-            </Box>
+            ></Box>
           ))}
         </Box>
         <Box className={classes.shareButtonContainer}>
@@ -209,7 +178,6 @@ const LeaderBoard = () => {
               <th>Grid</th>
               <th>Date</th>
               <th>Score</th>
-              {/* <th>Percentile</th> */}
               <th>Status</th>
             </tr>
           </thead>
@@ -221,7 +189,6 @@ const LeaderBoard = () => {
                   <td>{index + 1}</td>
                   <td>{convertPSTTime(entry.timeStamp)}</td>
                   <td>{entry.gameSetting?.score || 0}</td>
-                  {/* <td>{calculatePlayerPercentile(entry.gameSetting?.score)}</td> */}
                   <td>
                     <Button
                       variant="contained"

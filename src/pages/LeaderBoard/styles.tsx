@@ -45,9 +45,12 @@ const styles = makeStyles()((theme: Theme) => ({
   },
 
   backButton: {
+    display: "flex",
+    alignItems: "center",
+    gap: "4px",
     backgroundColor: theme.palette.secondary.main,
     color: theme.palette.common.white,
-    padding: theme.spacing(1.5, 3),
+    padding: theme.spacing(1.0, 2),
     fontSize: "clamp(0.875rem, 1.5vw, 1rem)",
     "&:hover": {
       backgroundColor: theme.palette.secondary.dark,
@@ -67,6 +70,11 @@ const styles = makeStyles()((theme: Theme) => ({
       alignItems: "center",
       zIndex: 1,
     },
+  },
+
+  backIcon: {
+    display: "flex",
+    paddingBottom: "4px",
   },
 
   userSummary: {
@@ -167,7 +175,7 @@ const styles = makeStyles()((theme: Theme) => ({
     textAlign: "center",
 
     [theme.breakpoints.down("sm")]: {
-      marginTop: theme.spacing(1),
+      marginTop: theme.spacing(2),
     },
   },
 
@@ -177,7 +185,7 @@ const styles = makeStyles()((theme: Theme) => ({
     "&:hover": {
       backgroundColor: theme.palette.primary.dark,
     },
-    fontSize: "clamp(0.7rem, 1vw, 0.85rem)",
+    fontSize: "clamp(0.7rem, 1vw, 1rem)",
     padding: theme.spacing(0.5, 1.5),
     borderRadius: "4px",
   },

@@ -8,6 +8,7 @@ import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 
 import CollegeModal from "../../components/CollegeModal/CollegeModal";
 import AnswerModal from "../../components/AnswerModal/AnswerModal";
+import SummaryModal from "../../components/SummaryModal/SummaryModal";
 
 import useStyles from "./styles";
 import { GameSetting, PlayerInfo } from "../../models/interface";
@@ -41,8 +42,10 @@ const GameBoardIndex = () => {
   const dispatch = useAppDispatch();
 
   const [targetItem, setTargetItem] = useState<PlayerInfo | null>(null);
+
   const [open, setOpen] = useState(false);
   const [answerOpen, setAnswerOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
 
   const [isConfirming, setIsConfirming] = useState(false);
   const [remainTime, setRemainTime] = useState(0);
@@ -170,6 +173,7 @@ const GameBoardIndex = () => {
       ...prevSetting,
       endStatus: true,
     }));
+    setSummaryOpen(true);
   }, []);
 
   const selectItem = useCallback(
@@ -208,6 +212,10 @@ const GameBoardIndex = () => {
 
   const handleNavigateToLeaderboard = () => {
     navigate("/leaderboard");
+  };
+
+  const goInfo = () => {
+    navigate("/");
   };
 
   useEffect(() => {
@@ -261,24 +269,22 @@ const GameBoardIndex = () => {
           variant="contained"
           onClick={handleNavigateToLeaderboard}
         >
-          <Box component={"span"}>
+          <Box className={classes.leaderBoardIcon}>
             <LeaderboardIcon />
           </Box>{" "}
-          <Box component={"span"} className={classes.onlyDesktop}>
-            Summary
-          </Box>
+          <Box className={classes.onlyDesktop}>Summary</Box>
         </Button>
 
-        <Link to={"/"}>
-          <Button className={classes.backButton} variant="contained">
-            <Box component={"span"} className={classes.infoIcon}>
-              <InfoIcon />
-            </Box>{" "}
-            <Box component={"span"} className={classes.onlyDesktop}>
-              Back
-            </Box>
-          </Button>
-        </Link>
+        <Button
+          className={classes.infoButton}
+          variant="contained"
+          onClick={goInfo}
+        >
+          <Box className={classes.infoIcon}>
+            <InfoIcon />
+          </Box>{" "}
+          <Box className={classes.onlyDesktop}>Info</Box>
+        </Button>
       </Box>
 
       <Box className={classes.leftPanel}></Box>
@@ -378,6 +384,11 @@ const GameBoardIndex = () => {
         open={answerOpen}
         itemId={targetItem?.playerId}
         handleOpenStatus={(answerOpen) => setAnswerOpen(answerOpen)}
+      />
+      <SummaryModal
+        open={summaryOpen}
+        onClose={(summaryOpen) => setSummaryOpen(summaryOpen)}
+        gameSetting={gameSetting}
       />
     </Box>
   );

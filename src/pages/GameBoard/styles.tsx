@@ -202,7 +202,10 @@ const styles = makeStyles()((theme: Theme) => ({
     },
   },
 
-  backButton: {
+  infoButton: {
+    display: "flex",
+    gap: "4px",
+    alignItems: "center",
     backgroundColor: "#0077b6",
     color: "#fff",
     fontSize: "clamp(12px, 1.5vw, 14px)",
@@ -224,11 +227,15 @@ const styles = makeStyles()((theme: Theme) => ({
   },
 
   infoIcon: {
+    display: "flex",
     fontSize: "100%",
-    paddingTop: "5px",
   },
 
   leaderBoard: {
+    display: "flex",
+    gap: "4px",
+    alignItems: "center",
+    justifyContent: "center",
     backgroundColor: "#f76c6c",
     color: "#fff",
     fontSize: "clamp(12px, 1.5vw, 14px)",
@@ -247,6 +254,10 @@ const styles = makeStyles()((theme: Theme) => ({
       justifyContent: "center",
       alignItems: "center",
     },
+  },
+
+  leaderBoardIcon: {
+    display: "flex",
   },
 }));
 

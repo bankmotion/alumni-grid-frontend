@@ -6,7 +6,7 @@ const styles = makeStyles()((theme: Theme) => ({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    height: "100vh",
+    padding: "40px",
     background: "linear-gradient(135deg, #FF4F00, #FFB600)",
     backgroundColor: "#1A1A2E",
     backgroundSize: "cover",
@@ -14,7 +14,7 @@ const styles = makeStyles()((theme: Theme) => ({
     position: "relative",
     boxSizing: "border-box",
     [theme.breakpoints.down("sm")]: {
-      padding: "10px",
+      padding: "15px",
     },
   },
   content: {
@@ -65,7 +65,7 @@ const styles = makeStyles()((theme: Theme) => ({
       backgroundColor: "#FF6F20",
     },
     [theme.breakpoints.down("sm")]: {
-      padding: "10px 20px",
+      padding: "8px 16px",
       fontSize: "clamp(0.8rem, 1vw, 1.1rem)",
     },
   },
