@@ -40,6 +40,10 @@ const styles = makeStyles()((theme: Theme) => ({
     },
   },
 
+  score: {
+    fontSize: "clamp(2rem, 3vw, 2.5rem)",
+  },
+
   backButton: {
     backgroundColor: theme.palette.secondary.main,
     color: theme.palette.common.white,

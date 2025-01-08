@@ -157,14 +157,14 @@ const LeaderBoard = () => {
       </Box>
 
       <Box className={classes.userSummary}>
-        <Typography variant="h4">
+        <Typography className={classes.score}>
           Your Score: {currentData?.score || 0}
         </Typography>
-        <Typography variant="h4">
+        {/* <Typography variant="h4">
           Percentile:
           {userPercentitle}
           th Percentile
-        </Typography>
+        </Typography> */}
       </Box>
 
       <Box className={classes.gridSummary}>
@@ -209,7 +209,7 @@ const LeaderBoard = () => {
               <th>Grid</th>
               <th>Date</th>
               <th>Score</th>
-              <th>Percentile</th>
+              {/* <th>Percentile</th> */}
               <th>Status</th>
             </tr>
           </thead>
@@ -221,7 +221,7 @@ const LeaderBoard = () => {
                   <td>{index + 1}</td>
                   <td>{convertPSTTime(entry.timeStamp)}</td>
                   <td>{entry.gameSetting?.score || 0}</td>
-                  <td>{calculatePlayerPercentile(entry.gameSetting?.score)}</td>
+                  {/* <td>{calculatePlayerPercentile(entry.gameSetting?.score)}</td> */}
                   <td>
                     <Button
                       variant="contained"
