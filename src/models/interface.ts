@@ -48,6 +48,7 @@ export interface AllPlayer {
   draftRound: number;
   draftNumber: number;
   teamId: number;
+  active: number;
 }
 
 export interface NFLAllPlayer {
@@ -63,6 +64,7 @@ export interface NFLAllPlayer {
   experience: string;
   age: number;
   teamId: number;
+  active: number;
 }
 export interface PlayerOption {
   id: number;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Box,
   Table,
@@ -9,22 +9,28 @@ import {
   TextField,
   TablePagination,
   TableContainer,
-  ButtonGroup,
   Button,
 } from "@mui/material";
 import useStyles from "./styles";
 import { AllPlayer } from "../../models/interface";
+import { ActiveStatus, PlayType } from "../../constant/const";
+import { useAppDispatch } from "../../app/hooks";
+import { getAllPlayers, updateActiveStatus } from "../../reducers/game.slice";
 
 interface NBAPlayerTableContainerProps {
   viewedPlayers: AllPlayer[];
+  page: number;
+  setPage: (page: number) => void;
 }
 
 const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
   viewedPlayers,
+  page,
+  setPage,
 }) => {
   const { classes } = useStyles();
+  const dispatch = useAppDispatch();
 
-  const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [idFilter, setIdFilter] = useState("");
@@ -71,6 +77,69 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
     setPage(0);
   };
 
+  const handleUpdateActive = (id: number, active: ActiveStatus) => {
+    dispatch(updateActiveStatus({ type: PlayType.NBA, id, active })).then(
+      () => {
+        dispatch(getAllPlayers());
+      }
+    );
+  };
+
+  const renderButtonGroup = (player: AllPlayer) => {
+    return player.active === ActiveStatus.Actived ? (
+      <>
+        <Button
+          variant={"contained"}
+          color={"info"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Inactived)}
+        >
+          Deselect
+        </Button>
+        <Button
+          variant={"outlined"}
+          color={"primary"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Canceled)}
+        >
+          Cancel
+        </Button>
+      </>
+    ) : player.active === ActiveStatus.Inactived ? (
+      <>
+        <Button
+          variant={"contained"}
+          color={"primary"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Actived)}
+        >
+          Select
+        </Button>
+        <Button
+          variant={"outlined"}
+          color={"primary"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Canceled)}
+        >
+          Cancel
+        </Button>
+      </>
+    ) : (
+      <>
+        <Button
+          variant={"contained"}
+          color={"primary"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Actived)}
+        >
+          Select
+        </Button>
+        <Button
+          variant={"contained"}
+          color={"info"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Inactived)}
+        >
+          Deselect
+        </Button>
+      </>
+    );
+  };
+
   return (
     <Box>
       <TableContainer className={classes.tableContainer}>
@@ -83,6 +152,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
               <TableCell>College</TableCell>
               <TableCell>Position</TableCell>
               <TableCell>Draft Year</TableCell>
+              <TableCell>Select</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
@@ -139,6 +209,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
                   onChange={(e) => setDraftYearFilter(e.target.value)}
                 />
               </TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -152,6 +223,9 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
                   <TableCell>{player.college}</TableCell>
                   <TableCell>{player.position}</TableCell>
                   <TableCell>{player.draftYear}</TableCell>
+                  <TableCell sx={{ display: "flex", gap: 1 }}>
+                    {renderButtonGroup(player)}
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>

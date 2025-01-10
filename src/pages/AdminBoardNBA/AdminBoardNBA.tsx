@@ -33,7 +33,7 @@ import { AppDispatch, RootState } from "../../app/store";
 import NBAPlayerTableContainer from "../../components/NBAPlayerTableContainer/NBAPlayerTableContainer";
 import NBAOptionTableContainer from "../../components/NBAOptionTableContainer/NBAOptionTableContainer";
 import { AllPlayer, PlayerOption } from "../../models/interface";
-import { PlayType } from "../../constant/const";
+import { ActiveStatus, PlayType } from "../../constant/const";
 
 const AdminBoardNBA = () => {
   const { classes } = useStyles();
@@ -43,11 +43,12 @@ const AdminBoardNBA = () => {
   const { allPlayerList, optionList } = useSelector(
     (state: RootState) => state.game
   );
-  console.log("allplayerlist", allPlayerList);
+
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [draftYear, setDraftYear] = useState<number>(1900);
   const [position, setPosition] = useState<string>("");
   const [toggleState, setToggleState] = useState<boolean>(false);
+  const [page, setPage] = useState(0);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [optionedPlayersCount, setOptionedPlayersCount] = useState(0);
@@ -56,7 +57,7 @@ const AdminBoardNBA = () => {
   const [activeViewId, setActiveViewId] = useState<number | null>(null);
 
   const [statusFilter, setStatusFilter] = useState<
-    "All" | "Active" | "Inactive" | "None"
+    "All" | "Active" | "Inactive" | "Selected" | "Deselected" | "None"
   >("All");
 
   const handleCountryChange = (event: SelectChangeEvent<string>) => {
@@ -127,19 +128,45 @@ const AdminBoardNBA = () => {
 
     if (statusFilter === "Active") {
       setFilteredPlayers(
-        allPlayerList.filter((player) =>
-          optionList.some((option) => isMatchForPlayerOption(player, option))
+        allPlayerList.filter(
+          (player) =>
+            (optionList.some((option) =>
+              isMatchForPlayerOption(player, option)
+            ) &&
+              player.active !== ActiveStatus.Inactived) ||
+            player.active === ActiveStatus.Actived
         )
       );
     }
 
     if (statusFilter === "Inactive") {
       setFilteredPlayers(
-        allPlayerList.filter((player) =>
-          optionList.every((option) => !isMatchForPlayerOption(player, option))
+        allPlayerList.filter(
+          (player) =>
+            (optionList.every(
+              (option) => !isMatchForPlayerOption(player, option)
+            ) &&
+              player.active !== ActiveStatus.Actived) ||
+            player.active === ActiveStatus.Inactived
         )
       );
     }
+
+    if (statusFilter === "Selected") {
+      setFilteredPlayers(
+        allPlayerList.filter((player) => player.active === ActiveStatus.Actived)
+      );
+    }
+
+    if (statusFilter === "Deselected") {
+      setFilteredPlayers(
+        allPlayerList.filter(
+          (player) => player.active === ActiveStatus.Inactived
+        )
+      );
+    }
+
+    setPage(0);
   }, [statusFilter, allPlayerList, optionList]);
 
   useEffect(() => {
@@ -320,7 +347,7 @@ const AdminBoardNBA = () => {
             setActiveViewId(null);
           }}
         >
-          Active
+          Actived
         </Button>
         <Button
           variant={statusFilter === "Inactive" ? "contained" : "outlined"}
@@ -330,11 +357,35 @@ const AdminBoardNBA = () => {
             setActiveViewId(null);
           }}
         >
-          Inactive
+          Inactived
+        </Button>
+        <Button
+          variant={statusFilter === "Selected" ? "contained" : "outlined"}
+          color={statusFilter === "Selected" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("Selected");
+            setActiveViewId(null);
+          }}
+        >
+          Selected
+        </Button>
+        <Button
+          variant={statusFilter === "Deselected" ? "contained" : "outlined"}
+          color={statusFilter === "Deselected" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("Deselected");
+            setActiveViewId(null);
+          }}
+        >
+          Deselected
         </Button>
       </ButtonGroup>
 
-      <NBAPlayerTableContainer viewedPlayers={filteredPlayers} />
+      <NBAPlayerTableContainer
+        viewedPlayers={filteredPlayers}
+        page={page}
+        setPage={setPage}
+      />
 
       <NBAConfirmationModal
         open={dialogOpen}

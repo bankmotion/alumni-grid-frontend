@@ -1,7 +1,4 @@
-import {
-  createAsyncThunk,
-  createSlice,
-} from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import { SERVER_URL } from "../config/config";
 import {
@@ -14,7 +11,7 @@ import {
   NFLPlayerOption,
 } from "../models/interface";
 import { json } from "stream/consumers";
-import { PlayType } from "../constant/const";
+import { ActiveStatus, PlayType } from "../constant/const";
 
 export interface GameState {
   collegeList: College[];
@@ -42,6 +39,7 @@ export interface GameState {
   optionList: PlayerOption[];
 
   NFLOptionList: NFLPlayerOption[];
+  isUpdateActiveStatus: boolean;
 }
 
 const initialState: GameState = {
@@ -70,6 +68,7 @@ const initialState: GameState = {
   optionList: [],
 
   NFLOptionList: [],
+  isUpdateActiveStatus: false,
 };
 
 export const getCollegeList = createAsyncThunk(
@@ -215,6 +214,23 @@ export const deleteNFLPlayerOption = createAsyncThunk(
     try {
       await axios.delete(`${SERVER_URL}/admin/${id}`);
       return id;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateActiveStatus = createAsyncThunk(
+  "game/updateActiveStatus",
+  async (
+    { type, id, active }: { type: PlayType; id: number; active: ActiveStatus },
+    { rejectWithValue }
+  ) => {
+    try {
+      await axios.put(`${SERVER_URL}/game/active/${type}`, {
+        id,
+        status: active,
+      });
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -375,6 +391,16 @@ export const gameSlice = createSlice({
     });
     builder.addCase(deletePlayerOption.rejected, (state, { payload }) => {
       console.error("Failed to delete option:", payload);
+    });
+
+    builder.addCase(updateActiveStatus.pending, (state, { payload }) => {
+      state.isUpdateActiveStatus = true;
+    });
+    builder.addCase(updateActiveStatus.fulfilled, (state, { payload }) => {
+      state.isUpdateActiveStatus = false;
+    });
+    builder.addCase(updateActiveStatus.rejected, (state, { payload }) => {
+      state.isUpdateActiveStatus = false;
     });
   },
 });

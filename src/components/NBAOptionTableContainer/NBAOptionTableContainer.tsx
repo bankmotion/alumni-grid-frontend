@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 import {
   Button,
@@ -8,8 +7,6 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
-  TablePagination,
   TableContainer,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
