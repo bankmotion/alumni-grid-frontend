@@ -15,6 +15,13 @@ const styles = makeStyles()((theme: Theme) => ({
     },
   },
 
+  percentBox: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%,-50%)",
+  },
+
   gridContainer: {
     position: "relative",
     display: "grid",

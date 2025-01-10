@@ -47,7 +47,6 @@ const AdminBoardNBA = () => {
   const [selectedCountry, setSelectedCountry] = useState<string>("");
   const [draftYear, setDraftYear] = useState<number>(1900);
   const [position, setPosition] = useState<string>("");
-  const [toggleState, setToggleState] = useState<boolean>(false);
   const [page, setPage] = useState(0);
 
   const [dialogOpen, setDialogOpen] = useState(false);

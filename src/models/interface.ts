@@ -25,6 +25,8 @@ export interface GameSetting {
 
 export interface AllHistory {
   timeStamp: number;
+  playingCount: number;
+  correctCount: number;
   players: Player[];
 }
 
@@ -32,6 +34,8 @@ export interface Player {
   id: number;
   firstname: string;
   lastname: string;
+  correctCount: number;
+  playingCount: number;
 }
 
 export interface AllPlayer {

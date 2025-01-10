@@ -139,6 +139,13 @@ const styles = makeStyles()((theme: Theme) => ({
     alignItems: "center",
   },
 
+  percentBox: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%,-50%)",
+  },
+
   gridContent: {
     position: "absolute",
     top: 0,

@@ -25,7 +25,7 @@ import {
   getRemainTimeStr,
   getStartTimeByTimestampDaily,
 } from "../../utils/utils";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const GameBoardIndex = () => {
   const { classes } = useStyles();
@@ -70,6 +70,7 @@ const GameBoardIndex = () => {
           const response = await axios.post(`${SERVER_URL}/game/college`, {
             id: targetItem.playerId,
             college: collegeName,
+            timestamp: timeStampParam,
           });
           setIsConfirming(false);
 
@@ -126,7 +127,11 @@ const GameBoardIndex = () => {
           (item) => item.createTime === history.startTimestamp
         );
 
-        if (data.createTime && history.startTimestamp === data.createTime) {
+        if (
+          data &&
+          data.createTime &&
+          history.startTimestamp === data.createTime
+        ) {
           setGameSetting({
             playerList: data.playerList,
             remainCount: data.remainCount,
@@ -143,6 +148,10 @@ const GameBoardIndex = () => {
             createTime: history.startTimestamp,
             endStatus: false,
             gameStartTime: Math.floor(new Date().getTime() / 1000),
+          });
+
+          axios.post(`${SERVER_URL}/game/gamestart`, {
+            timestamp: timeStampParam,
           });
         }
       } catch (err) {
@@ -166,7 +175,7 @@ const GameBoardIndex = () => {
         gameStartTime: Math.floor(new Date().getTime() / 1000),
       });
     }
-  }, [history]);
+  }, [history, timeStampParam]);
 
   const handleEndGame = useCallback(() => {
     setGameSetting((prevSetting) => ({

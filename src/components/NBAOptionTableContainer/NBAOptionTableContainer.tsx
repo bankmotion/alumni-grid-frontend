@@ -42,10 +42,6 @@ const NBAOptionTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
     });
   };
 
-  useEffect(() => {
-    dispatch(getPlayerOptions({ playerType: PlayType.NBA }));
-  }, [dispatch]);
-
   return (
     <TableContainer>
       <Table>

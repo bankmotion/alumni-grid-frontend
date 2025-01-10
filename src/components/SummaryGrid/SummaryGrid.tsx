@@ -6,11 +6,17 @@ import { GameSetting } from "../../models/interface";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import { Version } from "../../config/config";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { getLeaderHistory } from "../../reducers/game.slice";
 
 const SummaryGrid = () => {
   const { classes } = useStyles();
+  const dispatch = useAppDispatch();
+
   const [shareText, setShareText] = useState<string>("");
   const [currentData, setCurrentData] = useState<GameSetting | null>(null);
+
+  const { allLeaderHistory } = useAppSelector((state) => state.game);
 
   const generateShareableText = useCallback(() => {
     if (!currentData) return;
@@ -54,6 +60,22 @@ const SummaryGrid = () => {
       });
   };
 
+  const getPercent = (timestamp: number, playerId: number) => {
+    const gameData = allLeaderHistory.find(
+      (history) => history.timeStamp === timestamp
+    );
+
+    if (!gameData) return 0;
+    const playerData = gameData.players.find(
+      (player) => player.id === playerId
+    );
+    if (!playerData) return 0;
+
+    return playerData.playingCount === 0
+      ? 0
+      : Math.floor((playerData.correctCount / playerData.playingCount) * 100);
+  };
+
   useEffect(() => {
     let data: GameSetting | null = null;
     try {
@@ -65,6 +87,10 @@ const SummaryGrid = () => {
 
     setCurrentData(data);
   }, []);
+
+  useEffect(() => {
+    dispatch(getLeaderHistory());
+  }, [dispatch]);
 
   useEffect(() => {
     generateShareableText();
@@ -81,7 +107,11 @@ const SummaryGrid = () => {
                 ? classes.gridItem
                 : classes.correctBox
             }`}
-          ></Box>
+          >
+            <Box className={classes.percentBox}>
+              {getPercent(currentData.createTime, player.playerId)}%
+            </Box>
+          </Box>
         ))}
       </Box>
       <Box className={classes.shareButtonContainer}>

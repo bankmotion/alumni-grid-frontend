@@ -300,6 +300,8 @@ export const gameSlice = createSlice({
           ({
             players: historyItem.players,
             timeStamp: historyItem.timestamp,
+            correctCount: historyItem.correctCount,
+            playingCount: historyItem.playingCount,
           } as AllHistory)
       );
     });

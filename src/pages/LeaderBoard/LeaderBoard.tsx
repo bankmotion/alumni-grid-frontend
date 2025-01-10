@@ -114,6 +114,22 @@ const LeaderBoard = () => {
       });
   };
 
+  const getPercent = (timestamp: number, playerId: number) => {
+    const gameData = allLeaderHistory.find(
+      (history) => history.timeStamp === timestamp
+    );
+
+    if (!gameData) return 0;
+    const playerData = gameData.players.find(
+      (player) => player.id === playerId
+    );
+    if (!playerData) return 0;
+
+    return playerData.playingCount === 0
+      ? 0
+      : Math.floor((playerData.correctCount / playerData.playingCount) * 100);
+  };
+
   useEffect(() => {
     generateShareableText();
   }, [generateShareableText]);
@@ -153,7 +169,11 @@ const LeaderBoard = () => {
                   ? classes.gridItem
                   : classes.correctBox
               }`}
-            ></Box>
+            >
+              <Box className={classes.percentBox}>
+                {getPercent(currentData.createTime, player.playerId)}%
+              </Box>
+            </Box>
           ))}
         </Box>
         <Box className={classes.shareButtonContainer}>
