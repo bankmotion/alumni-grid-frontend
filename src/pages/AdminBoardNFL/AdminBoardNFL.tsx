@@ -101,29 +101,6 @@ const AdminBoardNFL = () => {
         >
           Admin Board (NFL)
         </Typography>
-
-        <Box style={{ display: "flex", justifyContent: "flex-end" }}>
-          <Tooltip
-            title={
-              toggleState
-                ? "The NBA data will be represented in the game."
-                : "If this button is disabled, the NBA data will not be represented in the game."
-            }
-            arrow
-          >
-            <IconButton
-              onClick={() => setToggleState(!toggleState)}
-              aria-label="toggle"
-              className={classes.toggleButton}
-            >
-              {toggleState ? (
-                <CheckIcon color="primary" />
-              ) : (
-                <CloseIcon color="secondary" />
-              )}
-            </IconButton>
-          </Tooltip>
-        </Box>
       </Box>
 
       <Grid
