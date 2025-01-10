@@ -165,9 +165,11 @@ const AdminBoardNBA = () => {
         )
       );
     }
-
-    setPage(0);
   }, [statusFilter, allPlayerList, optionList]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [statusFilter, activeViewId]);
 
   useEffect(() => {
     setOptionedPlayersCount(
