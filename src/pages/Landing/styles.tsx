@@ -13,8 +13,10 @@ const styles = makeStyles()((theme: Theme) => ({
     backgroundPosition: "center",
     position: "relative",
     boxSizing: "border-box",
+    minHeight: "100vh",
     [theme.breakpoints.down("sm")]: {
-      padding: "15px",
+      padding: "20px",
+      height: "100vh",
     },
   },
   content: {

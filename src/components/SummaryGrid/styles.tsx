@@ -44,7 +44,7 @@ const styles = makeStyles()((theme: Theme) => ({
     position: "relative",
     display: "grid",
     width: "70%",
-    fontSize: "32px",
+    fontSize: "24px",
     fontWeight: "bold",
     gridTemplateColumns: "repeat(3, 1fr)", // 3 columns
     gridTemplateRows: "repeat(3, 1fr)", // 3 rows
@@ -57,7 +57,7 @@ const styles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down("sm")]: {
       gridTemplateColumns: "repeat(3, 1fr)", // 2 columns for smaller screens
       gap: theme.spacing(1.5),
-      fontSize: "24px",
+      fontSize: "14px",
     },
   },
 

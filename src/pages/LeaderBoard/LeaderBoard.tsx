@@ -197,7 +197,7 @@ const LeaderBoard = () => {
 
       <Box className={classes.achieveTable}>
         <Typography variant="h5" className={classes.tableTitle}>
-          Achievement Table
+          Accuracy Table
         </Typography>
         <table className={classes.table}>
           <thead>
