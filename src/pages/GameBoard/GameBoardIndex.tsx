@@ -9,6 +9,7 @@ import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 import CollegeModal from "../../components/CollegeModal/CollegeModal";
 import AnswerModal from "../../components/AnswerModal/AnswerModal";
 import SummaryModal from "../../components/SummaryModal/SummaryModal";
+import ArchiveModal from "../../components/ArchiveModal/ArchiveModal";
 
 import useStyles from "./styles";
 import { GameSetting, PlayerInfo } from "../../models/interface";
@@ -26,6 +27,7 @@ import {
   getStartTimeByTimestampDaily,
 } from "../../utils/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { arch } from "os";
 
 const GameBoardIndex = () => {
   const { classes } = useStyles();
@@ -46,6 +48,7 @@ const GameBoardIndex = () => {
   const [open, setOpen] = useState(false);
   const [answerOpen, setAnswerOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
+  const [archiveOpen, setArchiveOpen] = useState(false);
 
   const [isConfirming, setIsConfirming] = useState(false);
   const [remainTime, setRemainTime] = useState(0);
@@ -228,7 +231,8 @@ const GameBoardIndex = () => {
   }, []);
 
   const handleNavigateToLeaderboard = () => {
-    navigate("/leaderboard");
+    // navigate("/leaderboard");
+    setArchiveOpen(true);
   };
 
   const goInfo = () => {
@@ -289,7 +293,7 @@ const GameBoardIndex = () => {
           <Box className={classes.leaderBoardIcon}>
             <LeaderboardIcon />
           </Box>{" "}
-          <Box className={classes.onlyDesktop}>Summary</Box>
+          <Box className={classes.onlyDesktop}>Archive</Box>
         </Button>
 
         <Button
@@ -406,6 +410,10 @@ const GameBoardIndex = () => {
         open={summaryOpen}
         onClose={(summaryOpen) => setSummaryOpen(summaryOpen)}
         gameSetting={gameSetting}
+      />
+      <ArchiveModal
+        open={archiveOpen}
+        onClose={(archiveOpen) => setArchiveOpen(archiveOpen)}
       />
     </Box>
   );
