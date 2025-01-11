@@ -117,6 +117,26 @@ const styles = makeStyles()((theme: Theme) => ({
       gap: theme.spacing(1.5),
     },
   },
+  gridWithPercent: {
+    position: "relative",
+    display: "grid",
+    width: "70%",
+    fontSize: "32px",
+    fontWeight: "bold",
+    gridTemplateColumns: "repeat(3, 1fr)", // 3 columns
+    gridTemplateRows: "repeat(3, 1fr)", // 3 rows
+    gap: theme.spacing(2),
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: theme.spacing(2),
+    marginLeft: "15%",
+
+    [theme.breakpoints.down("sm")]: {
+      gridTemplateColumns: "repeat(3, 1fr)", // 2 columns for smaller screens
+      gap: theme.spacing(1.5),
+      fontSize: "24px",
+    },
+  },
 
   gridItem: {
     position: "relative",

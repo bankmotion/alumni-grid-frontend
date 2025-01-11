@@ -169,13 +169,10 @@ const LeaderBoard = () => {
                   ? classes.gridItem
                   : classes.correctBox
               }`}
-            >
-              <Box className={classes.percentBox}>
-                {getPercent(currentData.createTime, player.playerId)}%
-              </Box>
-            </Box>
+            ></Box>
           ))}
         </Box>
+
         <Box className={classes.shareButtonContainer}>
           <Button
             variant="contained"
@@ -185,6 +182,16 @@ const LeaderBoard = () => {
           >
             Share Grid
           </Button>
+        </Box>
+
+        <Box className={classes.gridWithPercent}>
+          {currentData?.playerList.map((player, index) => (
+            <Box key={index} className={classes.gridItem}>
+              <Box className={classes.percentBox}>
+                {getPercent(currentData.createTime, player.playerId)}%
+              </Box>
+            </Box>
+          ))}
         </Box>
       </Box>
 
