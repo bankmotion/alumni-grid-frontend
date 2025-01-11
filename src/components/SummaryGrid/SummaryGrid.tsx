@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import useStyles from "./styles";
 import ShareIcon from "@mui/icons-material/Share";
 import { GameSetting } from "../../models/interface";
@@ -95,6 +95,7 @@ const SummaryGrid = () => {
   useEffect(() => {
     generateShareableText();
   }, [generateShareableText]);
+  
   return (
     <Box className={classes.gridSummary}>
       {/* <Typography variant="h5">Game Summary</Typography> */}

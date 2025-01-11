@@ -164,6 +164,10 @@ const GameBoardIndex = () => {
           endStatus: false,
           gameStartTime: Math.floor(new Date().getTime() / 1000),
         });
+
+        axios.post(`${SERVER_URL}/game/gamestart`, {
+          timestamp: timeStampParam,
+        });
       }
     } else {
       setGameSetting({
@@ -173,6 +177,10 @@ const GameBoardIndex = () => {
         createTime: history.startTimestamp,
         endStatus: false,
         gameStartTime: Math.floor(new Date().getTime() / 1000),
+      });
+
+      axios.post(`${SERVER_URL}/game/gamestart`, {
+        timestamp: timeStampParam,
       });
     }
   }, [history, timeStampParam]);
