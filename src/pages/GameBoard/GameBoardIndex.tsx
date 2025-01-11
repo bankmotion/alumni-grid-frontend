@@ -392,6 +392,18 @@ const GameBoardIndex = () => {
             ? `New Grid in ${getRemainTimeStr(remainTime)}`
             : getRemainTimeStr(spentTime)}
         </Box>
+
+        <Box>
+          {gameSetting.endStatus && (
+            <Button
+              variant="contained"
+              sx={{ textTransform: "none" }}
+              onClick={() => setSummaryOpen(true)}
+            >
+              Summary
+            </Button>
+          )}
+        </Box>
       </Box>
 
       <CollegeModal

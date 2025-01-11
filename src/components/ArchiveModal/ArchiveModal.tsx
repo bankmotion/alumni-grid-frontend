@@ -52,6 +52,7 @@ const ArchiveModal = ({
 
   const handleNavigation = (timeStamp: number) => {
     navigate(`/game?timestamp=${timeStamp}`);
+    onClose(false);
   };
 
   useEffect(() => {
@@ -61,7 +62,7 @@ const ArchiveModal = ({
     } catch (err) {}
 
     setDataList(data);
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     let data: GameSetting | null = null;
