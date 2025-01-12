@@ -5,7 +5,6 @@ const styles = makeStyles()((theme: Theme) => ({
   summaryModal: {
     display: "flex",
     alignItems: "center",
-    justifyContent: "center",
     flexDirection: "column",
     position: "absolute",
     top: "50%",
@@ -19,9 +18,12 @@ const styles = makeStyles()((theme: Theme) => ({
     width: "400px",
     textAlign: "center",
     fontWeight: "bold",
+    maxHeight: "700px",
+    overflowY: "auto",
 
     [theme.breakpoints.down("sm")]: {
       width: "70%",
+      maxHeight: "500px",
     },
   },
   closeButton: {

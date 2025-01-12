@@ -197,6 +197,7 @@ const styles = makeStyles()((theme: Theme) => ({
   },
 
   onlyDesktop: {
+    textTransform: "none",
     [theme.breakpoints.down("sm")]: {
       display: "none",
     },
@@ -237,6 +238,31 @@ const styles = makeStyles()((theme: Theme) => ({
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: "#f76c6c",
+    color: "#fff",
+    fontSize: "clamp(12px, 1.5vw, 14px)",
+
+    "&:hover": {
+      backgroundColor: "#d45c5c",
+    },
+
+    [theme.breakpoints.down("sm")]: {
+      width: "40px",
+      height: "40px",
+      borderRadius: "50%",
+      padding: 0,
+      minWidth: "30px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  },
+
+  summary: {
+    display: "flex",
+    gap: "4px",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#f39c12",
     color: "#fff",
     fontSize: "clamp(12px, 1.5vw, 14px)",
 

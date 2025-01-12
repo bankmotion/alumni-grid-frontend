@@ -4,6 +4,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import axios from "axios";
 import { clsx } from "clsx";
 import InfoIcon from "@mui/icons-material/Info";
+import AssessmentIcon from "@mui/icons-material/Assessment";
 import LeaderboardIcon from "@mui/icons-material/Leaderboard";
 
 import CollegeModal from "../../components/CollegeModal/CollegeModal";
@@ -27,7 +28,6 @@ import {
   getStartTimeByTimestampDaily,
 } from "../../utils/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { arch } from "os";
 
 const GameBoardIndex = () => {
   const { classes } = useStyles();
@@ -285,6 +285,17 @@ const GameBoardIndex = () => {
   return (
     <Box className={classes.gameBoard}>
       <Box className={classes.buttonContainer}>
+        {/* <Button
+          className={classes.summary}
+          variant="contained"
+          onClick={() => setSummaryOpen(true)}
+        >
+          <Box className={classes.leaderBoardIcon}>
+            <AssessmentIcon />
+          </Box>{" "}
+          <Box className={classes.onlyDesktop}>Summary</Box>
+        </Button> */}
+
         <Button
           className={classes.leaderBoard}
           variant="contained"
@@ -293,7 +304,7 @@ const GameBoardIndex = () => {
           <Box className={classes.leaderBoardIcon}>
             <LeaderboardIcon />
           </Box>{" "}
-          <Box className={classes.onlyDesktop}>Archive</Box>
+          <Box className={classes.onlyDesktop}>Prior grids</Box>
         </Button>
 
         <Button

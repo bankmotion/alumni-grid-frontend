@@ -5,6 +5,7 @@ import { GameSetting, PlayerInfo } from "../../models/interface";
 import CloseIcon from "@mui/icons-material/Close";
 
 import SummaryGrid from "../SummaryGrid/SummaryGrid";
+import { convertPSTTime } from "../../utils/utils";
 
 const SummaryModal = ({
   open,
@@ -27,7 +28,15 @@ const SummaryModal = ({
         >
           <CloseIcon />
         </IconButton>
-        <Typography variant="h5">Game Summary</Typography>
+        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+          Game Summary
+        </Typography>
+        <Typography
+          component={"span"}
+          sx={{ fontSize: "17px", marginTop: "12px" }}
+        >
+          AlumniGrid {convertPSTTime(gameSetting.createTime)}
+        </Typography>
         <Typography>Score: {gameSetting.score}</Typography>
         <SummaryGrid />
       </Box>
