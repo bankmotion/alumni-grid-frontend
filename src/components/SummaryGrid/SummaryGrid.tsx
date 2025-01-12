@@ -121,7 +121,7 @@ const SummaryGrid = () => {
           Share Grid
         </Button>
       </Box>
-      <Box sx={{ marginTop: "24px" }}>Accuracy table</Box>
+      <Box sx={{ marginTop: "24px" }}>Accuracy Table</Box>
       <Box className={classes.gridWithPercent}>
         {currentData?.playerList.map((player, index) => (
           <Box key={index} className={classes.gridItem}>

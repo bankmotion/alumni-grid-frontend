@@ -143,6 +143,12 @@ const GameBoardIndex = () => {
             endStatus: data.endStatus,
             gameStartTime: data.gameStartTime,
           });
+
+          // if (data.endStatus) {
+          //   setSummaryOpen(true);
+          // } else {
+          //   setSummaryOpen(false);
+          // }
         } else {
           setGameSetting({
             playerList: history.items,
@@ -231,7 +237,10 @@ const GameBoardIndex = () => {
   }, []);
 
   const handleNavigateToLeaderboard = () => {
-    // navigate("/leaderboard");
+    navigate("/leaderboard");
+  };
+
+  const openPriorGridsModal = () => {
     setArchiveOpen(true);
   };
 
@@ -282,21 +291,29 @@ const GameBoardIndex = () => {
     dispatch(getHistoryList(Number(timeStampParam)));
   }, [dispatch, searchParams, timeStampParam]);
 
+  useEffect(() => {
+    if (gameSetting.endStatus) {
+      setSummaryOpen(true);
+    } else {
+      setSummaryOpen(false);
+    }
+  }, [gameSetting.endStatus, gameSetting.createTime]);
+
   return (
     <Box className={classes.gameBoard}>
       <Box className={classes.buttonContainer}>
         {/* <Button
           className={classes.summary}
           variant="contained"
-          onClick={() => setSummaryOpen(true)}
+          onClick={handleNavigateToLeaderboard}
         >
           <Box className={classes.leaderBoardIcon}>
             <AssessmentIcon />
           </Box>{" "}
-          <Box className={classes.onlyDesktop}>Summary</Box>
+          <Box className={classes.onlyDesktop}>Summary Stats</Box>
         </Button> */}
 
-        <Button
+        {/* <Button
           className={classes.leaderBoard}
           variant="contained"
           onClick={handleNavigateToLeaderboard}
@@ -305,7 +322,7 @@ const GameBoardIndex = () => {
             <LeaderboardIcon />
           </Box>{" "}
           <Box className={classes.onlyDesktop}>Prior grids</Box>
-        </Button>
+        </Button> */}
 
         <Button
           className={classes.infoButton}
@@ -392,8 +409,8 @@ const GameBoardIndex = () => {
               Click into boxes to see the correct answer.
             </Typography>
             <Typography variant="body2">
-              Head to the <strong>Summary Page</strong> to share scores and play
-              prior day grids.
+              Click <b>Show Summary</b> to view stats and share your grid with
+              friends!
             </Typography>
           </Box>
         )}
@@ -404,16 +421,23 @@ const GameBoardIndex = () => {
             : getRemainTimeStr(spentTime)}
         </Box>
 
-        <Box>
+        <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {gameSetting.endStatus && (
             <Button
               variant="contained"
               sx={{ textTransform: "none" }}
               onClick={() => setSummaryOpen(true)}
             >
-              Summary
+              Show Summary
             </Button>
           )}
+          <Button
+            variant="contained"
+            sx={{ textTransform: "none", marginTop: "8px" }}
+            onClick={openPriorGridsModal}
+          >
+            Prior Grids
+          </Button>
         </Box>
       </Box>
 
