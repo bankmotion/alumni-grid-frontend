@@ -18,13 +18,15 @@ const Landing = () => {
         <Box className={classes.description}>
           AlumniGrid is a daily sports trivia game.
           <br />
-          Each day 9 athletes are prompted and tap a Square to guess the college
-          the player went to.
+          Each day, 9 squares containing an athlete’s name are prompted.
           <br />
-          If they didn’t attend college, name the high school or last school
-          attended.
+          Players tap into each square and guess where each athlete went to
+          college.
           <br />
-          If they attended to multiple colleges, select the most recent school
+          If the athlete did not go to college, guess the high school or last
+          school the athlete attended.
+          <br />
+          If the athlete went to multiple colleges, guess the most recent school
           attended.
           <br />
           <br />
