@@ -29,7 +29,6 @@ const ArchiveModal = ({
 
   const [dataList, setDataList] = useState<GameSetting[]>([]);
   const [currentData, setCurrentData] = useState<GameSetting | null>(null);
-  const [shareText, setShareText] = useState<string>("");
   const { allLeaderHistory } = useAppSelector((state) => state.game);
 
   useEffect(() => {
