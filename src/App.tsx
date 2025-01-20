@@ -19,7 +19,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
 
-            <Route path="/game" element={<GameBoardIndex />} />
+            <Route path="/game/nba" element={<GameBoardIndex />} />
 
             {/* <Route path="/game/:timeStamp" element={<GameBoardIndex />}/> */}
 
