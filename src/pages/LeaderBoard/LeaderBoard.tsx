@@ -44,11 +44,11 @@ const LeaderBoard = () => {
     .sort((a, b) => b.timeStamp - a.timeStamp);
 
   const handleNavigation = (timeStamp: number) => {
-    navigate(`/game?timestamp=${timeStamp}`);
+    navigate(`/game/nba?timestamp=${timeStamp}`);
   };
 
   const goGameBoard = () => {
-    navigate("/game");
+    navigate("/game/nba");
   };
 
   useEffect(() => {
@@ -91,7 +91,7 @@ const LeaderBoard = () => {
       `${gridVisualization}\n` +
       ` Play at:\n` +
       ` ` +
-      `https://alumnigrid.com/game`.trim();
+      `https://alumnigrid.com/game/nba`.trim();
 
     setShareText(text);
   }, [currentData]);

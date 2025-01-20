@@ -50,7 +50,7 @@ const ArchiveModal = ({
     .sort((a, b) => b.timeStamp - a.timeStamp);
 
   const handleNavigation = (timeStamp: number) => {
-    navigate(`/game?timestamp=${timeStamp}`);
+    navigate(`/game/nba?timestamp=${timeStamp}`);
     onClose(false);
   };
 

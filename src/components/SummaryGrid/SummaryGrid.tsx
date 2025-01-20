@@ -37,7 +37,7 @@ const SummaryGrid = () => {
       `${gridVisualization}\n` +
       ` Play at:\n` +
       ` ` +
-      `https://alumnigrid.com/game`.trim();
+      `https://alumnigrid.com/game/nba`.trim();
 
     setShareText(text);
   }, [currentData]);

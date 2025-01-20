@@ -6,7 +6,7 @@ const Landing = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();
   const handleStartGame = () => {
-    navigate("/game");
+    navigate("/game/nba");
   };
 
   return (
