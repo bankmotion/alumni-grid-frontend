@@ -29,7 +29,7 @@ function App() {
 
             <Route path="/adminboard/NBA" element={<AdminBoardNBA />} />
 
-            {/* <Route path="/adminboard/NFL" element={<AdminBoardNFL />} /> */}
+            <Route path="/adminboard/NFL" element={<AdminBoardNFL />} />
           </Routes>
         </Router>
       </div>

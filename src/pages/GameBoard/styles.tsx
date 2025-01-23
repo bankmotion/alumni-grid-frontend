@@ -88,6 +88,7 @@ const styles = makeStyles()((theme: Theme) => ({
 
   playerName: {
     fontSize: "clamp(18px, 2.5vw, 30px)",
+    wordBreak: "break-word",
 
     [theme.breakpoints.down("sm")]: {
       fontSize: "clamp(14px, 2vw, 24px)",
