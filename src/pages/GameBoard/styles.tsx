@@ -8,9 +8,6 @@ const styles = makeStyles()((theme: Theme) => ({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    background: "url(/assets/background.jpg)",
-    backgroundSize: "cover",
-    backgroundRepeat: "no-repeat",
     padding: "16px",
 
     [theme.breakpoints.down("sm")]: {
@@ -20,6 +17,18 @@ const styles = makeStyles()((theme: Theme) => ({
       minHeight: "100vh",
       justifyContent: "flex-start",
     },
+  },
+
+  nbaBg: {
+    background: "url(/assets/background.jpg)",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
+  },
+
+  nflBg: {
+    background: "url(/assets/nflbg.jpg)",
+    backgroundSize: "cover",
+    backgroundRepeat: "no-repeat",
   },
 
   gameTitle: {

@@ -2,7 +2,6 @@ import "./App.css";
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 
 import GameBoardIndex from "./pages/GameBoard/GameBoardIndex";
-import LeaderBoard from "./pages/LeaderBoard/LeaderBoard";
 import Landing from "./pages/Landing/Landing";
 import { Provider } from "react-redux";
 import { store } from "./app/store";

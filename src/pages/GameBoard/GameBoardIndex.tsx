@@ -303,7 +303,12 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
   }, [gameSetting.endStatus, gameSetting.createTime]);
 
   return (
-    <Box className={classes.gameBoard}>
+    <Box
+      className={clsx(
+        classes.gameBoard,
+        playType === PlayType.NBA ? classes.nbaBg : classes.nflBg
+      )}
+    >
       <Box className={classes.buttonContainer}>
         <Button
           className={classes.infoButton}
