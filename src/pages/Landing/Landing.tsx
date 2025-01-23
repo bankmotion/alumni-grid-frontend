@@ -52,7 +52,7 @@ const Landing = () => {
           <br />
           <br />
           <strong>
-            Note: The game is currently in beta. Only the NBA grid is available
+            Note: The game is currently in beta. NBA and NFL grids are available
             at this time. Stay tuned…
           </strong>
         </Box>
