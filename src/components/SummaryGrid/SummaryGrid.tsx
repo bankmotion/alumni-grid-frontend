@@ -33,7 +33,7 @@ const SummaryGrid = ({ playType }: { playType: PlayType }) => {
       .join("\n");
 
     const text =
-      `${playType === PlayType.NBA ? "🏀" : "⚽"} Alumni Grid - ${
+      `${playType === PlayType.NBA ? "🏀" : "🏈"} Alumni Grid - ${
         PlayTypeInfo[playType].up
       } \n` +
       ` Score: ${currentData.score}\n` +
