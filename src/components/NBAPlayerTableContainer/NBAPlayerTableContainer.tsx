@@ -78,11 +78,11 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
   };
 
   const handleUpdateActive = (id: number, active: ActiveStatus) => {
-    dispatch(updateActiveStatus({ type: PlayType.NBA, id, active })).then(
-      () => {
-        dispatch(getAllPlayers());
-      }
-    );
+    dispatch(updateActiveStatus({ type: PlayType.NBA, id, active }))
+      .unwrap()
+      .then(() => {
+        dispatch(getAllPlayers({ playType: PlayType.NBA }));
+      });
   };
 
   const renderButtonGroup = (player: AllPlayer) => {

@@ -4,8 +4,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import axios from "axios";
 import { clsx } from "clsx";
 import InfoIcon from "@mui/icons-material/Info";
-import AssessmentIcon from "@mui/icons-material/Assessment";
-import LeaderboardIcon from "@mui/icons-material/Leaderboard";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import CollegeModal from "../../components/CollegeModal/CollegeModal";
 import AnswerModal from "../../components/AnswerModal/AnswerModal";
@@ -27,9 +26,9 @@ import {
   getRemainTimeStr,
   getStartTimeByTimestampDaily,
 } from "../../utils/utils";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { PlayType, PlayTypeInfo } from "../../constant/const";
 
-const GameBoardIndex = () => {
+const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -70,11 +69,14 @@ const GameBoardIndex = () => {
       try {
         if (targetItem) {
           setIsConfirming(true);
-          const response = await axios.post(`${SERVER_URL}/game/college`, {
-            id: targetItem.playerId,
-            college: collegeName,
-            timestamp: timeStampParam,
-          });
+          const response = await axios.post(
+            `${SERVER_URL}/game/college/${playType}`,
+            {
+              id: targetItem.playerId,
+              college: collegeName,
+              timestamp: timeStampParam,
+            }
+          );
           setIsConfirming(false);
 
           const status = response.data.message as boolean;
@@ -120,7 +122,9 @@ const GameBoardIndex = () => {
   const loadDataFromLocalStorage = useCallback(() => {
     if (history.items.length === 0) return;
 
-    const dataStr = localStorage.getItem(`dataList${Version}`);
+    const dataStr = localStorage.getItem(
+      `dataList-${PlayTypeInfo[playType].up}${Version}`
+    );
 
     if (dataStr) {
       try {
@@ -143,12 +147,6 @@ const GameBoardIndex = () => {
             endStatus: data.endStatus,
             gameStartTime: data.gameStartTime,
           });
-
-          // if (data.endStatus) {
-          //   setSummaryOpen(true);
-          // } else {
-          //   setSummaryOpen(false);
-          // }
         } else {
           setGameSetting({
             playerList: history.items,
@@ -159,7 +157,7 @@ const GameBoardIndex = () => {
             gameStartTime: Math.floor(new Date().getTime() / 1000),
           });
 
-          axios.post(`${SERVER_URL}/game/gamestart`, {
+          axios.post(`${SERVER_URL}/game/gameStart/${playType}`, {
             timestamp: timeStampParam,
           });
         }
@@ -174,7 +172,7 @@ const GameBoardIndex = () => {
           gameStartTime: Math.floor(new Date().getTime() / 1000),
         });
 
-        axios.post(`${SERVER_URL}/game/gamestart`, {
+        axios.post(`${SERVER_URL}/game/gamestart/${playType}`, {
           timestamp: timeStampParam,
         });
       }
@@ -188,11 +186,11 @@ const GameBoardIndex = () => {
         gameStartTime: Math.floor(new Date().getTime() / 1000),
       });
 
-      axios.post(`${SERVER_URL}/game/gamestart`, {
+      axios.post(`${SERVER_URL}/game/gamestart/${playType}`, {
         timestamp: timeStampParam,
       });
     }
-  }, [history, timeStampParam]);
+  }, [history, timeStampParam, playType]);
 
   const handleEndGame = useCallback(() => {
     setGameSetting((prevSetting) => ({
@@ -215,30 +213,34 @@ const GameBoardIndex = () => {
     [gameSetting.endStatus]
   );
 
-  const getDataList = () => {
-    const dataListStr = localStorage.getItem(`dataList${Version}`);
-    return dataListStr ? JSON.parse(dataListStr) : [];
-  };
-
-  const saveDailyData = useCallback((data: GameSetting) => {
-    const dataList = getDataList();
-
-    const existingIndex = dataList.findIndex(
-      (entry: GameSetting) => entry.createTime === data.createTime
+  const getDataList = useCallback(() => {
+    const dataListStr = localStorage.getItem(
+      `dataList-${PlayTypeInfo[playType].up}${Version}`
     );
+    return dataListStr ? JSON.parse(dataListStr) : [];
+  }, [playType]);
 
-    if (existingIndex !== -1) {
-      dataList[existingIndex] = data;
-    } else {
-      dataList.push(data);
-    }
+  const saveDailyData = useCallback(
+    (data: GameSetting) => {
+      const dataList = getDataList();
 
-    localStorage.setItem(`dataList${Version}`, JSON.stringify(dataList));
-  }, []);
+      const existingIndex = dataList.findIndex(
+        (entry: GameSetting) => entry.createTime === data.createTime
+      );
 
-  const handleNavigateToLeaderboard = () => {
-    navigate("/leaderboard");
-  };
+      if (existingIndex !== -1) {
+        dataList[existingIndex] = data;
+      } else {
+        dataList.push(data);
+      }
+
+      localStorage.setItem(
+        `dataList-${PlayTypeInfo[playType].up}${Version}`,
+        JSON.stringify(dataList)
+      );
+    },
+    [getDataList, playType]
+  );
 
   const openPriorGridsModal = () => {
     setArchiveOpen(true);
@@ -254,9 +256,12 @@ const GameBoardIndex = () => {
 
   useEffect(() => {
     if (gameSetting.createTime === 0) return;
-    localStorage.setItem(`Data${Version}`, JSON.stringify(gameSetting));
+    localStorage.setItem(
+      `Data-${PlayTypeInfo[playType].up}${Version}`,
+      JSON.stringify(gameSetting)
+    );
     saveDailyData(gameSetting);
-  }, [gameSetting, saveDailyData]);
+  }, [gameSetting, saveDailyData, playType]);
 
   useEffect(() => {
     if (gameSetting.playerList.length > 0 && targetItem) {
@@ -287,9 +292,9 @@ const GameBoardIndex = () => {
   }, [gameSetting.createTime, gameSetting.gameStartTime]);
 
   useEffect(() => {
-    dispatch(getCollegeList());
-    dispatch(getHistoryList(Number(timeStampParam)));
-  }, [dispatch, searchParams, timeStampParam]);
+    dispatch(getCollegeList({ playType }));
+    dispatch(getHistoryList({ timestamp: Number(timeStampParam), playType }));
+  }, [dispatch, searchParams, timeStampParam, playType]);
 
   useEffect(() => {
     if (gameSetting.endStatus) {
@@ -302,28 +307,6 @@ const GameBoardIndex = () => {
   return (
     <Box className={classes.gameBoard}>
       <Box className={classes.buttonContainer}>
-        {/* <Button
-          className={classes.summary}
-          variant="contained"
-          onClick={handleNavigateToLeaderboard}
-        >
-          <Box className={classes.leaderBoardIcon}>
-            <AssessmentIcon />
-          </Box>{" "}
-          <Box className={classes.onlyDesktop}>Summary Stats</Box>
-        </Button> */}
-
-        {/* <Button
-          className={classes.leaderBoard}
-          variant="contained"
-          onClick={handleNavigateToLeaderboard}
-        >
-          <Box className={classes.leaderBoardIcon}>
-            <LeaderboardIcon />
-          </Box>{" "}
-          <Box className={classes.onlyDesktop}>Prior grids</Box>
-        </Button> */}
-
         <Button
           className={classes.infoButton}
           variant="contained"
@@ -340,7 +323,7 @@ const GameBoardIndex = () => {
 
       <Box className={classes.middlePanel}>
         <Typography variant="h3" className={classes.gameTitle}>
-          AlumniGrid
+          AlumniGrid - {PlayTypeInfo[playType].up}
         </Typography>
         <Box className={classes.gridBox}>
           {isGettingHistory
@@ -373,7 +356,6 @@ const GameBoardIndex = () => {
                   onClick={() => selectItem(item)}
                   key={index}
                 >
-                  {/* <PersonIcon className={classes.personAva} /> */}
                   <Box className={classes.playerName}>
                     {item.firstname} {item.lastname}
                   </Box>
@@ -452,15 +434,18 @@ const GameBoardIndex = () => {
         open={answerOpen}
         itemId={targetItem?.playerId}
         handleOpenStatus={(answerOpen) => setAnswerOpen(answerOpen)}
+        playType={playType}
       />
       <SummaryModal
         open={summaryOpen}
         onClose={(summaryOpen) => setSummaryOpen(summaryOpen)}
         gameSetting={gameSetting}
+        playType={playType}
       />
       <ArchiveModal
         open={archiveOpen}
         onClose={(archiveOpen) => setArchiveOpen(archiveOpen)}
+        playType={playType}
       />
     </Box>
   );

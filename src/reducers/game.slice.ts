@@ -10,7 +10,6 @@ import {
   NFLAllPlayer,
   NFLPlayerOption,
 } from "../models/interface";
-import { json } from "stream/consumers";
 import { ActiveStatus, PlayType } from "../constant/const";
 
 export interface GameState {
@@ -73,9 +72,11 @@ const initialState: GameState = {
 
 export const getCollegeList = createAsyncThunk(
   "game/gettingCollegeList",
-  async (_, { rejectWithValue }) => {
+  async ({ playType }: { playType: PlayType }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${SERVER_URL}/game/colleges`);
+      const response = await axios.get(
+        `${SERVER_URL}/game/colleges/${playType}`
+      );
       return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -85,10 +86,13 @@ export const getCollegeList = createAsyncThunk(
 
 export const getHistoryList = createAsyncThunk(
   "game/getRandPlayerList",
-  async (timeStamp: number, { rejectWithValue }) => {
+  async (
+    { timestamp, playType }: { timestamp: number; playType: PlayType },
+    { rejectWithValue }
+  ) => {
     try {
       const response = await axios.get(
-        `${SERVER_URL}/history/timestamp/${timeStamp}`
+        `${SERVER_URL}/history/timestamp/${playType}/${timestamp}`
       );
       return response.data;
     } catch (err) {
@@ -99,9 +103,9 @@ export const getHistoryList = createAsyncThunk(
 
 export const getLeaderHistory = createAsyncThunk(
   "leaderboard/getAllLeaderHistory",
-  async (__dirname, { rejectWithValue }) => {
+  async ({ playType }: { playType: PlayType }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${SERVER_URL}/history/all`);
+      const response = await axios.get(`${SERVER_URL}/history/all/${playType}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -174,9 +178,9 @@ export const getNFLPlayerOptions = createAsyncThunk(
 
 export const getAllPlayers = createAsyncThunk(
   "game/getNBAAllPlayers",
-  async (_, { rejectWithValue }) => {
+  async ({ playType }: { playType: PlayType }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${SERVER_URL}/game/all/0`);
+      const response = await axios.get(`${SERVER_URL}/game/all/${playType}`);
       return response.data; // Assuming your API response is an array of players
     } catch (err) {
       return rejectWithValue(err.response.data);
@@ -269,8 +273,8 @@ export const gameSlice = createSlice({
             ({
               historyId: item.id,
               playerId: item.playerId,
-              firstname: item.NBAPlayer.firstName,
-              lastname: item.NBAPlayer.lastName,
+              firstname: item.NBAPlayer?.firstName || item.NFLPlayer?.firstName,
+              lastname: item.NBAPlayer?.lastName || item.NFLPlayer?.lastName,
               wrongStatus: [],
               rightStatus: "none",
             } as PlayerInfo)

@@ -1,11 +1,10 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button, Typography, Modal, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useStyles from "./styles";
 
 import CloseIcon from "@mui/icons-material/Close";
 
-import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -14,13 +13,16 @@ import { getLeaderHistory } from "../../reducers/game.slice";
 import { GameSetting } from "../../models/interface";
 import { convertPSTTime } from "../../utils/utils";
 import { Version } from "../../config/config";
+import { PlayType, PlayTypeInfo } from "../../constant/const";
 
 const ArchiveModal = ({
   open,
   onClose,
+  playType,
 }: {
   open: boolean;
   onClose: (summaryOpen: boolean) => void;
+  playType: PlayType;
 }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -32,8 +34,8 @@ const ArchiveModal = ({
   const { allLeaderHistory } = useAppSelector((state) => state.game);
 
   useEffect(() => {
-    dispatch(getLeaderHistory());
-  }, [dispatch]);
+    dispatch(getLeaderHistory({ playType }));
+  }, [dispatch, playType]);
 
   const combineData = allLeaderHistory
     .map((backendEntry) => {
@@ -50,37 +52,46 @@ const ArchiveModal = ({
     .sort((a, b) => b.timeStamp - a.timeStamp);
 
   const handleNavigation = (timeStamp: number) => {
-    navigate(`/game/nba?timestamp=${timeStamp}`);
+    navigate(`/game/${PlayTypeInfo[playType].lo}?timestamp=${timeStamp}`);
     onClose(false);
   };
 
   useEffect(() => {
     let data: GameSetting[] = [];
     try {
-      data = JSON.parse(localStorage.getItem(`dataList${Version}`)) || [];
+      data =
+        JSON.parse(
+          localStorage.getItem(
+            `dataList-${PlayTypeInfo[playType].up}${Version}`
+          )
+        ) || [];
     } catch (err) {}
 
     setDataList(data);
-  }, [open]);
+  }, [open, playType]);
 
   useEffect(() => {
     let data: GameSetting | null = null;
     try {
-      const storedData = localStorage.getItem(`Data${Version}`);
+      const storedData = localStorage.getItem(
+        `Data-${PlayTypeInfo[playType].up}${Version}`
+      );
       data = storedData ? JSON.parse(storedData) : null;
     } catch (error) {
       console.error("Error parsing local storage data:", error);
     }
 
     setCurrentData(data);
-  }, []);
+  }, [playType]);
 
   return (
     <Modal open={open} onClose={() => onClose(false)}>
       <Box className={classes.archiveModal}>
         <Box className={classes.archiveHeader}>
           <Box className={classes.titleBox}>
-            <Typography className={classes.archiveTitle}>ARCHIVE</Typography>
+            <Typography className={classes.archiveTitle}>
+              ARCHIVE - {PlayTypeInfo[playType].up}
+            </Typography>
           </Box>
 
           <IconButton

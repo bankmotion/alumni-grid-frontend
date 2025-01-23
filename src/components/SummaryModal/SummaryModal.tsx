@@ -1,20 +1,23 @@
 import useStyles from "./styles";
 import { Box, Modal, Typography, IconButton } from "@mui/material";
-import { GameSetting, PlayerInfo } from "../../models/interface";
+import { GameSetting } from "../../models/interface";
 
 import CloseIcon from "@mui/icons-material/Close";
 
 import SummaryGrid from "../SummaryGrid/SummaryGrid";
 import { convertPSTTime } from "../../utils/utils";
+import { PlayType, PlayTypeInfo } from "../../constant/const";
 
 const SummaryModal = ({
   open,
   onClose,
   gameSetting,
+  playType,
 }: {
   open: boolean;
   onClose: (summaryOpen: boolean) => void;
   gameSetting: GameSetting;
+  playType: PlayType;
 }) => {
   const { classes } = useStyles();
 
@@ -29,7 +32,7 @@ const SummaryModal = ({
           <CloseIcon />
         </IconButton>
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
-          Game Summary
+          Game Summary - {PlayTypeInfo[playType].up}
         </Typography>
         <Typography
           component={"span"}
@@ -38,7 +41,7 @@ const SummaryModal = ({
           AlumniGrid {convertPSTTime(gameSetting.createTime)}
         </Typography>
         <Typography>Score: {gameSetting.score}</Typography>
-        <SummaryGrid />
+        <SummaryGrid playType={playType} />
       </Box>
     </Modal>
   );

@@ -11,15 +11,13 @@ import {
   TableCell,
   TableHead,
   TableRow,
-  TextField,
-  TablePagination,
   TableContainer,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
 import useStyles from "./styles";
 import { NFLPlayerOption } from "../../models/interface";
-import { AppDispatch, RootState } from "../../app/store";
+import { AppDispatch } from "../../app/store";
 import { deletePlayerOption } from "../../reducers/game.slice";
 import { getNFLPlayerOptions } from "../../reducers/game.slice";
 

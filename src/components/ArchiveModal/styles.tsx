@@ -14,7 +14,7 @@ const styles = makeStyles()((theme: Theme) => ({
     color: theme.palette.getContrastText("#FFD60A"),
     borderRadius: "8px",
     boxShadow: "0px 4px 20px rgba(0, 0, 0, 0.3)",
-    padding: "0 32px 32px",
+    padding: "16px 32px 32px",
     width: "40%",
     height: "auto",
     textAlign: "center",

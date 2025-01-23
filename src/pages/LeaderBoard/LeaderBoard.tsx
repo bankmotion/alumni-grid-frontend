@@ -13,8 +13,9 @@ import { getLeaderHistory } from "../../reducers/game.slice";
 import { GameSetting } from "../../models/interface";
 import { convertPSTTime } from "../../utils/utils";
 import { Version } from "../../config/config";
+import { PlayType, PlayTypeInfo } from "../../constant/const";
 
-const LeaderBoard = () => {
+const LeaderBoard = ({ playType }: { playType: PlayType }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
 
@@ -26,8 +27,8 @@ const LeaderBoard = () => {
   const { allLeaderHistory } = useAppSelector((state) => state.game);
 
   useEffect(() => {
-    dispatch(getLeaderHistory());
-  }, [dispatch]);
+    dispatch(getLeaderHistory({ playType }));
+  }, [dispatch, playType]);
 
   const combineData = allLeaderHistory
     .map((backendEntry) => {
@@ -54,16 +55,23 @@ const LeaderBoard = () => {
   useEffect(() => {
     let data: GameSetting[] = [];
     try {
-      data = JSON.parse(localStorage.getItem(`dataList${Version}`)) || [];
+      data =
+        JSON.parse(
+          localStorage.getItem(
+            `dataList-${PlayTypeInfo[playType].up}${Version}`
+          )
+        ) || [];
     } catch (err) {}
 
     setDataList(data);
-  }, []);
+  }, [playType]);
 
   useEffect(() => {
     let data: GameSetting | null = null;
     try {
-      const storedData = localStorage.getItem(`Data${Version}`);
+      const storedData = localStorage.getItem(
+        `Data-${PlayTypeInfo[playType].up}${Version}`
+      );
       data = storedData ? JSON.parse(storedData) : null;
     } catch (error) {
       console.error("Error parsing local storage data:", error);

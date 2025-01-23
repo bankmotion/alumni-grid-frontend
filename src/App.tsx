@@ -1,4 +1,3 @@
-import React, { useEffect } from "react";
 import "./App.css";
 import { Route, Routes, BrowserRouter as Router } from "react-router-dom";
 
@@ -9,9 +8,9 @@ import { Provider } from "react-redux";
 import { store } from "./app/store";
 import AdminBoardNBA from "./pages/AdminBoardNBA/AdminBoardNBA";
 import AdminBoardNFL from "./pages/AdminBoardNFL/AdminBoardNFL";
+import { PlayType } from "./constant/const";
 
 function App() {
-
   return (
     <Provider store={store}>
       <div className="App">
@@ -19,11 +18,15 @@ function App() {
           <Routes>
             <Route path="/" element={<Landing />} />
 
-            <Route path="/game/nba" element={<GameBoardIndex />} />
+            <Route
+              path="/game/nba"
+              element={<GameBoardIndex playType={PlayType.NBA} />}
+            />
 
-            {/* <Route path="/game/:timeStamp" element={<GameBoardIndex />}/> */}
-
-            <Route path="/leaderboard" element={<LeaderBoard />} />
+            <Route
+              path="/game/nfl"
+              element={<GameBoardIndex playType={PlayType.NFL} />}
+            />
 
             <Route path="/adminboard/NBA" element={<AdminBoardNBA />} />
 

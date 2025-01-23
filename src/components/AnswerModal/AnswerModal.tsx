@@ -4,15 +4,18 @@ import { Box, Modal, Typography, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import useStyles from "./styles";
 import { SERVER_URL } from "../../config/config";
+import { PlayType } from "../../constant/const";
 
 const AnswerModal = ({
   open,
   itemId,
   handleOpenStatus,
+  playType,
 }: {
   open: boolean;
   itemId: number;
   handleOpenStatus: (answerOpen: boolean) => void;
+  playType: PlayType;
 }) => {
   const { classes } = useStyles();
   const [collegeName, setCollegeName] = useState<string>("none");
@@ -21,7 +24,9 @@ const AnswerModal = ({
     if (open && itemId) {
       (async () => {
         try {
-          const response = await axios.get(`${SERVER_URL}/game/${itemId}`);
+          const response = await axios.get(
+            `${SERVER_URL}/game/answer/${playType}/${itemId}`
+          );
           console.log("data", response.data.data.college);
           setCollegeName(response.data.data.college);
         } catch (error) {
@@ -29,7 +34,7 @@ const AnswerModal = ({
         }
       })();
     }
-  }, [open, itemId]);
+  }, [open, itemId, playType]);
 
   useEffect(() => {
     if (!open) {

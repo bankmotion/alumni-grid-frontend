@@ -183,7 +183,7 @@ const AdminBoardNBA = () => {
   }, [selectedCountry, draftYear, position, allPlayerList]);
 
   useEffect(() => {
-    dispatch(getAllPlayers());
+    dispatch(getAllPlayers({ playType: PlayType.NBA }));
   }, [dispatch]);
 
   return (

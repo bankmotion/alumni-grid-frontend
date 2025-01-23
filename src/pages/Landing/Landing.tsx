@@ -1,12 +1,17 @@
 import { Box, Button, Typography } from "@mui/material";
 import useStyles from "./styles";
 import { useNavigate } from "react-router-dom";
+import { PlayType } from "../../constant/const";
 
 const Landing = () => {
   const { classes } = useStyles();
   const navigate = useNavigate();
-  const handleStartGame = () => {
-    navigate("/game/nba");
+  const handleStartGame = (playType: PlayType) => {
+    if (playType === PlayType.NBA) {
+      navigate("/game/nba");
+    } else if (playType === PlayType.NFL) {
+      navigate("/game/nfl");
+    }
   };
 
   return (
@@ -51,14 +56,28 @@ const Landing = () => {
             at this time. Stay tuned…
           </strong>
         </Box>
-        <Button
-          variant="contained"
-          color="primary"
-          className={classes.startButton}
-          onClick={handleStartGame}
-        >
-          Start Game
-        </Button>
+        <Box className={classes.buttonGroup}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.nbaButton}
+            onClick={() => {
+              handleStartGame(PlayType.NBA);
+            }}
+          >
+            Start NBA
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.nflButton}
+            onClick={() => {
+              handleStartGame(PlayType.NFL);
+            }}
+          >
+            Start NFL
+          </Button>
+        </Box>
       </Box>
     </Box>
   );

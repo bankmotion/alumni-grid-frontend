@@ -56,7 +56,14 @@ const styles = makeStyles()((theme: Theme) => ({
       padding: "0 10px",
     },
   },
-  startButton: {
+
+  buttonGroup: {
+    display: "flex",
+    gap: "16px",
+    justifyContent: "center",
+  },
+
+  nbaButton: {
     fontWeight: "bold",
     borderRadius: "8px",
     backgroundColor: "#FF4F00",
@@ -65,6 +72,22 @@ const styles = makeStyles()((theme: Theme) => ({
     padding: "12px 24px",
     "&:hover": {
       backgroundColor: "#FF6F20",
+    },
+    [theme.breakpoints.down("sm")]: {
+      padding: "8px 16px",
+      fontSize: "clamp(0.8rem, 1vw, 1.1rem)",
+    },
+  },
+
+  nflButton: {
+    fontWeight: "bold",
+    borderRadius: "8px",
+    backgroundColor: "#044e5d",
+    color: "#fff",
+    fontSize: "1.1rem",
+    padding: "12px 24px",
+    "&:hover": {
+      backgroundColor: "#056376",
     },
     [theme.breakpoints.down("sm")]: {
       padding: "8px 16px",

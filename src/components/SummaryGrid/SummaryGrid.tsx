@@ -8,8 +8,9 @@ import "toastify-js/src/toastify.css";
 import { Version } from "../../config/config";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getLeaderHistory } from "../../reducers/game.slice";
+import { PlayType, PlayTypeInfo } from "../../constant/const";
 
-const SummaryGrid = () => {
+const SummaryGrid = ({ playType }: { playType: PlayType }) => {
   const { classes } = useStyles();
   const dispatch = useAppDispatch();
 
@@ -32,15 +33,15 @@ const SummaryGrid = () => {
       .join("\n");
 
     const text =
-      `🏀 Alumni Grid \n` +
+      `🏀 Alumni Grid - ${PlayTypeInfo[playType].up} \n` +
       ` Score: ${currentData.score}\n` +
       `${gridVisualization}\n` +
       ` Play at:\n` +
       ` ` +
-      `https://alumnigrid.com/game/nba`.trim();
+      `https://alumnigrid.com/game/${PlayTypeInfo[playType].lo}`.trim();
 
     setShareText(text);
-  }, [currentData]);
+  }, [currentData, playType]);
 
   const copyToClipboard = () => {
     navigator.clipboard
@@ -79,18 +80,20 @@ const SummaryGrid = () => {
   useEffect(() => {
     let data: GameSetting | null = null;
     try {
-      const storedData = localStorage.getItem(`Data${Version}`);
+      const storedData = localStorage.getItem(
+        `Data-${PlayTypeInfo[playType].up}${Version}`
+      );
       data = storedData ? JSON.parse(storedData) : null;
     } catch (error) {
       console.error("Error parsing local storage data:", error);
     }
 
     setCurrentData(data);
-  }, []);
+  }, [playType]);
 
   useEffect(() => {
-    dispatch(getLeaderHistory());
-  }, [dispatch]);
+    dispatch(getLeaderHistory({ playType }));
+  }, [dispatch, playType]);
 
   useEffect(() => {
     generateShareableText();
