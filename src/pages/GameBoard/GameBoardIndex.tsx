@@ -14,7 +14,11 @@ import ArchiveModal from "../../components/ArchiveModal/ArchiveModal";
 import useStyles from "./styles";
 import { GameSetting, PlayerInfo } from "../../models/interface";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { getCollegeList, getHistoryList } from "../../reducers/game.slice";
+import {
+  getCollegeList,
+  getHistoryList,
+  setHistory,
+} from "../../reducers/game.slice";
 import {
   DECREASE_TIME,
   DURATION_TIME,
@@ -114,7 +118,7 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
         setIsConfirming(false);
       }
     },
-    [spentTime, targetItem]
+    [spentTime, targetItem, playType, timeStampParam]
   );
 
   const loadDataFromLocalStorage = useCallback(() => {
@@ -301,6 +305,13 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
       setSummaryOpen(false);
     }
   }, [gameSetting.endStatus, gameSetting.createTime]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(setHistory());
+      // localStorage.setItem(`Data-${PlayTypeInfo[playType].up}${Version}`, "");
+    };
+  }, [dispatch]);
 
   return (
     <Box

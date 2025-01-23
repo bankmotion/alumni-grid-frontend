@@ -213,7 +213,14 @@ export const updateActiveStatus = createAsyncThunk(
 export const gameSlice = createSlice({
   name: "game",
   initialState,
-  reducers: {},
+  reducers: {
+    setHistory: (state) => {
+      state.history = {
+        items: [],
+        startTimestamp: 0,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getCollegeList.pending, (state) => {
       state.isGettingCollegeList = true;
@@ -356,6 +363,6 @@ export const gameSlice = createSlice({
   },
 });
 
-export const {} = gameSlice.actions;
+export const { setHistory } = gameSlice.actions;
 
 export default gameSlice.reducer;
