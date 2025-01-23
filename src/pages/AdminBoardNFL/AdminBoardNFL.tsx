@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import {
   FormControl,
   InputLabel,
@@ -11,36 +11,33 @@ import {
   Grid,
   Box,
   TextField,
-  IconButton,
   CircularProgress,
+  ButtonGroup,
 } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
-import { SelectChangeEvent } from "@mui/material";
-import { Tooltip } from "@mui/material";
 import {
   getNFLAllPlayers,
-  saveNFLPlayerOptions,
-  getNFLPlayerOptions,
+  getPlayerOptions,
+  savePlayerOptions,
 } from "../../reducers/game.slice";
+import Toastify from "toastify-js";
 
 import useStyles from "./styles";
 
-import { AppDispatch, RootState } from "../../app/store";
+import { RootState } from "../../app/store";
 import NFLConfirmationModal from "../../components/NFLConfirmationModal/NFLConfirmationModal";
 import NFLOptionTableContainer from "../../components/NFLOptionTableContainer/NFLOptionTableContainer";
 import NFLPlayerTableContainer from "../../components/NFLPlayerTableContainer/NFLPlayerTableContainer";
-import { NFLPlayerOption } from "../../models/interface";
 import { NFLPositions } from "../../config/config";
+import { ActiveStatus, PlayType } from "../../constant/const";
+import { useAppDispatch } from "../../app/hooks";
+import { NFLAllPlayer, PlayerOption } from "../../models/interface";
 
 const AdminBoardNFL = () => {
   const { classes } = useStyles();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
-  const { isSavingOptions, saveOptions } = useSelector(
-    (state: RootState) => state.game
-  );
-  const { NFLAllPlayerList, NFLOptionList } = useSelector(
+  const { isSavingOptions } = useSelector((state: RootState) => state.game);
+  const { NFLAllPlayerList, optionList } = useSelector(
     (state: RootState) => state.game
   );
 
@@ -49,36 +46,149 @@ const AdminBoardNFL = () => {
   const [ageTo, setAgeTo] = useState<number>(0);
   const [position, setPosition] = useState<string>("");
 
-  const [toggleState, setToggleState] = useState<boolean>(false);
-
   const [dialogOpen, setDialogOpen] = useState(false);
   const [optionedPlayersCount, setOptionedPlayersCount] = useState(0);
 
   const [filteredPlayers, setFilteredPlayers] = useState(NFLAllPlayerList);
+  const [activeViewId, setActiveViewId] = useState<number | null>(null);
+  const [page, setPage] = useState(0);
 
-  // const [savedOptions, setSavedOptions] = useState<PlayerOption[]>([]);
+  const [statusFilter, setStatusFilter] = useState<
+    "All" | "Active" | "Inactive" | "Selected" | "Deselected" | "None"
+  >("All");
 
   const handleFilterPlayers = () => {
     dispatch(
-      saveNFLPlayerOptions({
-        position: position,
-        experience: experience,
-        ageFrom: ageFrom,
-        ageTo: ageTo,
+      savePlayerOptions({
+        filters: {
+          position: position,
+          experience: experience,
+          ageFrom: ageFrom,
+          ageTo: ageTo,
+        },
+        playType: PlayType.NFL,
       })
     ).then(() => {
-      dispatch(getNFLPlayerOptions());
+      dispatch(getPlayerOptions({ playType: PlayType.NFL }));
     });
 
     setDialogOpen(false);
-    //dispatch(getPlayerOptions());
+  };
+
+  const isMatchForPlayerOption = (
+    player: NFLAllPlayer,
+    option: PlayerOption
+  ) => {
+    const positionMatch =
+      option.position === "-1" || player.position === option.position;
+    const experienceMatch = player.experience >= option.experience;
+    const ageFromMatch = player.age >= option.ageFrom;
+    const ageToMatch = player.age <= option.ageTo;
+
+    return positionMatch && experienceMatch && ageFromMatch && ageToMatch;
+  };
+
+  const handleViewFilteredPlayers = (option: PlayerOption) => {
+    const filtered = NFLAllPlayerList.filter((player) =>
+      isMatchForPlayerOption(player, option)
+    );
+
+    if (filtered.length === 0) {
+      Toastify({
+        text: "No data matches the selected options!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+      }).showToast();
+    }
+
+    setFilteredPlayers(filtered);
   };
 
   useEffect(() => {
-    dispatch(getNFLPlayerOptions());
+    if (statusFilter === "None") return;
+
+    if (statusFilter === "All") setFilteredPlayers(NFLAllPlayerList);
+
+    if (statusFilter === "Active") {
+      setFilteredPlayers(
+        NFLAllPlayerList.filter(
+          (player) =>
+            (optionList.some((option) =>
+              isMatchForPlayerOption(player, option)
+            ) &&
+              player.active !== ActiveStatus.Inactived) ||
+            player.active === ActiveStatus.Actived
+        )
+      );
+    }
+
+    if (statusFilter === "Inactive") {
+      setFilteredPlayers(
+        NFLAllPlayerList.filter(
+          (player) =>
+            (optionList.every(
+              (option) => !isMatchForPlayerOption(player, option)
+            ) &&
+              player.active !== ActiveStatus.Actived) ||
+            player.active === ActiveStatus.Inactived
+        )
+      );
+    }
+
+    if (statusFilter === "Selected") {
+      setFilteredPlayers(
+        NFLAllPlayerList.filter(
+          (player) => player.active === ActiveStatus.Actived
+        )
+      );
+    }
+
+    if (statusFilter === "Deselected") {
+      setFilteredPlayers(
+        NFLAllPlayerList.filter(
+          (player) => player.active === ActiveStatus.Inactived
+        )
+      );
+    }
+  }, [statusFilter, NFLAllPlayerList, optionList]);
+
+  useEffect(() => {
+    setOptionedPlayersCount(
+      NFLAllPlayerList.filter((player) =>
+        isMatchForPlayerOption(player, {
+          experience,
+          ageFrom,
+          ageTo,
+          position,
+        } as PlayerOption)
+      ).length
+    );
+  }, [experience, ageFrom, ageTo, position, NFLAllPlayerList]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [statusFilter, activeViewId]);
+
+  useEffect(() => {
+    dispatch(getPlayerOptions({ playType: PlayType.NFL }));
   }, [dispatch]);
 
   const handleSaveOption = () => {
+    if (!position || experience === "" || !ageFrom || !ageTo) {
+      Toastify({
+        text: "Please select all options!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+      }).showToast();
+      return;
+    }
+
     setDialogOpen(true);
   };
 
@@ -88,7 +198,7 @@ const AdminBoardNFL = () => {
 
   useEffect(() => {
     dispatch(getNFLAllPlayers());
-  }, []);
+  }, [dispatch]);
 
   return (
     <Paper className={classes.adminBoard}>
@@ -147,7 +257,6 @@ const AdminBoardNFL = () => {
           />
         </Grid>
 
-        {/* Experience Input */}
         <Grid item xs={12} md={3}>
           <Typography
             variant="subtitle1"
@@ -218,12 +327,72 @@ const AdminBoardNFL = () => {
         </Typography>
 
         <NFLOptionTableContainer
-          savedOptions={NFLOptionList}
-          //onViewFilteredPlayers={handleViewFilteredPlayers}
+          savedOptions={optionList}
+          onViewFilteredPlayers={handleViewFilteredPlayers}
+          setStatusFilter={setStatusFilter}
+          activeViewId={activeViewId}
+          setActiveViewId={setActiveViewId}
         />
       </Box>
 
-      <NFLPlayerTableContainer NFLAllPlayerList={NFLAllPlayerList} />
+      <ButtonGroup variant="contained" style={{ marginTop: "20px" }}>
+        <Button
+          variant={statusFilter === "All" ? "contained" : "outlined"}
+          color={statusFilter === "All" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("All");
+            setActiveViewId(null);
+          }}
+        >
+          All Players
+        </Button>
+        <Button
+          variant={statusFilter === "Active" ? "contained" : "outlined"}
+          color={statusFilter === "Active" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("Active");
+            setActiveViewId(null);
+          }}
+        >
+          Actived
+        </Button>
+        <Button
+          variant={statusFilter === "Inactive" ? "contained" : "outlined"}
+          color={statusFilter === "Inactive" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("Inactive");
+            setActiveViewId(null);
+          }}
+        >
+          Inactived
+        </Button>
+        <Button
+          variant={statusFilter === "Selected" ? "contained" : "outlined"}
+          color={statusFilter === "Selected" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("Selected");
+            setActiveViewId(null);
+          }}
+        >
+          Selected
+        </Button>
+        <Button
+          variant={statusFilter === "Deselected" ? "contained" : "outlined"}
+          color={statusFilter === "Deselected" ? "primary" : "inherit"}
+          onClick={() => {
+            setStatusFilter("Deselected");
+            setActiveViewId(null);
+          }}
+        >
+          Deselected
+        </Button>
+      </ButtonGroup>
+
+      <NFLPlayerTableContainer
+        viewedPlayers={filteredPlayers}
+        page={page}
+        setPage={setPage}
+      />
 
       <NFLConfirmationModal
         open={dialogOpen}

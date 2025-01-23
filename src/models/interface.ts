@@ -71,18 +71,12 @@ export interface NFLAllPlayer {
   active: number;
 }
 export interface PlayerOption {
-  id: number;
-  position: string;
-  country: string;
-  draft: number;
-  // college: string;
-  isActive: boolean;
-}
-
-export interface NFLPlayerOption {
-  id: number;
-  position: string;
-  experience: string;
-  ageFrom: number;
-  ageTo: number;
+  id?: number;
+  position?: string;
+  country?: string;
+  draft?: number;
+  isActive?: boolean;
+  experience?: string;
+  ageFrom?: number;
+  ageTo?: number;
 }

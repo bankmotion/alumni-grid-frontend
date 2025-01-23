@@ -8,7 +8,6 @@ import {
   AllPlayer,
   PlayerOption,
   NFLAllPlayer,
-  NFLPlayerOption,
 } from "../models/interface";
 import { ActiveStatus, PlayType } from "../constant/const";
 
@@ -37,7 +36,6 @@ export interface GameState {
 
   optionList: PlayerOption[];
 
-  NFLOptionList: NFLPlayerOption[];
   isUpdateActiveStatus: boolean;
 }
 
@@ -66,7 +64,6 @@ const initialState: GameState = {
 
   optionList: [],
 
-  NFLOptionList: [],
   isUpdateActiveStatus: false,
 };
 
@@ -116,35 +113,27 @@ export const getLeaderHistory = createAsyncThunk(
 export const savePlayerOptions = createAsyncThunk(
   "game/savePlayerOptions",
   async (
-    filters: {
-      position: string;
-      country: string;
-      draft: number;
+    {
+      filters,
+      playType,
+    }: {
+      filters: {
+        position?: string;
+        country?: string;
+        draft?: number;
+        experience?: string;
+        ageFrom?: number;
+        ageTo?: number;
+      };
+      playType: PlayType;
     },
     { rejectWithValue }
   ) => {
     try {
-      const response = await axios.post(`${SERVER_URL}/admin/0`, filters);
-      return response.status;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const saveNFLPlayerOptions = createAsyncThunk(
-  "game/saveNFLPlayerOptions",
-  async (
-    filters: {
-      position: string;
-      experience: string;
-      ageFrom: number;
-      ageTo: number;
-    },
-    { rejectWithValue }
-  ) => {
-    try {
-      const response = await axios.post(`${SERVER_URL}/admin/1`, filters);
+      const response = await axios.post(
+        `${SERVER_URL}/admin/${playType}`,
+        filters
+      );
       return response.status;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -153,35 +142,25 @@ export const saveNFLPlayerOptions = createAsyncThunk(
 );
 
 export const getPlayerOptions = createAsyncThunk(
-  "game/getNBAOptionList",
-  async ({ playerType }: { playerType: PlayType }, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${SERVER_URL}/admin/${playerType}`);
-      return response.data; // Assuming your API response is an array of players
-    } catch (err) {
-      return rejectWithValue(err.response.data);
-    }
-  }
-);
-
-export const getNFLPlayerOptions = createAsyncThunk(
-  "game/getNFLOptionList",
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await axios.get(`${SERVER_URL}/admin/1`);
-      return response.data; // Assuming your API response is an array of players
-    } catch (err) {
-      return rejectWithValue(err.response.data);
-    }
-  }
-);
-
-export const getAllPlayers = createAsyncThunk(
-  "game/getNBAAllPlayers",
+  "game/getOptionList",
   async ({ playType }: { playType: PlayType }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${SERVER_URL}/game/all/${playType}`);
-      return response.data; // Assuming your API response is an array of players
+      const response = await axios.get(`${SERVER_URL}/admin/${playType}`);
+      return response.data;
+    } catch (err) {
+      return rejectWithValue(err.response.data);
+    }
+  }
+);
+
+export const getNBAAllPlayers = createAsyncThunk(
+  "game/getNBAAllPlayers",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await axios.get(
+        `${SERVER_URL}/game/all/${PlayType.NBA}`
+      );
+      return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
@@ -192,8 +171,10 @@ export const getNFLAllPlayers = createAsyncThunk(
   "game/getNFLAllPlayers",
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`${SERVER_URL}/game/all/1`);
-      return response.data; // Assuming your API response is an array of players
+      const response = await axios.get(
+        `${SERVER_URL}/game/all/${PlayType.NFL}`
+      );
+      return response.data;
     } catch (err) {
       return rejectWithValue(err.response.data);
     }
@@ -202,21 +183,9 @@ export const getNFLAllPlayers = createAsyncThunk(
 
 export const deletePlayerOption = createAsyncThunk(
   "game/NBAdeletePlayerOption",
-  async (id: number, { rejectWithValue }) => {
+  async ({ id, type }: { id: number; type: PlayType }, { rejectWithValue }) => {
     try {
-      await axios.delete(`${SERVER_URL}/admin/${id}`);
-      return id;
-    } catch (error) {
-      return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const deleteNFLPlayerOption = createAsyncThunk(
-  "game/NFLdeletePlayerOption",
-  async (id: number, { rejectWithValue }) => {
-    try {
-      await axios.delete(`${SERVER_URL}/admin/${id}`);
+      await axios.delete(`${SERVER_URL}/admin/${id}/${type}`);
       return id;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -291,14 +260,6 @@ export const gameSlice = createSlice({
     });
     builder.addCase(getLeaderHistory.fulfilled, (state, { payload }) => {
       state.isGettingAllLeaderHistory = false;
-      // state.allLeaderHistory = payload.data.map((historyItem: any) => ({
-      //   players: historyItem.players.map((player: any) => ({
-      //     id: player.id,
-      //     firstName: player.firstName,
-      //     lastName: player.lastName,
-      //   })),
-      //   timeStamp: historyItem.timestamp,
-      // }));
       state.allLeaderHistory = payload.data.map(
         (historyItem: any) =>
           ({
@@ -313,15 +274,15 @@ export const gameSlice = createSlice({
       state.isGettingAllLeaderHistory = false;
     });
 
-    builder.addCase(getAllPlayers.pending, (state) => {
+    builder.addCase(getNBAAllPlayers.pending, (state) => {
       state.isFetchingPlayers = true;
       state.allPlayerList = [];
     });
-    builder.addCase(getAllPlayers.fulfilled, (state, { payload }) => {
+    builder.addCase(getNBAAllPlayers.fulfilled, (state, { payload }) => {
       state.isFetchingPlayers = false;
       state.allPlayerList = payload.data;
     });
-    builder.addCase(getAllPlayers.rejected, (state, { payload }) => {
+    builder.addCase(getNBAAllPlayers.rejected, (state, { payload }) => {
       state.isFetchingPlayers = false;
       state.errorFetchingPlayers = payload as string;
     });
@@ -346,7 +307,6 @@ export const gameSlice = createSlice({
       })
       .addCase(savePlayerOptions.fulfilled, (state, { payload }) => {
         state.isSavingOptions = false;
-        console.log(payload);
       })
       .addCase(savePlayerOptions.rejected, (state, { payload }) => {
         state.isSavingOptions = false;
@@ -357,36 +317,21 @@ export const gameSlice = createSlice({
       state.optionList = [];
     });
     builder.addCase(getPlayerOptions.fulfilled, (state, { payload }) => {
-      state.optionList = payload.data.map((item) => {
+      state.optionList = payload.data.map((item: any) => {
         const jsondata = JSON.parse(item.setting);
         return {
-          id: item.id,
-          position: jsondata.position,
-          country: jsondata.country,
-          draft: jsondata.draft,
-          college: jsondata.college,
+          id: item?.id,
+          position: jsondata?.position,
+          country: jsondata?.country,
+          draft: jsondata?.draft,
+          college: jsondata?.college,
+          experience: Number(jsondata?.experience) || 0,
+          ageTo: jsondata?.ageTo,
+          ageFrom: jsondata?.ageFrom,
         };
       });
     });
     builder.addCase(getPlayerOptions.rejected, (state, { payload }) => {
-      console.error("Failed to get option:", payload);
-    });
-
-    builder.addCase(getNFLPlayerOptions.pending, (state) => {
-      state.NFLOptionList = [];
-    });
-    builder.addCase(getNFLPlayerOptions.fulfilled, (state, { payload }) => {
-      state.NFLOptionList = payload.data.map((item) => {
-        const jsondata = JSON.parse(item.setting);
-        return {
-          id: item.id,
-          position: jsondata.position,
-          age: jsondata.age,
-          experience: jsondata.experience,
-        };
-      });
-    });
-    builder.addCase(getNFLPlayerOptions.rejected, (state, { payload }) => {
       console.error("Failed to get option:", payload);
     });
 

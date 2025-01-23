@@ -15,7 +15,10 @@ import useStyles from "./styles";
 import { AllPlayer } from "../../models/interface";
 import { ActiveStatus, PlayType } from "../../constant/const";
 import { useAppDispatch } from "../../app/hooks";
-import { getAllPlayers, updateActiveStatus } from "../../reducers/game.slice";
+import {
+  getNBAAllPlayers,
+  updateActiveStatus,
+} from "../../reducers/game.slice";
 
 interface NBAPlayerTableContainerProps {
   viewedPlayers: AllPlayer[];
@@ -81,7 +84,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
     dispatch(updateActiveStatus({ type: PlayType.NBA, id, active }))
       .unwrap()
       .then(() => {
-        dispatch(getAllPlayers({ playType: PlayType.NBA }));
+        dispatch(getNBAAllPlayers());
       });
   };
 

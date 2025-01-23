@@ -1,11 +1,8 @@
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 import {
-  Paper,
-  Box,
   Button,
-  ButtonGroup,
   Table,
   TableBody,
   TableCell,
@@ -15,32 +12,42 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 
-import useStyles from "./styles";
-import { NFLPlayerOption } from "../../models/interface";
-import { AppDispatch } from "../../app/store";
-import { deletePlayerOption } from "../../reducers/game.slice";
-import { getNFLPlayerOptions } from "../../reducers/game.slice";
+import {
+  deletePlayerOption,
+  getPlayerOptions,
+} from "../../reducers/game.slice";
+import { PlayType } from "../../constant/const";
+import { useAppDispatch } from "../../app/hooks";
+import { PlayerOption } from "../../models/interface";
 
 interface NFLPlayerTableContainerProps {
-  savedOptions: NFLPlayerOption[];
-  //onViewFilteredPlayers: (option: PlayerOption) => void;
+  savedOptions: PlayerOption[];
+  onViewFilteredPlayers: (option: PlayerOption) => void;
+  setStatusFilter: (
+    statusFilter: "All" | "Active" | "Inactive" | "None"
+  ) => void;
+  activeViewId: number | null;
+  setActiveViewId: (activeViewId: number | null) => void;
 }
 const NFLOptionTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
   savedOptions,
-  //onViewFilteredPlayers,
+  onViewFilteredPlayers,
+  setStatusFilter,
+  activeViewId,
+  setActiveViewId,
 }) => {
-  console.log("savedOption", savedOptions);
-  const { classes } = useStyles();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const handleDeleteOption = (id: number) => {
-    dispatch(deletePlayerOption(id)).then(() => {
-      dispatch(getNFLPlayerOptions());
-    });
+    dispatch(deletePlayerOption({ id, type: PlayType.NFL }))
+      .unwrap()
+      .then(() => {
+        dispatch(getPlayerOptions({ playType: PlayType.NFL }));
+      });
   };
 
   useEffect(() => {
-    dispatch(getNFLPlayerOptions());
+    dispatch(getPlayerOptions({ playType: PlayType.NFL }));
   }, [dispatch]);
 
   return (
@@ -63,15 +70,23 @@ const NFLOptionTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
           ) : (
             savedOptions.map((option, index) => (
               <TableRow key={option.id}>
-                <TableCell>{option.position}</TableCell>
-                <TableCell>{option.experience}</TableCell>
+                <TableCell>
+                  {option.position === "-1" ? "All" : option.position}
+                </TableCell>
+                <TableCell>{option.experience} year</TableCell>
                 <TableCell>{option.ageFrom}</TableCell>
                 <TableCell>{option.ageTo}</TableCell>
                 <TableCell>
                   <Button
-                    variant="outlined"
-                    color="primary"
-                    //onClick={() => onViewFilteredPlayers(option)}
+                    variant={
+                      activeViewId === option.id ? "contained" : "outlined"
+                    }
+                    color={activeViewId === option.id ? "primary" : "inherit"}
+                    onClick={() => {
+                      setActiveViewId(option.id);
+                      onViewFilteredPlayers(option);
+                      setStatusFilter("None");
+                    }}
                   >
                     View
                   </Button>

@@ -1,9 +1,7 @@
 import { useState } from "react";
 import {
-  Paper,
   Box,
   Button,
-  ButtonGroup,
   Table,
   TableBody,
   TableCell,
@@ -15,18 +13,26 @@ import {
 } from "@mui/material";
 import useStyles from "./styles";
 import { NFLAllPlayer } from "../../models/interface";
+import { ActiveStatus, PlayType } from "../../constant/const";
+import {
+  getNFLAllPlayers,
+  updateActiveStatus,
+} from "../../reducers/game.slice";
+import { useAppDispatch } from "../../app/hooks";
 
 interface NFLPlayerTableContainerProps {
-  NFLAllPlayerList: NFLAllPlayer[]; // Expect an array of AllPlayer type
+  viewedPlayers: NFLAllPlayer[];
+  page: number;
+  setPage: (page: number) => void;
 }
 
 const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
-  NFLAllPlayerList,
+  viewedPlayers,
+  page,
+  setPage,
 }) => {
-  console.log("");
   const { classes } = useStyles();
-
-  const [page, setPage] = useState(0);
+  const dispatch = useAppDispatch();
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -37,34 +43,34 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
   const [experienceFilter, setExperienceFilter] = useState("");
   const [ageFilter, setAgeFilter] = useState("");
 
-  const [statusFilter, setStatusFilter] = useState<
-    "All" | "Active" | "Inactive"
-  >("All");
+  const filterPlayers = (playerList: NFLAllPlayer[]) => {
+    return playerList.filter((player) => {
+      return (
+        (idFilter === "" || player.id.toString().includes(idFilter)) &&
+        (firstNameFilter === "" ||
+          player.firstName
+            .toLowerCase()
+            .includes(firstNameFilter.toLowerCase())) &&
+        (lastNameFilter === "" ||
+          player.lastName
+            .toLowerCase()
+            .includes(lastNameFilter.toLowerCase())) &&
+        (positionFilter === "" ||
+          player.position
+            .toLowerCase()
+            .includes(positionFilter.toLowerCase())) &&
+        (experienceFilter === "" ||
+          player?.experience?.toString()?.includes(experienceFilter)) &&
+        (ageFilter === "" ||
+          player?.age
+            ?.toString()
+            .toLowerCase()
+            ?.includes(ageFilter.toLowerCase()))
+      );
+    });
+  };
 
-  //   const filteredPlayers = players.filter((player) => {
-  //     if (statusFilter === "Active") return player.isActive;
-  //     if (statusFilter === "Inactive") return !player.isActive;
-  //     return true;
-  //   });
-
-  const searchedPlayers = NFLAllPlayerList.filter((player) => {
-    return (
-      (idFilter === "" || player.id.toString().includes(idFilter)) &&
-      (firstNameFilter === "" ||
-        player.firstName
-          .toLowerCase()
-          .includes(firstNameFilter.toLowerCase())) &&
-      (lastNameFilter === "" ||
-        player.lastName.toLowerCase().includes(lastNameFilter.toLowerCase())) &&
-      (positionFilter === "" ||
-        player.position.toLowerCase().includes(positionFilter.toLowerCase())) &&
-      (ageFilter === "" || player.age.toString().includes(ageFilter)) &&
-      (experienceFilter === "" ||
-        player.experience
-          .toLowerCase()
-          .includes(experienceFilter.toLowerCase()))
-    );
-  });
+  const viewFilteredPlayers = filterPlayers(viewedPlayers);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -77,29 +83,72 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
     setPage(0);
   };
 
+  const handleUpdateActive = (id: number, active: ActiveStatus) => {
+    dispatch(updateActiveStatus({ type: PlayType.NFL, id, active }))
+      .unwrap()
+      .then(() => {
+        dispatch(getNFLAllPlayers());
+      });
+  };
+
+  const renderButtonGroup = (player: NFLAllPlayer) => {
+    return player.active === ActiveStatus.Actived ? (
+      <>
+        <Button
+          variant={"contained"}
+          color={"info"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Inactived)}
+        >
+          Deselect
+        </Button>
+        <Button
+          variant={"outlined"}
+          color={"primary"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Canceled)}
+        >
+          Cancel
+        </Button>
+      </>
+    ) : player.active === ActiveStatus.Inactived ? (
+      <>
+        <Button
+          variant={"contained"}
+          color={"primary"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Actived)}
+        >
+          Select
+        </Button>
+        <Button
+          variant={"outlined"}
+          color={"primary"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Canceled)}
+        >
+          Cancel
+        </Button>
+      </>
+    ) : (
+      <>
+        <Button
+          variant={"contained"}
+          color={"primary"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Actived)}
+        >
+          Select
+        </Button>
+        <Button
+          variant={"contained"}
+          color={"info"}
+          onClick={() => handleUpdateActive(player.id, ActiveStatus.Inactived)}
+        >
+          Deselect
+        </Button>
+      </>
+    );
+  };
+
   return (
     <Box>
       <TableContainer className={classes.tableContainer}>
-        <ButtonGroup variant="contained" style={{ marginTop: "20px" }}>
-          <Button
-            variant={statusFilter === "All" ? "contained" : "outlined"}
-            onClick={() => setStatusFilter("All")}
-          >
-            All
-          </Button>
-          <Button
-            variant={statusFilter === "Active" ? "contained" : "outlined"}
-            onClick={() => setStatusFilter("Active")}
-          >
-            Active
-          </Button>
-          <Button
-            variant={statusFilter === "Inactive" ? "contained" : "outlined"}
-            onClick={() => setStatusFilter("Inactive")}
-          >
-            Inactive
-          </Button>
-        </ButtonGroup>
         <Table>
           <TableHead>
             <TableRow>
@@ -109,6 +158,7 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
               <TableCell>Position</TableCell>
               <TableCell>Experience</TableCell>
               <TableCell>Age</TableCell>
+              <TableCell>Select</TableCell>
             </TableRow>
             <TableRow>
               <TableCell>
@@ -165,10 +215,11 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
                   onChange={(e) => setAgeFilter(e.target.value)}
                 />
               </TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {searchedPlayers
+            {viewFilteredPlayers
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((player) => (
                 <TableRow key={player.id}>
@@ -178,6 +229,9 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
                   <TableCell>{player.position}</TableCell>
                   <TableCell>{player.experience}</TableCell>
                   <TableCell>{player.age}</TableCell>
+                  <TableCell sx={{ display: "flex", gap: 1 }}>
+                    {renderButtonGroup(player)}
+                  </TableCell>
                 </TableRow>
               ))}
           </TableBody>
@@ -186,7 +240,7 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
-            count={NFLAllPlayerList.length}
+            count={viewFilteredPlayers.length}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

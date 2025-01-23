@@ -38,8 +38,6 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
       ? Number(searchParams.get("timestamp"))
       : Math.floor(new Date().getTime() / 1000)
   );
-  console.log(timeStampParam);
-
   const dispatch = useAppDispatch();
 
   const [targetItem, setTargetItem] = useState<PlayerInfo | null>(null);

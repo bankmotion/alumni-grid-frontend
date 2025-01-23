@@ -27,7 +27,6 @@ const AnswerModal = ({
           const response = await axios.get(
             `${SERVER_URL}/game/answer/${playType}/${itemId}`
           );
-          console.log("data", response.data.data.college);
           setCollegeName(response.data.data.college);
         } catch (error) {
           console.error("Error fetching college name:", error);

@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import {
   Button,
   Table,
@@ -37,8 +35,8 @@ const NBAOptionTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
   const dispatch = useAppDispatch();
 
   const handleDeleteOption = (id: number) => {
-    dispatch(deletePlayerOption(id)).then(() => {
-      dispatch(getPlayerOptions({ playerType: PlayType.NBA }));
+    dispatch(deletePlayerOption({ id, type: PlayType.NBA })).then(() => {
+      dispatch(getPlayerOptions({ playType: PlayType.NBA }));
     });
   };
 

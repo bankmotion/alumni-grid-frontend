@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
 import {
@@ -13,31 +13,28 @@ import {
   Grid,
   Box,
   TextField,
-  IconButton,
   CircularProgress,
   ButtonGroup,
 } from "@mui/material";
-import CheckIcon from "@mui/icons-material/Check";
-import CloseIcon from "@mui/icons-material/Close";
 import { SelectChangeEvent } from "@mui/material";
-import { Tooltip } from "@mui/material";
 import {
-  getAllPlayers,
   savePlayerOptions,
   getPlayerOptions,
+  getNBAAllPlayers,
 } from "../../reducers/game.slice";
 
 import useStyles from "./styles";
 import NBAConfirmationModal from "../../components/NBAConfirmationModal/NBAConfirmationModal";
-import { AppDispatch, RootState } from "../../app/store";
+import { RootState } from "../../app/store";
 import NBAPlayerTableContainer from "../../components/NBAPlayerTableContainer/NBAPlayerTableContainer";
 import NBAOptionTableContainer from "../../components/NBAOptionTableContainer/NBAOptionTableContainer";
 import { AllPlayer, PlayerOption } from "../../models/interface";
 import { ActiveStatus, PlayType } from "../../constant/const";
+import { useAppDispatch } from "../../app/hooks";
 
 const AdminBoardNBA = () => {
   const { classes } = useStyles();
-  const dispatch = useDispatch<AppDispatch>();
+  const dispatch = useAppDispatch();
 
   const { isSavingOptions } = useSelector((state: RootState) => state.game);
   const { allPlayerList, optionList } = useSelector(
@@ -66,23 +63,37 @@ const AdminBoardNBA = () => {
   const handleFilterPlayers = () => {
     dispatch(
       savePlayerOptions({
-        position: position ? position : "-1",
-        country: selectedCountry ? selectedCountry : "-1",
-        draft: draftYear,
+        filters: {
+          position: position ? position : "-1",
+          country: selectedCountry ? selectedCountry : "-1",
+          draft: draftYear,
+        },
+        playType: PlayType.NBA,
       })
     ).then(() => {
-      dispatch(getPlayerOptions({ playerType: PlayType.NBA }));
+      dispatch(getPlayerOptions({ playType: PlayType.NBA }));
     });
 
     setDialogOpen(false);
-    //dispatch(getPlayerOptions());
   };
 
   useEffect(() => {
-    dispatch(getPlayerOptions({ playerType: PlayType.NBA }));
+    dispatch(getPlayerOptions({ playType: PlayType.NBA }));
   }, [dispatch]);
 
   const handleSaveOption = () => {
+    if (!position || !selectedCountry || !draftYear) {
+      Toastify({
+        text: "Please select all options!",
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+      }).showToast();
+      return;
+    }
+
     setDialogOpen(true);
   };
 
@@ -183,7 +194,7 @@ const AdminBoardNBA = () => {
   }, [selectedCountry, draftYear, position, allPlayerList]);
 
   useEffect(() => {
-    dispatch(getAllPlayers({ playType: PlayType.NBA }));
+    dispatch(getNBAAllPlayers());
   }, [dispatch]);
 
   return (
@@ -302,9 +313,6 @@ const AdminBoardNBA = () => {
           setActiveViewId={setActiveViewId}
         />
       </Box>
-
-      {/* <NBAPlayerTableContainer allPlayerList={allPlayerList} />
-       */}
 
       <ButtonGroup variant="contained" style={{ marginTop: "20px" }}>
         <Button
