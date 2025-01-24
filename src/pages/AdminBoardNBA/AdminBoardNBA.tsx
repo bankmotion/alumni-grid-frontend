@@ -333,7 +333,7 @@ const AdminBoardNBA = () => {
             setActiveViewId(null);
           }}
         >
-          Actived
+          Active
         </Button>
         <Button
           variant={statusFilter === "Inactive" ? "contained" : "outlined"}
@@ -343,7 +343,7 @@ const AdminBoardNBA = () => {
             setActiveViewId(null);
           }}
         >
-          Inactived
+          Inactive
         </Button>
         <Button
           variant={statusFilter === "Selected" ? "contained" : "outlined"}
