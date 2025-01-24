@@ -1,6 +1,6 @@
 {
   "short_name": "AlumniGrid",
-  "name": "Create React App Sample",
+  "name": "The daily athlete college guessing game.",
   "icons": [
     {
       "src": "favicon.ico",
@@ -8,14 +8,9 @@
       "type": "image/x-icon"
     },
     {
-      "src": "logo192.png",
+      "src": "image.png",
       "type": "image/png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "logo512.png",
-      "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "304x258"
     }
   ],
   "start_url": ".",
