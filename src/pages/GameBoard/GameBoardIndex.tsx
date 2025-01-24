@@ -68,205 +68,140 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
 
   const { history, isGettingHistory } = useAppSelector((state) => state.game);
 
+  const updateGameSetting = (newSetting: Partial<GameSetting>) =>
+    setGameSetting((prev) => ({ ...prev, ...newSetting }));
+
   const handleCollegeSelect = useCallback(
     async (collegeName: string) => {
+      if (!targetItem) return;
+      setIsConfirming(true);
+
       try {
-        if (targetItem) {
-          setIsConfirming(true);
-          const response = await axios.post(
-            `${SERVER_URL}/game/college/${playType}`,
-            {
-              id: targetItem.playerId,
-              college: collegeName,
-              timestamp: timeStampParam,
-            }
-          );
-          setIsConfirming(false);
-
-          const status = response.data.message as boolean;
-
-          setGameSetting((prevSetting: GameSetting) => {
-            const updatedList = prevSetting.playerList.map((player) => {
-              if (player.playerId !== targetItem.playerId) return player;
-              else if (status) {
-                return {
-                  ...player,
-                  rightStatus: collegeName,
-                };
-              } else {
-                const updatedWrongStatus = [...(player.wrongStatus || [])];
-                updatedWrongStatus.push(collegeName);
-                return { ...player, wrongStatus: updatedWrongStatus };
-              }
-            });
-
-            return {
-              ...prevSetting,
-              playerList: updatedList,
-              remainCount: prevSetting.remainCount - 1,
-              score: status
-                ? prevSetting.score +
-                  Math.max(100 - Math.floor(spentTime / DECREASE_TIME), 0)
-                : prevSetting.score,
-            };
-          });
-
-          if (status) {
-            setOpen(false);
-            setExplosion(true);
+        const response = await axios.post(
+          `${SERVER_URL}/game/college/${playType}`,
+          {
+            id: targetItem.playerId,
+            college: collegeName,
+            timestamp: timeStampParam,
           }
+        );
+
+        const status = response.data.message as boolean;
+
+        updateGameSetting({
+          playerList: gameSetting.playerList.map((player) =>
+            player.playerId !== targetItem.playerId
+              ? player
+              : {
+                  ...player,
+                  ...(status
+                    ? { rightStatus: collegeName }
+                    : {
+                        wrongStatus: [
+                          ...(player.wrongStatus || []),
+                          collegeName,
+                        ],
+                      }),
+                }
+          ),
+          remainCount: gameSetting.remainCount - 1,
+          score: status
+            ? gameSetting.score +
+              Math.max(100 - Math.floor(spentTime / DECREASE_TIME), 0)
+            : gameSetting.score,
+        });
+
+        if (status) {
+          setOpen(false);
+          setExplosion(true);
         }
       } catch (err) {
         console.error("Error fetching game/college post:", err);
+      } finally {
         setIsConfirming(false);
       }
     },
-    [spentTime, targetItem, playType, timeStampParam]
+    [spentTime, targetItem, playType, timeStampParam, gameSetting]
   );
 
-  const loadDataFromLocalStorage = useCallback(() => {
+  const loadGameData = useCallback(() => {
     if (history.items.length === 0) return;
 
-    const dataStr = localStorage.getItem(
+    const savedData = localStorage.getItem(
       `dataList-${PlayTypeInfo[playType].up}${Version}`
     );
 
-    if (dataStr) {
+    if (savedData) {
       try {
-        const dataList = JSON.parse(dataStr) as GameSetting[];
+        const dataList = JSON.parse(savedData) as GameSetting[];
         console.log("Parsed localstorage data:", dataList);
-        const data = dataList.find(
+        const currentGameData = dataList.find(
           (item) => item.createTime === history.startTimestamp
         );
 
-        if (
-          data &&
-          data.createTime &&
-          history.startTimestamp === data.createTime
-        ) {
-          setGameSetting({
-            playerList: data.playerList,
-            remainCount: data.remainCount,
-            score: data.score,
-            createTime: data.createTime,
-            endStatus: data.endStatus,
-            gameStartTime: data.gameStartTime,
-          });
-        } else {
-          setGameSetting({
-            playerList: history.items,
-            remainCount: MAX_COUNT,
-            score: 0,
-            createTime: history.startTimestamp,
-            endStatus: false,
-            gameStartTime: Math.floor(new Date().getTime() / 1000),
-          });
-
-          axios.post(`${SERVER_URL}/game/gameStart/${playType}`, {
-            timestamp: timeStampParam,
-          });
+        if (currentGameData) {
+          setGameSetting(currentGameData);
+          return;
         }
       } catch (err) {
         console.error("Error parsing local storage data:", err);
-        setGameSetting({
-          playerList: history.items,
-          remainCount: MAX_COUNT,
-          score: 0,
-          createTime: history.startTimestamp,
-          endStatus: false,
-          gameStartTime: Math.floor(new Date().getTime() / 1000),
-        });
-
-        axios.post(`${SERVER_URL}/game/gamestart/${playType}`, {
-          timestamp: timeStampParam,
-        });
       }
-    } else {
-      setGameSetting({
-        playerList: history.items,
-        remainCount: MAX_COUNT,
-        score: 0,
-        createTime: history.startTimestamp,
-        endStatus: false,
-        gameStartTime: Math.floor(new Date().getTime() / 1000),
-      });
-
-      axios.post(`${SERVER_URL}/game/gamestart/${playType}`, {
-        timestamp: timeStampParam,
-      });
     }
+
+    const initialSetting: GameSetting = {
+      playerList: history.items,
+      remainCount: MAX_COUNT,
+      score: 0,
+      createTime: history.startTimestamp,
+      endStatus: false,
+      gameStartTime: Math.floor(Date.now() / 1000),
+    };
+    updateGameSetting(initialSetting);
+
+    axios.post(`${SERVER_URL}/game/gamestart/${playType}`, {
+      timestamp: timeStampParam,
+    });
   }, [history, timeStampParam, playType]);
 
   const handleEndGame = useCallback(() => {
-    setGameSetting((prevSetting) => ({
-      ...prevSetting,
-      endStatus: true,
-    }));
+    updateGameSetting({ endStatus: true });
     setSummaryOpen(true);
   }, []);
 
   const selectItem = useCallback(
     (item: PlayerInfo) => {
-      if (gameSetting.endStatus) {
-        setAnswerOpen(true);
-        setTargetItem(item);
-      } else {
-        setTargetItem(item);
-        setOpen(true);
-      }
+      setTargetItem(item);
+      setAnswerOpen(gameSetting.endStatus);
+      setOpen(!gameSetting.endStatus);
     },
     [gameSetting.endStatus]
   );
 
-  const getDataList = useCallback(() => {
-    const dataListStr = localStorage.getItem(
-      `dataList-${PlayTypeInfo[playType].up}${Version}`
+  const saveDailyData = useCallback(() => {
+    const dataList = JSON.parse(
+      localStorage.getItem(`dataList-${PlayTypeInfo[playType].up}${Version}`) ||
+        "[]"
+    ) as GameSetting[];
+
+    const updatedData = dataList.filter(
+      (item) => item.createTime !== gameSetting.createTime
     );
-    return dataListStr ? JSON.parse(dataListStr) : [];
-  }, [playType]);
+    updatedData.push(gameSetting);
 
-  const saveDailyData = useCallback(
-    (data: GameSetting) => {
-      const dataList = getDataList();
-
-      const existingIndex = dataList.findIndex(
-        (entry: GameSetting) => entry.createTime === data.createTime
-      );
-
-      if (existingIndex !== -1) {
-        dataList[existingIndex] = data;
-      } else {
-        dataList.push(data);
-      }
-
-      localStorage.setItem(
-        `dataList-${PlayTypeInfo[playType].up}${Version}`,
-        JSON.stringify(dataList)
-      );
-    },
-    [getDataList, playType]
-  );
-
-  const openPriorGridsModal = () => {
-    setArchiveOpen(true);
-  };
-
-  const goInfo = () => {
-    navigate("/");
-  };
+    localStorage.setItem(
+      `dataList-${PlayTypeInfo[playType].up}${Version}`,
+      JSON.stringify(updatedData)
+    );
+  }, [playType, gameSetting]);
 
   useEffect(() => {
-    loadDataFromLocalStorage();
-  }, [loadDataFromLocalStorage]);
+    loadGameData();
+  }, [loadGameData]);
 
   useEffect(() => {
     if (gameSetting.createTime === 0) return;
-    localStorage.setItem(
-      `Data-${PlayTypeInfo[playType].up}${Version}`,
-      JSON.stringify(gameSetting)
-    );
-    saveDailyData(gameSetting);
-  }, [gameSetting, saveDailyData, playType]);
+    saveDailyData();
+  }, [gameSetting, saveDailyData]);
 
   useEffect(() => {
     if (gameSetting.playerList.length > 0 && targetItem) {
@@ -312,7 +247,6 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
   useEffect(() => {
     return () => {
       dispatch(setHistory());
-      // localStorage.setItem(`Data-${PlayTypeInfo[playType].up}${Version}`, "");
     };
   }, [dispatch]);
 
@@ -335,7 +269,7 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
         <Button
           className={classes.infoButton}
           variant="contained"
-          onClick={goInfo}
+          onClick={() => navigate("/")}
         >
           <Box className={classes.infoIcon}>
             <InfoIcon />
@@ -441,7 +375,7 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
           <Button
             variant="contained"
             sx={{ textTransform: "none", marginTop: "8px" }}
-            onClick={openPriorGridsModal}
+            onClick={() => setArchiveOpen(true)}
           >
             Prior Grids
           </Button>
