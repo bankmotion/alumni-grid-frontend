@@ -8,7 +8,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import SummaryGrid from "../SummaryGrid/SummaryGrid";
 import { convertPSTTime } from "../../utils/utils";
 import { PlayType, PlayTypeInfo } from "../../constant/const";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const SummaryModal = ({
   open,
@@ -24,6 +24,7 @@ const SummaryModal = ({
   const { classes } = useStyles();
 
   const modalRef = useRef(null);
+  const [animatedScore, setAnimatedScore] = useState(0);
 
   const handleClose = () => {
     gsap.to(modalRef.current, {
@@ -61,6 +62,33 @@ const SummaryModal = ({
     }
   }, [open, modalRef.current]);
 
+  useEffect(() => {
+    if (gameSetting.score === 0) return;
+
+    let currentScore = 0;
+    const targetScore = gameSetting.score;
+
+    const interval = setInterval(() => {
+      currentScore += Math.ceil(targetScore / 20);
+      if (currentScore >= targetScore) {
+        currentScore = targetScore;
+        clearInterval(interval);
+      }
+
+      setAnimatedScore(currentScore);
+    }, 30);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [gameSetting.score, open]);
+
+  useEffect(() => {
+    if (open) {
+      setAnimatedScore(0);
+    }
+  }, [open]);
+
   return (
     <Modal open={open} onClose={handleClose}>
       <Box className={classes.summaryModal} ref={modalRef}>
@@ -80,7 +108,9 @@ const SummaryModal = ({
         >
           AlumniGrid {convertPSTTime(gameSetting.createTime)}
         </Typography>
-        <Typography>Score: {gameSetting.score}</Typography>
+        <Typography sx={{ fontSize: "24px" }}>
+          Score: {animatedScore}
+        </Typography>
         <SummaryGrid playType={playType} gameSetting={gameSetting} />
       </Box>
     </Modal>
