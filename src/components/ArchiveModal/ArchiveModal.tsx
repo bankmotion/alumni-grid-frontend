@@ -19,10 +19,12 @@ const ArchiveModal = ({
   open,
   onClose,
   playType,
+  gameSetting,
 }: {
   open: boolean;
   onClose: (summaryOpen: boolean) => void;
   playType: PlayType;
+  gameSetting: GameSetting;
 }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -30,7 +32,6 @@ const ArchiveModal = ({
   const dispatch = useAppDispatch();
 
   const [dataList, setDataList] = useState<GameSetting[]>([]);
-  const [currentData, setCurrentData] = useState<GameSetting | null>(null);
   const { allLeaderHistory } = useAppSelector((state) => state.game);
 
   useEffect(() => {
@@ -69,20 +70,6 @@ const ArchiveModal = ({
 
     setDataList(data);
   }, [open, playType]);
-
-  useEffect(() => {
-    let data: GameSetting | null = null;
-    try {
-      const storedData = localStorage.getItem(
-        `Data-${PlayTypeInfo[playType].up}${Version}`
-      );
-      data = storedData ? JSON.parse(storedData) : null;
-    } catch (error) {
-      console.error("Error parsing local storage data:", error);
-    }
-
-    setCurrentData(data);
-  }, [playType]);
 
   return (
     <Modal open={open} onClose={() => onClose(false)}>

@@ -41,7 +41,7 @@ const SummaryModal = ({
           AlumniGrid {convertPSTTime(gameSetting.createTime)}
         </Typography>
         <Typography>Score: {gameSetting.score}</Typography>
-        <SummaryGrid playType={playType} />
+        <SummaryGrid playType={playType} gameSetting={gameSetting} />
       </Box>
     </Modal>
   );

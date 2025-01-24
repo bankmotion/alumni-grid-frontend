@@ -258,6 +258,8 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
     }
   }, [explosion]);
 
+  console.log(gameSetting);
+
   return (
     <Box
       className={clsx(
@@ -405,6 +407,7 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
         open={archiveOpen}
         onClose={(archiveOpen) => setArchiveOpen(archiveOpen)}
         playType={playType}
+        gameSetting={gameSetting}
       />
 
       {explosion && (

@@ -5,24 +5,28 @@ import ShareIcon from "@mui/icons-material/Share";
 import { GameSetting } from "../../models/interface";
 import Toastify from "toastify-js";
 import "toastify-js/src/toastify.css";
-import { Version } from "../../config/config";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { getLeaderHistory } from "../../reducers/game.slice";
 import { PlayType, PlayTypeInfo } from "../../constant/const";
 
-const SummaryGrid = ({ playType }: { playType: PlayType }) => {
+const SummaryGrid = ({
+  playType,
+  gameSetting,
+}: {
+  playType: PlayType;
+  gameSetting: GameSetting;
+}) => {
   const { classes } = useStyles();
   const dispatch = useAppDispatch();
 
   const [shareText, setShareText] = useState<string>("");
-  const [currentData, setCurrentData] = useState<GameSetting | null>(null);
 
   const { allLeaderHistory } = useAppSelector((state) => state.game);
 
   const generateShareableText = useCallback(() => {
-    if (!currentData) return;
+    if (!gameSetting) return;
 
-    const gridVisualization = currentData.playerList
+    const gridVisualization = gameSetting.playerList
       .map((player) => (player.rightStatus === "none" ? "⬜" : "🟩"))
       .reduce((rows, current, index) => {
         if (index % 3 === 0) rows.push([]);
@@ -36,14 +40,14 @@ const SummaryGrid = ({ playType }: { playType: PlayType }) => {
       `${playType === PlayType.NBA ? "🏀" : "🏈"} Alumni Grid - ${
         PlayTypeInfo[playType].up
       } \n` +
-      ` Score: ${currentData.score}\n` +
+      ` Score: ${gameSetting.score}\n` +
       `${gridVisualization}\n` +
       ` Play at:\n` +
       ` ` +
       `https://alumnigrid.com/game/${PlayTypeInfo[playType].lo}`.trim();
 
     setShareText(text);
-  }, [currentData, playType]);
+  }, [gameSetting, playType]);
 
   const copyToClipboard = () => {
     navigator.clipboard
@@ -80,20 +84,6 @@ const SummaryGrid = ({ playType }: { playType: PlayType }) => {
   };
 
   useEffect(() => {
-    let data: GameSetting | null = null;
-    try {
-      const storedData = localStorage.getItem(
-        `Data-${PlayTypeInfo[playType].up}${Version}`
-      );
-      data = storedData ? JSON.parse(storedData) : null;
-    } catch (error) {
-      console.error("Error parsing local storage data:", error);
-    }
-
-    setCurrentData(data);
-  }, [playType]);
-
-  useEffect(() => {
     dispatch(getLeaderHistory({ playType }));
   }, [dispatch, playType]);
 
@@ -105,7 +95,7 @@ const SummaryGrid = ({ playType }: { playType: PlayType }) => {
     <Box className={classes.gridSummary}>
       {/* <Typography variant="h5">Game Summary</Typography> */}
       <Box className={classes.gridContainer}>
-        {currentData?.playerList.map((player, index) => (
+        {gameSetting?.playerList.map((player, index) => (
           <Box
             key={index}
             className={`${classes.gridItem} ${
@@ -128,10 +118,10 @@ const SummaryGrid = ({ playType }: { playType: PlayType }) => {
       </Box>
       <Box sx={{ marginTop: "24px" }}>Accuracy Table</Box>
       <Box className={classes.gridWithPercent}>
-        {currentData?.playerList.map((player, index) => (
+        {gameSetting?.playerList.map((player, index) => (
           <Box key={index} className={classes.gridItem}>
             <Box className={classes.percentBox}>
-              {getPercent(currentData.createTime, player.playerId)}%
+              {getPercent(gameSetting.createTime, player.playerId)}%
             </Box>
           </Box>
         ))}
