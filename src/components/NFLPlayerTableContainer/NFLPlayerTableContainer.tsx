@@ -39,6 +39,7 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
   const [idFilter, setIdFilter] = useState("");
   const [firstNameFilter, setFirstNameFilter] = useState("");
   const [lastNameFilter, setLastNameFilter] = useState("");
+  const [collegeFilter, setCollegeFilter] = useState("");
   const [positionFilter, setPositionFilter] = useState("");
   const [experienceFilter, setExperienceFilter] = useState("");
   const [ageFilter, setAgeFilter] = useState("");
@@ -55,6 +56,8 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
           player.lastName
             .toLowerCase()
             .includes(lastNameFilter.toLowerCase())) &&
+        (collegeFilter === "" ||
+          player.college.toLowerCase().includes(collegeFilter.toLowerCase())) &&
         (positionFilter === "" ||
           player.position
             .toLowerCase()
@@ -155,6 +158,7 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
               <TableCell>ID</TableCell>
               <TableCell>First Name</TableCell>
               <TableCell>Last Name</TableCell>
+              <TableCell>College</TableCell>
               <TableCell>Position</TableCell>
               <TableCell>Experience</TableCell>
               <TableCell>Age</TableCell>
@@ -186,6 +190,15 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
                   size="small"
                   placeholder="Last Name"
                   onChange={(e) => setLastNameFilter(e.target.value)}
+                />
+              </TableCell>
+              <TableCell>
+                <TextField
+                  fullWidth
+                  variant="outlined"
+                  size="small"
+                  placeholder="College"
+                  onChange={(e) => setCollegeFilter(e.target.value)}
                 />
               </TableCell>
               <TableCell>
@@ -226,6 +239,7 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
                   <TableCell>{player.id}</TableCell>
                   <TableCell>{player.firstName}</TableCell>
                   <TableCell>{player.lastName}</TableCell>
+                  <TableCell>{player.college}</TableCell>
                   <TableCell>{player.position}</TableCell>
                   <TableCell>{player.experience}</TableCell>
                   <TableCell>{player.age}</TableCell>

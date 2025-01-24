@@ -5,6 +5,7 @@ import axios from "axios";
 import { clsx } from "clsx";
 import InfoIcon from "@mui/icons-material/Info";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import ConfettiExplosion from "react-confetti-explosion";
 
 import CollegeModal from "../../components/CollegeModal/CollegeModal";
 import AnswerModal from "../../components/AnswerModal/AnswerModal";
@@ -54,6 +55,7 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
   const [isConfirming, setIsConfirming] = useState(false);
   const [remainTime, setRemainTime] = useState(0);
   const [spentTime, setSpentTime] = useState(0);
+  const [explosion, setExplosion] = useState(false);
 
   const [gameSetting, setGameSetting] = useState<GameSetting>({
     createTime: 0,
@@ -111,6 +113,7 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
 
           if (status) {
             setOpen(false);
+            setExplosion(true);
           }
         }
       } catch (err) {
@@ -313,6 +316,14 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    if (explosion) {
+      setTimeout(() => {
+        setExplosion(false);
+      }, 5000);
+    }
+  }, [explosion]);
+
   return (
     <Box
       className={clsx(
@@ -461,6 +472,16 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
         onClose={(archiveOpen) => setArchiveOpen(archiveOpen)}
         playType={playType}
       />
+
+      {explosion && (
+        <ConfettiExplosion
+          duration={3000}
+          zIndex={5}
+          width={1300}
+          height={"100vh"}
+          style={{ position: "absolute", top: "0", left: "50%" }}
+        />
+      )}
     </Box>
   );
 };
