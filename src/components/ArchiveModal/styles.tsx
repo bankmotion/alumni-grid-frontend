@@ -7,9 +7,9 @@ const styles = makeStyles()((theme: Theme) => ({
     alignItems: "center",
     flexDirection: "column",
     position: "absolute",
+    scale: 1,
     top: "60%",
     left: "50%",
-    scale: 0.95,
     transform: "translate(-50%, -50%)",
     background: "white",
     color: theme.palette.getContrastText("#FFD60A"),
@@ -19,13 +19,11 @@ const styles = makeStyles()((theme: Theme) => ({
     width: "40%",
     height: "auto",
     textAlign: "center",
-    marginBottom: "20%",
     maxHeight: "500px",
     overflowY: "auto",
 
     [theme.breakpoints.down("sm")]: {
       width: "75%",
-      marginTop: "5%",
     },
   },
 

@@ -237,6 +237,46 @@ const styles = makeStyles()((theme: Theme) => ({
     },
   },
 
+  linkButton: {
+    display: "flex",
+    gap: "4px",
+    alignItems: "center",
+    backgroundColor: "#0077b6",
+    color: "#fff",
+    fontSize: "clamp(12px, 1.5vw, 14px)",
+
+    "&:hover": {
+      backgroundColor: "#005f8a",
+    },
+
+    [theme.breakpoints.down("sm")]: {
+      width: "40px",
+      height: "40px",
+      borderRadius: "50%",
+      padding: 0,
+      minWidth: "30px",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    },
+  },
+
+  nbaColor: {
+    backgroundColor: "#FF4F00",
+
+    "&:hover": {
+      backgroundColor: "#FF6F20",
+    },
+  },
+
+  nflColor: {
+    backgroundColor: "#044e5d",
+
+    "&:hover": {
+      backgroundColor: "#056376",
+    },
+  },
+
   infoIcon: {
     display: "flex",
     fontSize: "100%",

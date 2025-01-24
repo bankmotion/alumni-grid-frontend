@@ -19,6 +19,7 @@
     "clsx": "^2.1.1",
     "fs": "^0.0.1-security",
     "gsap": "^3.12.7",
+    "is-mobile": "^5.0.0",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
     "react": "^18.3.1",

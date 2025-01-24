@@ -57,11 +57,11 @@ const ArchiveModal = ({
         {
           opacity: 0.5,
           top: "60%",
-          scale: 0.95,
+          scale: 1,
         },
         {
           opacity: 1,
-          scale: 1,
+          scale: 1.05,
           top: "50%",
           duration: 0.3,
           ease: "power2.out",
@@ -119,7 +119,7 @@ const ArchiveModal = ({
 
           <IconButton
             aria-label="close"
-            onClick={() => onClose(false)}
+            onClick={handleClose}
             className={classes.closeButton}
           >
             <CloseIcon />

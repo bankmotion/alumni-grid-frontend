@@ -20,6 +20,28 @@ const Landing = () => {
         <Typography className={classes.gameTitle}>
           Welcome to the AlumniGrid
         </Typography>
+        <Box className={classes.buttonGroup}>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.nbaButton}
+            onClick={() => {
+              handleStartGame(PlayType.NBA);
+            }}
+          >
+            Start NBA
+          </Button>
+          <Button
+            variant="contained"
+            color="primary"
+            className={classes.nflButton}
+            onClick={() => {
+              handleStartGame(PlayType.NFL);
+            }}
+          >
+            Start NFL
+          </Button>
+        </Box>
         <Box className={classes.description}>
           AlumniGrid is a daily sports trivia game.
           <br />
@@ -55,28 +77,6 @@ const Landing = () => {
             Note: The game is currently in beta. NBA and NFL grids are available
             at this time. Stay tuned…
           </strong>
-        </Box>
-        <Box className={classes.buttonGroup}>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.nbaButton}
-            onClick={() => {
-              handleStartGame(PlayType.NBA);
-            }}
-          >
-            Start NBA
-          </Button>
-          <Button
-            variant="contained"
-            color="primary"
-            className={classes.nflButton}
-            onClick={() => {
-              handleStartGame(PlayType.NFL);
-            }}
-          >
-            Start NFL
-          </Button>
         </Box>
       </Box>
     </Box>

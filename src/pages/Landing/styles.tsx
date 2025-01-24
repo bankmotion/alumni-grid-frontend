@@ -49,6 +49,7 @@ const styles = makeStyles()((theme: Theme) => ({
     lineHeight: "1.8",
     marginBottom: "24px",
     padding: "0 80px",
+    marginTop: "18px",
     [theme.breakpoints.down("sm")]: {
       fontSize: "clamp(12px, 1.5vw, 1.2rem)",
       lineHeight: "1.5",

@@ -9,6 +9,7 @@ import SummaryGrid from "../SummaryGrid/SummaryGrid";
 import { convertPSTTime } from "../../utils/utils";
 import { PlayType, PlayTypeInfo } from "../../constant/const";
 import { useEffect, useRef, useState } from "react";
+import isMobile from "is-mobile";
 
 const SummaryModal = ({
   open,
@@ -94,12 +95,15 @@ const SummaryModal = ({
       <Box className={classes.summaryModal} ref={modalRef}>
         <IconButton
           aria-label="close"
-          onClick={() => onClose(false)}
+          onClick={handleClose}
           className={classes.closeButton}
         >
           <CloseIcon />
         </IconButton>
-        <Typography variant="h4" sx={{ fontWeight: "bold" }}>
+        <Typography
+          variant={isMobile ? "h5" : "h4"}
+          sx={{ fontWeight: "bold" }}
+        >
           Game Summary - {PlayTypeInfo[playType].up}
         </Typography>
         <Typography

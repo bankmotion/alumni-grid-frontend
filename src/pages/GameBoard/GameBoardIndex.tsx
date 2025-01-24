@@ -68,6 +68,14 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
 
   const { history, isGettingHistory } = useAppSelector((state) => state.game);
 
+  const handleLink = () => {
+    if (playType === PlayType.NBA) {
+      navigate("/game/nfl");
+    } else if (playType === PlayType.NFL) {
+      navigate("/game/nba");
+    }
+  };
+
   const updateGameSetting = (newSetting: Partial<GameSetting>) =>
     setGameSetting((prev) => ({ ...prev, ...newSetting }));
 
@@ -277,6 +285,18 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
             <InfoIcon />
           </Box>{" "}
           <Box className={classes.onlyDesktop}>Info</Box>
+        </Button>
+        <Button
+          className={clsx(
+            classes.linkButton,
+            playType === PlayType.NBA ? classes.nbaColor : classes.nflColor
+          )}
+          variant="contained"
+          onClick={handleLink}
+        >
+          <Box className={classes.onlyDesktop}>
+            {playType === PlayType.NBA ? "NFL Grid 🏈" : "NBA Grid 🏀"}{" "}
+          </Box>
         </Button>
       </Box>
 
