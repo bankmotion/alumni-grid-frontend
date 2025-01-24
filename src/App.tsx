@@ -30,10 +30,22 @@ function App() {
             <Route path="/adminboard/NBA" element={<AdminBoardNBA />} />
 
             <Route path="/adminboard/NFL" element={<AdminBoardNFL />} />
+
+            <Route path="/metaimg.png" element={<MetaImage />} />
           </Routes>
         </Router>
       </div>
     </Provider>
+  );
+}
+
+function MetaImage() {
+  return (
+    <img
+      src={"https://alumnigrid.com/image.png"}
+      style={{ display: "block", maxWidth: "100%", height: "auto" }}
+      alt="Meta Preview"
+    />
   );
 }
 
