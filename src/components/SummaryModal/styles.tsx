@@ -18,7 +18,7 @@ const styles = makeStyles()((theme: Theme) => ({
     width: "400px",
     textAlign: "center",
     fontWeight: "bold",
-    maxHeight: "700px",
+    maxHeight: "550px",
     overflowY: "auto",
 
     [theme.breakpoints.down("sm")]: {
