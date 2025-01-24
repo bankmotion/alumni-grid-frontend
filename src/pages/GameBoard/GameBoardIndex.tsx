@@ -407,7 +407,6 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
         open={archiveOpen}
         onClose={(archiveOpen) => setArchiveOpen(archiveOpen)}
         playType={playType}
-        gameSetting={gameSetting}
       />
 
       {explosion && (

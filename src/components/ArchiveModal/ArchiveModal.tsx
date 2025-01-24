@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Box, Button, Typography, Modal, IconButton } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import useStyles from "./styles";
+import gsap from "gsap";
 
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -19,12 +20,10 @@ const ArchiveModal = ({
   open,
   onClose,
   playType,
-  gameSetting,
 }: {
   open: boolean;
   onClose: (summaryOpen: boolean) => void;
   playType: PlayType;
-  gameSetting: GameSetting;
 }) => {
   const { classes } = useStyles();
   const navigate = useNavigate();
@@ -33,6 +32,43 @@ const ArchiveModal = ({
 
   const [dataList, setDataList] = useState<GameSetting[]>([]);
   const { allLeaderHistory } = useAppSelector((state) => state.game);
+  const modalRef = useRef(null);
+
+  const handleClose = () => {
+    gsap.to(modalRef.current, {
+      opacity: 0.5,
+      top: "60%",
+      duration: 0.3,
+      scale: 0.95,
+      ease: "power2.in",
+    });
+
+    setTimeout(() => {
+      onClose(false);
+    }, 300);
+  };
+
+  useEffect(() => {
+    if (!modalRef.current) return;
+
+    if (open) {
+      gsap.fromTo(
+        modalRef.current,
+        {
+          opacity: 0.5,
+          top: "60%",
+          scale: 0.95,
+        },
+        {
+          opacity: 1,
+          scale: 1,
+          top: "50%",
+          duration: 0.3,
+          ease: "power2.out",
+        }
+      );
+    }
+  }, [open, modalRef.current]);
 
   useEffect(() => {
     dispatch(getLeaderHistory({ playType }));
@@ -72,8 +108,8 @@ const ArchiveModal = ({
   }, [open, playType]);
 
   return (
-    <Modal open={open} onClose={() => onClose(false)}>
-      <Box className={classes.archiveModal}>
+    <Modal open={open} onClose={handleClose}>
+      <Box className={classes.archiveModal} ref={modalRef}>
         <Box className={classes.archiveHeader}>
           <Box className={classes.titleBox}>
             <Typography className={classes.archiveTitle}>

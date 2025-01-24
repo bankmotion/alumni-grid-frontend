@@ -1,12 +1,14 @@
 import useStyles from "./styles";
 import { Box, Modal, Typography, IconButton } from "@mui/material";
 import { GameSetting } from "../../models/interface";
+import gsap from "gsap";
 
 import CloseIcon from "@mui/icons-material/Close";
 
 import SummaryGrid from "../SummaryGrid/SummaryGrid";
 import { convertPSTTime } from "../../utils/utils";
 import { PlayType, PlayTypeInfo } from "../../constant/const";
+import { useEffect, useRef } from "react";
 
 const SummaryModal = ({
   open,
@@ -21,9 +23,47 @@ const SummaryModal = ({
 }) => {
   const { classes } = useStyles();
 
+  const modalRef = useRef(null);
+
+  const handleClose = () => {
+    gsap.to(modalRef.current, {
+      opacity: 0.5,
+      top: "60%",
+      duration: 0.3,
+      scale: 0.95,
+      ease: "power2.in",
+    });
+
+    setTimeout(() => {
+      onClose(false);
+    }, 300);
+  };
+
+  useEffect(() => {
+    if (!modalRef.current) return;
+
+    if (open) {
+      gsap.fromTo(
+        modalRef.current,
+        {
+          opacity: 0.5,
+          top: "60%",
+          scale: 0.95,
+        },
+        {
+          opacity: 1,
+          scale: 1,
+          top: "50%",
+          duration: 0.3,
+          ease: "power2.out",
+        }
+      );
+    }
+  }, [open, modalRef.current]);
+
   return (
-    <Modal open={open} onClose={() => onClose(false)}>
-      <Box className={classes.summaryModal}>
+    <Modal open={open} onClose={handleClose}>
+      <Box className={classes.summaryModal} ref={modalRef}>
         <IconButton
           aria-label="close"
           onClick={() => onClose(false)}
