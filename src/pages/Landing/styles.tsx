@@ -67,12 +67,12 @@ const styles = makeStyles()((theme: Theme) => ({
   nbaButton: {
     fontWeight: "bold",
     borderRadius: "8px",
-    backgroundColor: "#FF4F00",
+    backgroundColor: "#2b7355",
     color: "#fff",
     fontSize: "1.1rem",
     padding: "12px 24px",
     "&:hover": {
-      backgroundColor: "#FF6F20",
+      backgroundColor: "#368c68",
     },
     [theme.breakpoints.down("sm")]: {
       padding: "8px 16px",

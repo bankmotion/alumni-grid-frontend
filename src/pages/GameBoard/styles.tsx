@@ -37,7 +37,6 @@ const styles = makeStyles()((theme: Theme) => ({
     //color: "#bdc3c7",
     color: "#f39c12",
     textAlign: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: "8px",
     borderRadius: "4px",
   },
@@ -200,11 +199,9 @@ const styles = makeStyles()((theme: Theme) => ({
     top: 20,
 
     [theme.breakpoints.down("sm")]: {
-      left: 10,
-      right: "auto",
-      flexDirection: "column",
-      alignItems: "flex-end",
+      left: 20,
       gap: "8px",
+      justifyContent: "space-between",
     },
   },
 
@@ -236,6 +233,7 @@ const styles = makeStyles()((theme: Theme) => ({
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+      order: 2,
     },
   },
 
@@ -261,14 +259,15 @@ const styles = makeStyles()((theme: Theme) => ({
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+      order: 1,
     },
   },
 
   nbaColor: {
-    backgroundColor: "#FF4F00",
+    backgroundColor: "#2b7355",
 
     "&:hover": {
-      backgroundColor: "#FF6F20",
+      backgroundColor: "#368c68",
     },
   },
 
