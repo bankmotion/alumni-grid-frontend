@@ -200,6 +200,8 @@ const styles = makeStyles()((theme: Theme) => ({
     top: 20,
 
     [theme.breakpoints.down("sm")]: {
+      left: 10,
+      right: "auto",
       flexDirection: "column",
       alignItems: "flex-end",
       gap: "8px",

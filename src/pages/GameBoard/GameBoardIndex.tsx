@@ -290,7 +290,7 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
         <Button
           className={clsx(
             classes.linkButton,
-            playType === PlayType.NBA ? classes.nbaColor : classes.nflColor
+            playType === PlayType.NBA ? classes.nflColor : classes.nbaColor
           )}
           variant="contained"
           onClick={handleLink}
