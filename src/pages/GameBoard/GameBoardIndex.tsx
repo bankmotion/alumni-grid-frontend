@@ -32,6 +32,7 @@ import {
   getStartTimeByTimestampDaily,
 } from "../../utils/utils";
 import { PlayType, PlayTypeInfo } from "../../constant/const";
+import isMobile from "is-mobile";
 
 const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
   const { classes } = useStyles();
@@ -294,9 +295,15 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
           variant="contained"
           onClick={handleLink}
         >
-          <Box className={classes.onlyDesktop}>
-            {playType === PlayType.NBA ? "NFL Grid 🏈" : "NBA Grid 🏀"}{" "}
-          </Box>
+          {isMobile() ? (
+            <Box sx={{ fontSize: "20px" }}>
+              {playType === PlayType.NBA ? "🏈" : "🏀"}
+            </Box>
+          ) : playType === PlayType.NBA ? (
+            "NFL Grid 🏈"
+          ) : (
+            "NBA Grid 🏀"
+          )}
         </Button>
       </Box>
 

@@ -244,6 +244,7 @@ const styles = makeStyles()((theme: Theme) => ({
     backgroundColor: "#0077b6",
     color: "#fff",
     fontSize: "clamp(12px, 1.5vw, 14px)",
+    textTransform: "none",
 
     "&:hover": {
       backgroundColor: "#005f8a",
