@@ -71,9 +71,9 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
 
   const handleLink = () => {
     if (playType === PlayType.NBA) {
-      navigate("/game/nfl");
+      window.location.href = "/game/nfl";
     } else if (playType === PlayType.NFL) {
-      navigate("/game/nba");
+      window.location.href = "/game/nba";
     }
   };
 
@@ -266,8 +266,6 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
       }, 5000);
     }
   }, [explosion]);
-
-  console.log(gameSetting);
 
   return (
     <Box
