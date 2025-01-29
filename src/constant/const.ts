@@ -25,3 +25,17 @@ export enum ActiveStatus {
   Inactived = -1,
   Canceled = 0,
 }
+
+export enum Difficulty {
+  None,
+  Easy,
+  Medium,
+  Hard,
+}
+
+export const DifficultyName = {
+  [Difficulty.None]: "None",
+  [Difficulty.Easy]: "Easy",
+  [Difficulty.Medium]: "Medium",
+  [Difficulty.Hard]: "Hard",
+};

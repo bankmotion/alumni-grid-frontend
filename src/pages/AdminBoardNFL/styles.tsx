@@ -7,7 +7,7 @@ const styles = makeStyles()((theme: Theme) => ({
     background: "linear-gradient(135deg, #e0f7fa, #ffffff)",
     borderRadius: "16px",
     boxShadow: "0px 6px 20px rgba(0, 0, 0, 0.15)",
-    maxWidth: "1024px",
+    maxWidth: "1200px",
     margin: "50px auto", // Center the board with some margin
     textAlign: "center",
     transition: "transform 0.3s ease, box-shadow 0.3s ease",
@@ -115,6 +115,14 @@ const styles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down("xs")]: {
       marginTop: "16px", // Less margin for smaller screens
     },
+  },
+
+  selectGroup: {
+    display: "flex",
+    alignItems: "center",
+    marginTop: "20px",
+    justifyContent: "center",
+    gap: "24px",
   },
 }));
 

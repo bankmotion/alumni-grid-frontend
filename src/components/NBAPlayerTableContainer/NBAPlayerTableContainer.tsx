@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Box,
   Table,
@@ -10,14 +10,16 @@ import {
   TablePagination,
   TableContainer,
   Button,
+  Checkbox,
 } from "@mui/material";
 import useStyles from "./styles";
 import { AllPlayer } from "../../models/interface";
-import { ActiveStatus, PlayType } from "../../constant/const";
+import { ActiveStatus, DifficultyName, PlayType } from "../../constant/const";
 import { useAppDispatch } from "../../app/hooks";
 import {
   getNBAAllPlayers,
   updateActiveStatus,
+  updateAllPlayerList,
 } from "../../reducers/game.slice";
 
 interface NBAPlayerTableContainerProps {
@@ -42,32 +44,9 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
   const [lastNameFilter, setLastNameFilter] = useState("");
   const [positionFilter, setPositionFilter] = useState("");
   const [draftYearFilter, setDraftYearFilter] = useState("");
+  const [viewFilteredPlayers, setViewFilteredPlayers] = useState([]);
 
-  const filterPlayers = (playerList: AllPlayer[]) => {
-    return playerList.filter((player) => {
-      return (
-        (idFilter === "" || player.id.toString().includes(idFilter)) &&
-        (firstNameFilter === "" ||
-          player.firstName
-            .toLowerCase()
-            .includes(firstNameFilter.toLowerCase())) &&
-        (lastNameFilter === "" ||
-          player.lastName
-            .toLowerCase()
-            .includes(lastNameFilter.toLowerCase())) &&
-        (positionFilter === "" ||
-          player.position
-            .toLowerCase()
-            .includes(positionFilter.toLowerCase())) &&
-        (draftYearFilter === "" ||
-          player?.draftYear?.toString()?.includes(draftYearFilter)) &&
-        (collegeFilter === "" ||
-          player?.college?.toLowerCase()?.includes(collegeFilter.toLowerCase()))
-      );
-    });
-  };
-
-  const viewFilteredPlayers = filterPlayers(viewedPlayers);
+  const label = { inputProps: { "aria-label": "Checkbox demo" } };
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -86,6 +65,10 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
       .then(() => {
         dispatch(getNBAAllPlayers());
       });
+  };
+
+  const handleChangeCheckBox = (id: number, checkStatus: boolean) => {
+    dispatch(updateAllPlayerList({ id, checkStatus }));
   };
 
   const renderButtonGroup = (player: AllPlayer) => {
@@ -143,21 +126,63 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
     );
   };
 
+  useEffect(() => {
+    const filterPlayers = (playerList: AllPlayer[]) => {
+      return playerList.filter((player) => {
+        return (
+          (idFilter === "" || player.id.toString().includes(idFilter)) &&
+          (firstNameFilter === "" ||
+            player.firstName
+              .toLowerCase()
+              .includes(firstNameFilter.toLowerCase())) &&
+          (lastNameFilter === "" ||
+            player.lastName
+              .toLowerCase()
+              .includes(lastNameFilter.toLowerCase())) &&
+          (positionFilter === "" ||
+            player.position
+              .toLowerCase()
+              .includes(positionFilter.toLowerCase())) &&
+          (draftYearFilter === "" ||
+            player?.draftYear?.toString()?.includes(draftYearFilter)) &&
+          (collegeFilter === "" ||
+            player?.college
+              ?.toLowerCase()
+              ?.includes(collegeFilter.toLowerCase()))
+        );
+      });
+    };
+
+    const viewFilteredPlayers = filterPlayers(viewedPlayers);
+    setViewFilteredPlayers(viewFilteredPlayers);
+  }, [
+    viewedPlayers,
+    collegeFilter,
+    draftYearFilter,
+    firstNameFilter,
+    lastNameFilter,
+    idFilter,
+    positionFilter,
+  ]);
+
   return (
     <Box>
       <TableContainer className={classes.tableContainer}>
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell></TableCell>
               <TableCell>ID</TableCell>
               <TableCell>First Name</TableCell>
               <TableCell>Last Name</TableCell>
               <TableCell>College</TableCell>
               <TableCell>Position</TableCell>
               <TableCell>Draft Year</TableCell>
+              <TableCell>Difficulty</TableCell>
               <TableCell>Select</TableCell>
             </TableRow>
             <TableRow>
+              <TableCell></TableCell>
               <TableCell>
                 <TextField
                   fullWidth
@@ -213,6 +238,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
                 />
               </TableCell>
               <TableCell></TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -220,12 +246,23 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((player) => (
                 <TableRow key={player.id}>
+                  <TableCell>
+                    <Checkbox
+                      value={true}
+                      {...label}
+                      checked={player.checkStatus}
+                      onChange={(e) =>
+                        handleChangeCheckBox(player.id, e.target.checked)
+                      }
+                    />
+                  </TableCell>
                   <TableCell>{player.id}</TableCell>
                   <TableCell>{player.firstName}</TableCell>
                   <TableCell>{player.lastName}</TableCell>
                   <TableCell>{player.college}</TableCell>
                   <TableCell>{player.position}</TableCell>
                   <TableCell>{player.draftYear}</TableCell>
+                  <TableCell>{DifficultyName[player.difficulty]}</TableCell>
                   <TableCell sx={{ display: "flex", gap: 1 }}>
                     {renderButtonGroup(player)}
                   </TableCell>

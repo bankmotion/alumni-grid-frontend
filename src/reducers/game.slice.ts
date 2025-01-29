@@ -9,7 +9,7 @@ import {
   PlayerOption,
   NFLAllPlayer,
 } from "../models/interface";
-import { ActiveStatus, PlayType } from "../constant/const";
+import { ActiveStatus, Difficulty, PlayType } from "../constant/const";
 
 export interface GameState {
   collegeList: College[];
@@ -210,6 +210,31 @@ export const updateActiveStatus = createAsyncThunk(
   }
 );
 
+export const handleSaveDifficultyAction = createAsyncThunk(
+  "game/saveDifficultyAction",
+  async (
+    {
+      difficulty,
+      ids,
+      playType,
+    }: {
+      difficulty: Difficulty;
+      ids: number[];
+      playType: PlayType;
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      await axios.post(`${SERVER_URL}/admin/difficulty/${playType}`, {
+        ids,
+        difficulty,
+      });
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
 export const gameSlice = createSlice({
   name: "game",
   initialState,
@@ -219,6 +244,28 @@ export const gameSlice = createSlice({
         items: [],
         startTimestamp: 0,
       };
+    },
+
+    updateAllPlayerList: (state, { payload }) => {
+      const { id, checkStatus } = payload;
+      const playerIndex = state.allPlayerList.findIndex(
+        (player) => player.id === id
+      );
+
+      if (playerIndex !== -1) {
+        state.allPlayerList[playerIndex].checkStatus = checkStatus;
+      }
+    },
+
+    updateNFLAllPlayerList: (state, { payload }) => {
+      const { id, checkStatus } = payload;
+      const playerIndex = state.NFLAllPlayerList.findIndex(
+        (player) => player.id === id
+      );
+
+      if (playerIndex !== -1) {
+        state.NFLAllPlayerList[playerIndex].checkStatus = checkStatus;
+      }
     },
   },
   extraReducers: (builder) => {
@@ -360,9 +407,17 @@ export const gameSlice = createSlice({
     builder.addCase(updateActiveStatus.rejected, (state, { payload }) => {
       state.isUpdateActiveStatus = false;
     });
+
+    builder.addCase(handleSaveDifficultyAction.pending, (state) => {});
+    builder.addCase(
+      handleSaveDifficultyAction.fulfilled,
+      (state, { payload }) => {}
+    );
+    builder.addCase(handleSaveDifficultyAction.rejected, (state) => {});
   },
 });
 
-export const { setHistory } = gameSlice.actions;
+export const { setHistory, updateAllPlayerList, updateNFLAllPlayerList } =
+  gameSlice.actions;
 
 export default gameSlice.reducer;

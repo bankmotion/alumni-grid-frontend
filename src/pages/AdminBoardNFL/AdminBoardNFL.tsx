@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import {
   FormControl,
@@ -15,8 +15,10 @@ import {
   ButtonGroup,
 } from "@mui/material";
 import {
+  getNBAAllPlayers,
   getNFLAllPlayers,
   getPlayerOptions,
+  handleSaveDifficultyAction,
   savePlayerOptions,
 } from "../../reducers/game.slice";
 import Toastify from "toastify-js";
@@ -28,7 +30,7 @@ import NFLConfirmationModal from "../../components/NFLConfirmationModal/NFLConfi
 import NFLOptionTableContainer from "../../components/NFLOptionTableContainer/NFLOptionTableContainer";
 import NFLPlayerTableContainer from "../../components/NFLPlayerTableContainer/NFLPlayerTableContainer";
 import { NFLPositions } from "../../config/config";
-import { ActiveStatus, PlayType } from "../../constant/const";
+import { ActiveStatus, Difficulty, PlayType } from "../../constant/const";
 import { useAppDispatch } from "../../app/hooks";
 import { NFLAllPlayer, PlayerOption } from "../../models/interface";
 
@@ -45,6 +47,9 @@ const AdminBoardNFL = () => {
   const [ageFrom, setAgeFrom] = useState<number>(0);
   const [ageTo, setAgeTo] = useState<number>(0);
   const [position, setPosition] = useState<string>("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty | -1>(
+    -1
+  );
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [optionedPlayersCount, setOptionedPlayersCount] = useState(0);
@@ -107,53 +112,75 @@ const AdminBoardNFL = () => {
     setFilteredPlayers(filtered);
   };
 
+  const checkedPlayersCount = useMemo(() => {
+    return NFLAllPlayerList.filter((player) => player.checkStatus).length;
+  }, [NFLAllPlayerList]);
+
+  const handleSaveDifficultyStatus = (difficulty: Difficulty) => {
+    dispatch(
+      handleSaveDifficultyAction({
+        difficulty,
+        ids: NFLAllPlayerList.filter((player) => player.checkStatus).map(
+          (player) => player.id
+        ),
+        playType: PlayType.NFL,
+      })
+    )
+      .unwrap()
+      .then(() => {
+        dispatch(getNFLAllPlayers());
+      });
+  };
+
   useEffect(() => {
     if (statusFilter === "None") return;
 
-    if (statusFilter === "All") setFilteredPlayers(NFLAllPlayerList);
+    const filterByDifficulty = (player: NFLAllPlayer) =>
+      selectedDifficulty === -1 || player.difficulty === selectedDifficulty;
 
-    if (statusFilter === "Active") {
-      setFilteredPlayers(
-        NFLAllPlayerList.filter(
-          (player) =>
-            (optionList.some((option) =>
+    const filteredPlayers = NFLAllPlayerList.filter((player) => {
+      switch (statusFilter) {
+        case "All":
+          return filterByDifficulty(player);
+
+        case "Active":
+          return (
+            ((optionList.some((option) =>
               isMatchForPlayerOption(player, option)
             ) &&
               player.active !== ActiveStatus.Inactived) ||
-            player.active === ActiveStatus.Actived
-        )
-      );
-    }
+              player.active === ActiveStatus.Actived) &&
+            filterByDifficulty(player)
+          );
 
-    if (statusFilter === "Inactive") {
-      setFilteredPlayers(
-        NFLAllPlayerList.filter(
-          (player) =>
-            (optionList.every(
+        case "Inactive":
+          return (
+            ((optionList.every(
               (option) => !isMatchForPlayerOption(player, option)
             ) &&
               player.active !== ActiveStatus.Actived) ||
-            player.active === ActiveStatus.Inactived
-        )
-      );
-    }
+              player.active === ActiveStatus.Inactived) &&
+            filterByDifficulty(player)
+          );
 
-    if (statusFilter === "Selected") {
-      setFilteredPlayers(
-        NFLAllPlayerList.filter(
-          (player) => player.active === ActiveStatus.Actived
-        )
-      );
-    }
+        case "Selected":
+          return (
+            player.active === ActiveStatus.Actived && filterByDifficulty(player)
+          );
 
-    if (statusFilter === "Deselected") {
-      setFilteredPlayers(
-        NFLAllPlayerList.filter(
-          (player) => player.active === ActiveStatus.Inactived
-        )
-      );
-    }
-  }, [statusFilter, NFLAllPlayerList, optionList]);
+        case "Deselected":
+          return (
+            player.active === ActiveStatus.Inactived &&
+            filterByDifficulty(player)
+          );
+
+        default:
+          return false;
+      }
+    });
+
+    setFilteredPlayers(filteredPlayers);
+  }, [statusFilter, NFLAllPlayerList, optionList, selectedDifficulty]);
 
   useEffect(() => {
     setOptionedPlayersCount(
@@ -170,7 +197,7 @@ const AdminBoardNFL = () => {
 
   useEffect(() => {
     setPage(0);
-  }, [statusFilter, activeViewId]);
+  }, [statusFilter, activeViewId, selectedDifficulty]);
 
   useEffect(() => {
     dispatch(getPlayerOptions({ playType: PlayType.NFL }));
@@ -335,58 +362,127 @@ const AdminBoardNFL = () => {
         />
       </Box>
 
-      <ButtonGroup variant="contained" style={{ marginTop: "20px" }}>
-        <Button
-          variant={statusFilter === "All" ? "contained" : "outlined"}
-          color={statusFilter === "All" ? "primary" : "inherit"}
-          onClick={() => {
-            setStatusFilter("All");
-            setActiveViewId(null);
-          }}
-        >
-          All Players
-        </Button>
-        <Button
-          variant={statusFilter === "Active" ? "contained" : "outlined"}
-          color={statusFilter === "Active" ? "primary" : "inherit"}
-          onClick={() => {
-            setStatusFilter("Active");
-            setActiveViewId(null);
-          }}
-        >
-          Active
-        </Button>
-        <Button
-          variant={statusFilter === "Inactive" ? "contained" : "outlined"}
-          color={statusFilter === "Inactive" ? "primary" : "inherit"}
-          onClick={() => {
-            setStatusFilter("Inactive");
-            setActiveViewId(null);
-          }}
-        >
-          Inactive
-        </Button>
-        <Button
-          variant={statusFilter === "Selected" ? "contained" : "outlined"}
-          color={statusFilter === "Selected" ? "primary" : "inherit"}
-          onClick={() => {
-            setStatusFilter("Selected");
-            setActiveViewId(null);
-          }}
-        >
-          Selected
-        </Button>
-        <Button
-          variant={statusFilter === "Deselected" ? "contained" : "outlined"}
-          color={statusFilter === "Deselected" ? "primary" : "inherit"}
-          onClick={() => {
-            setStatusFilter("Deselected");
-            setActiveViewId(null);
-          }}
-        >
-          Deselected
-        </Button>
-      </ButtonGroup>
+      <Box className={classes.selectGroup}>
+        <ButtonGroup variant="contained">
+          <Button
+            variant={statusFilter === "All" ? "contained" : "outlined"}
+            color={statusFilter === "All" ? "primary" : "inherit"}
+            onClick={() => {
+              setStatusFilter("All");
+              setActiveViewId(null);
+            }}
+          >
+            All Players
+          </Button>
+          <Button
+            variant={statusFilter === "Active" ? "contained" : "outlined"}
+            color={statusFilter === "Active" ? "primary" : "inherit"}
+            onClick={() => {
+              setStatusFilter("Active");
+              setActiveViewId(null);
+            }}
+          >
+            Active
+          </Button>
+          <Button
+            variant={statusFilter === "Inactive" ? "contained" : "outlined"}
+            color={statusFilter === "Inactive" ? "primary" : "inherit"}
+            onClick={() => {
+              setStatusFilter("Inactive");
+              setActiveViewId(null);
+            }}
+          >
+            Inactive
+          </Button>
+          <Button
+            variant={statusFilter === "Selected" ? "contained" : "outlined"}
+            color={statusFilter === "Selected" ? "primary" : "inherit"}
+            onClick={() => {
+              setStatusFilter("Selected");
+              setActiveViewId(null);
+            }}
+          >
+            Selected
+          </Button>
+          <Button
+            variant={statusFilter === "Deselected" ? "contained" : "outlined"}
+            color={statusFilter === "Deselected" ? "primary" : "inherit"}
+            onClick={() => {
+              setStatusFilter("Deselected");
+              setActiveViewId(null);
+            }}
+          >
+            Deselected
+          </Button>
+        </ButtonGroup>
+
+        <FormControl sx={{ width: "120px" }} variant="outlined" size="small">
+          <InputLabel>Difficulty</InputLabel>
+          <Select
+            value={selectedDifficulty}
+            onChange={(e) =>
+              setSelectedDifficulty(e.target.value as Difficulty)
+            }
+            label="Difficulty"
+          >
+            <MenuItem value={-1}>All</MenuItem>
+            <MenuItem value={Difficulty.None}>None</MenuItem>
+            <MenuItem value={Difficulty.Easy}>Easy</MenuItem>
+            <MenuItem value={Difficulty.Medium}>Medium</MenuItem>
+            <MenuItem value={Difficulty.Hard}>Hard</MenuItem>
+          </Select>
+        </FormControl>
+      </Box>
+
+      <Box
+        mt={3}
+        sx={{
+          display: "flex",
+          gap: 4,
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        {checkedPlayersCount ? `${checkedPlayersCount} players selected` : ""}
+        {checkedPlayersCount ? (
+          <ButtonGroup variant="contained">
+            <Button
+              variant={"contained"}
+              onClick={() => {
+                handleSaveDifficultyStatus(Difficulty.None);
+              }}
+            >
+              None
+            </Button>
+            <Button
+              variant={"contained"}
+              onClick={() => {
+                handleSaveDifficultyStatus(Difficulty.Easy);
+              }}
+            >
+              Easy
+            </Button>
+            <Button
+              variant={"contained"}
+              onClick={() => {
+                handleSaveDifficultyStatus(Difficulty.Medium);
+              }}
+            >
+              Medium
+            </Button>
+            <Button
+              variant={"contained"}
+              onClick={() => {
+                handleSaveDifficultyStatus(Difficulty.Hard);
+              }}
+            >
+              Hard
+            </Button>
+          </ButtonGroup>
+        ) : (
+          ""
+        )}
+      </Box>
 
       <NFLPlayerTableContainer
         viewedPlayers={filteredPlayers}

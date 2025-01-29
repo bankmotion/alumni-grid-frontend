@@ -1,4 +1,4 @@
-import { PlayType } from "../constant/const";
+import { Difficulty, PlayType } from "../constant/const";
 
 export interface PlayerInfo {
   historyId: number;
@@ -53,6 +53,8 @@ export interface AllPlayer {
   draftNumber: number;
   teamId: number;
   active: number;
+  difficulty: Difficulty;
+  checkStatus?: boolean;
 }
 
 export interface NFLAllPlayer {
@@ -69,6 +71,8 @@ export interface NFLAllPlayer {
   age: number;
   teamId: number;
   active: number;
+  difficulty: Difficulty;
+  checkStatus?: boolean;
 }
 export interface PlayerOption {
   id?: number;
