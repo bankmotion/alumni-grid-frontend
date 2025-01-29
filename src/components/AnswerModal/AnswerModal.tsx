@@ -54,15 +54,7 @@ const AnswerModal = ({
         >
           <CloseIcon />
         </IconButton>
-        <Box
-          sx={{
-            margin: "16px 0",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "baseline",
-            gap: "8px",
-          }}
-        >
+        <Box className={classes.playerBox}>
           The player attended:{" "}
           <Box
             sx={{
@@ -70,7 +62,8 @@ const AnswerModal = ({
               fontWeight: "bold",
               opacity: collegeName !== "none" ? 1 : 0,
               minWidth: "120px",
-              fontSize: "24px",
+              fontSize: "20px",
+              minHeight: "32px",
             }}
           >
             {collegeName}

@@ -17,9 +17,7 @@ const styles = makeStyles()((theme: Theme) => ({
     fontWeight: "bold",
 
     [theme.breakpoints.down("sm")]: {
-      height: "20%",
       width: "70%",
-      maxHeight: "100px",
     },
   },
 
@@ -30,6 +28,21 @@ const styles = makeStyles()((theme: Theme) => ({
     right: theme.spacing(1),
     "&:hover": {
       color: theme.palette.error.main,
+    },
+  },
+
+  playerBox: {
+    margin: "16px 0",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "baseline",
+    gap: "8px",
+
+    [theme.breakpoints.down("sm")]: {
+      flexDirection: "column",
+      margin: "auto",
+      padding: "24px 0",
+      alignItems: "center",
     },
   },
 }));
