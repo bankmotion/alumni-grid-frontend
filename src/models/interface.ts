@@ -55,6 +55,7 @@ export interface AllPlayer {
   active: number;
   difficulty: Difficulty;
   checkStatus?: boolean;
+  imageLink?: string;
 }
 
 export interface NFLAllPlayer {
@@ -73,6 +74,7 @@ export interface NFLAllPlayer {
   active: number;
   difficulty: Difficulty;
   checkStatus?: boolean;
+  imageLink?: string;
 }
 export interface PlayerOption {
   id?: number;

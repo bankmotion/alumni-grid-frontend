@@ -172,6 +172,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
           <TableHead>
             <TableRow>
               <TableCell></TableCell>
+              <TableCell></TableCell>
               <TableCell>ID</TableCell>
               <TableCell>First Name</TableCell>
               <TableCell>Last Name</TableCell>
@@ -182,6 +183,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
               <TableCell>Select</TableCell>
             </TableRow>
             <TableRow>
+              <TableCell></TableCell>
               <TableCell></TableCell>
               <TableCell>
                 <TextField
@@ -245,7 +247,7 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
             {viewFilteredPlayers
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((player) => (
-                <TableRow key={player.id}>
+                <TableRow key={player.id} sx={{ height: 90 }}>
                   <TableCell>
                     <Checkbox
                       value={true}
@@ -255,6 +257,13 @@ const NBAPlayerTableContainer: React.FC<NBAPlayerTableContainerProps> = ({
                         handleChangeCheckBox(player.id, e.target.checked)
                       }
                     />
+                  </TableCell>
+                  <TableCell>
+                    <Box
+                      src={player.imageLink}
+                      component={"img"}
+                      sx={{ width: "70px" }}
+                    ></Box>
                   </TableCell>
                   <TableCell>{player.id}</TableCell>
                   <TableCell>{player.firstName}</TableCell>
