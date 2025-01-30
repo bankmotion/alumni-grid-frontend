@@ -300,6 +300,7 @@ export const gameSlice = createSlice({
               lastname: item.NBAPlayer?.lastName || item.NFLPlayer?.lastName,
               wrongStatus: [],
               rightStatus: "none",
+              imageLink: item.NBAPlayer?.imageLink || item.NFLPlayer?.imageLink,
             } as PlayerInfo)
         ),
         startTimestamp: payload.timestamp,

@@ -86,6 +86,25 @@ const styles = makeStyles()((theme: Theme) => ({
   },
 
   playerName: {
+    fontSize: "17px",
+    wordBreak: "break-word",
+    position: "absolute",
+    bottom: 0,
+    minHeight: "30px",
+    background: "black",
+    color: "white",
+    width: "100%",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+
+    [theme.breakpoints.down("sm")]: {
+      minHeight: "20px",
+      fontSize: "10px",
+    },
+  },
+
+  playerNameWithNoImg: {
     fontSize: "clamp(18px, 2.5vw, 30px)",
     wordBreak: "break-word",
 
@@ -120,6 +139,11 @@ const styles = makeStyles()((theme: Theme) => ({
       width: "26vw",
       height: "26vw",
     },
+  },
+
+  playerImage: {
+    width: "100%",
+    position: "absolute",
   },
 
   correctBox: {

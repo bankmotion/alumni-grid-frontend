@@ -7,6 +7,7 @@ export interface PlayerInfo {
   lastname: string;
   wrongStatus: string[];
   rightStatus: string;
+  imageLink: string;
 }
 
 export interface College {
