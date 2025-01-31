@@ -17,6 +17,7 @@ import { NFLAllPlayer } from "../../models/interface";
 import { ActiveStatus, DifficultyName, PlayType } from "../../constant/const";
 import {
   getNFLAllPlayers,
+  handleChangeImageLinkAction,
   updateActiveStatus,
   updateNFLAllPlayerList,
 } from "../../reducers/game.slice";
@@ -72,6 +73,12 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
 
   const handleChangeCheckBox = (id: number, checkStatus: boolean) => {
     dispatch(updateNFLAllPlayerList({ id, checkStatus }));
+  };
+
+  const handleChangeImageLink = (id: number, imageLink: string) => {
+    dispatch(
+      handleChangeImageLinkAction({ id, imageLink, playType: PlayType.NFL })
+    );
   };
 
   const renderButtonGroup = (player: NFLAllPlayer) => {
@@ -190,6 +197,7 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
               <TableCell>Experience</TableCell>
               <TableCell>Age</TableCell>
               <TableCell>Difficulty</TableCell>
+              <TableCell>Image Link</TableCell>
               <TableCell>Select</TableCell>
             </TableRow>
             <TableRow>
@@ -260,6 +268,7 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
               </TableCell>
               <TableCell></TableCell>
               <TableCell></TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -292,6 +301,15 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
                   <TableCell>{player.experience}</TableCell>
                   <TableCell>{player.age}</TableCell>
                   <TableCell>{DifficultyName[player.difficulty]}</TableCell>
+                  <TableCell>
+                    <TextField
+                      value={player.imageLink}
+                      sx={{ "& input": { padding: 0 } }}
+                      onChange={(e) =>
+                        handleChangeImageLink(player.id, e.target.value)
+                      }
+                    />
+                  </TableCell>
                   <TableCell sx={{ display: "flex", gap: 1 }}>
                     {renderButtonGroup(player)}
                   </TableCell>
