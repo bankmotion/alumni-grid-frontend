@@ -342,16 +342,14 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
                   onClick={() => selectItem(item)}
                   key={index}
                 >
-                  {playType === PlayType.NBA && (
-                    <Box
-                      component={"img"}
-                      src={item.imageLink}
-                      className={classes.playerImage}
-                    ></Box>
-                  )}
+                  <Box
+                    component={"img"}
+                    src={item.imageLink}
+                    className={classes.playerImage}
+                  ></Box>
                   <Box
                     className={
-                      item.imageLink && playType === PlayType.NBA
+                      item.imageLink
                         ? classes.playerName
                         : classes.playerNameWithNoImg
                     }
