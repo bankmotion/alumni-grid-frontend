@@ -148,6 +148,17 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
           (item) => item.createTime === history.startTimestamp
         );
 
+        for (const player of currentGameData.playerList) {
+          const historyInfo = history.items.find(
+            (item) => item.playerId === player.playerId
+          );
+          if (historyInfo) {
+            player.imageLink = historyInfo.imageLink;
+            player.firstname = historyInfo.firstname;
+            player.lastname = historyInfo.lastname;
+          }
+        }
+
         if (currentGameData) {
           setGameSetting(currentGameData);
           return;
