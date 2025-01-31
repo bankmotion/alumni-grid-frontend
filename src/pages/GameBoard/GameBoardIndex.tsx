@@ -315,9 +315,7 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
           )}
         </Button>
       </Box>
-
       <Box className={classes.leftPanel}></Box>
-
       <Box className={classes.middlePanel}>
         <Typography variant="h3" className={classes.gameTitle}>
           AlumniGrid - {PlayTypeInfo[playType].up}
@@ -404,13 +402,11 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
             </Typography>
           </Box>
         )}
-
         <Box className={classes.remainTime}>
           {gameSetting.endStatus
             ? `New Grid in ${getRemainTimeStr(remainTime)}`
             : getRemainTimeStr(spentTime)}
         </Box>
-
         <Box sx={{ display: "flex", flexDirection: "column", gap: "8px" }}>
           {gameSetting.endStatus && (
             <Button
@@ -429,8 +425,13 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
             Prior Grids
           </Button>
         </Box>
+        <Box sx={{ maxWidth: 250, color: "white", opacity: 0.8 }}>
+          Please note: AlumniGrid.com does not own any of the team, league or
+          event logos depicted within this site. All sports logos contained
+          within this site are properties of their respective leagues, teams,
+          ownership groups and/or organizations.
+        </Box>
       </Box>
-
       <CollegeModal
         open={open}
         handleOpenStatus={(open) => setOpen(open)}
@@ -455,7 +456,6 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
         onClose={(archiveOpen) => setArchiveOpen(archiveOpen)}
         playType={playType}
       />
-
       {explosion && (
         <ConfettiExplosion
           duration={3000}
