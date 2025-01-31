@@ -425,7 +425,15 @@ const GameBoardIndex = ({ playType }: { playType: PlayType }) => {
             Prior Grids
           </Button>
         </Box>
-        <Box sx={{ maxWidth: 300, color: "white", opacity: 0.8, fontSize: 14 }}>
+        <Box
+          sx={{
+            maxWidth: 300,
+            color: "white",
+            opacity: 0.8,
+            fontSize: 14,
+            marginTop: 3,
+          }}
+        >
           Please note: AlumniGrid.com does not own any of the team, league or
           event logos depicted within this site. All sports logos contained
           within this site are properties of their respective leagues, teams,
