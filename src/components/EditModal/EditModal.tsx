@@ -14,7 +14,7 @@ import { PlayType } from "../../constant/const";
 import useStyles from "./index.styles";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { handleUpdatePlayerDetail } from "../../reducers/game.slice";
-import { toast } from "react-toastify";
+import Toastify from "toastify-js";
 
 interface EditModalProps {
   open: boolean;
@@ -37,7 +37,17 @@ const EditModal: React.FC<EditModalProps> = ({ open, onClose, type, id }) => {
       handleUpdatePlayerDetail({ id, imageLink: link, college, playType: type })
     )
       .unwrap()
-      .then(() => toast.success("Successfully updated"));
+      .then(() => {
+        Toastify({
+          text: "Grid details copied to clipboard!",
+          duration: 3000,
+          close: true,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+        }).showToast();
+        onClose();
+      });
   };
 
   useEffect(() => {
