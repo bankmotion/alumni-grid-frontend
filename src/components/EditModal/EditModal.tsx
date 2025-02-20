@@ -39,7 +39,7 @@ const EditModal: React.FC<EditModalProps> = ({ open, onClose, type, id }) => {
       .unwrap()
       .then(() => {
         Toastify({
-          text: "Grid details copied to clipboard!",
+          text: "Successfully updated!",
           duration: 3000,
           close: true,
           gravity: "top",
