@@ -14,6 +14,7 @@ import { PlayType } from "../../constant/const";
 import useStyles from "./index.styles";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { handleUpdatePlayerDetail } from "../../reducers/game.slice";
+import { toast } from "react-toastify";
 
 interface EditModalProps {
   open: boolean;
@@ -34,7 +35,9 @@ const EditModal: React.FC<EditModalProps> = ({ open, onClose, type, id }) => {
   const handleConfirm = () => {
     dispatch(
       handleUpdatePlayerDetail({ id, imageLink: link, college, playType: type })
-    );
+    )
+      .unwrap()
+      .then(() => toast.success("Successfully updated"));
   };
 
   useEffect(() => {
@@ -66,6 +69,7 @@ const EditModal: React.FC<EditModalProps> = ({ open, onClose, type, id }) => {
             placeholder="College"
             className={classes.editText}
             value={college}
+            onChange={(e) => setCollege(e.target.value)}
           />
           <TextField
             fullWidth
@@ -74,6 +78,7 @@ const EditModal: React.FC<EditModalProps> = ({ open, onClose, type, id }) => {
             placeholder="Image link"
             className={classes.editText}
             value={link}
+            onChange={(e) => setLink(e.target.value)}
           />
         </Box>
       </DialogContent>
