@@ -1,37 +1,37 @@
+import {
+  Box,
+  Button,
+  ButtonGroup,
+  CircularProgress,
+  FormControl,
+  Grid,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
+import Toastify from "toastify-js";
 import {
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Button,
-  Typography,
-  Paper,
-  Grid,
-  Box,
-  TextField,
-  CircularProgress,
-  ButtonGroup,
-} from "@mui/material";
-import {
-  getNBAAllPlayers,
   getNFLAllPlayers,
   getPlayerOptions,
   handleSaveDifficultyAction,
   savePlayerOptions,
 } from "../../reducers/game.slice";
-import Toastify from "toastify-js";
 
 import useStyles from "./styles";
 
+import { useAppDispatch } from "../../app/hooks";
 import { RootState } from "../../app/store";
+import EditModal from "../../components/EditModal/EditModal";
 import NFLConfirmationModal from "../../components/NFLConfirmationModal/NFLConfirmationModal";
 import NFLOptionTableContainer from "../../components/NFLOptionTableContainer/NFLOptionTableContainer";
 import NFLPlayerTableContainer from "../../components/NFLPlayerTableContainer/NFLPlayerTableContainer";
 import { NFLPositions } from "../../config/config";
 import { ActiveStatus, Difficulty, PlayType } from "../../constant/const";
-import { useAppDispatch } from "../../app/hooks";
 import { NFLAllPlayer, PlayerOption } from "../../models/interface";
 
 const AdminBoardNFL = () => {
@@ -52,11 +52,14 @@ const AdminBoardNFL = () => {
   );
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [optionedPlayersCount, setOptionedPlayersCount] = useState(0);
 
   const [filteredPlayers, setFilteredPlayers] = useState(NFLAllPlayerList);
   const [activeViewId, setActiveViewId] = useState<number | null>(null);
   const [page, setPage] = useState(0);
+
+  const [selectedPlayer, setSelectedPlayer] = useState<number>(null);
 
   const [statusFilter, setStatusFilter] = useState<
     "All" | "Active" | "Inactive" | "Selected" | "Deselected" | "None"
@@ -486,6 +489,10 @@ const AdminBoardNFL = () => {
 
       <NFLPlayerTableContainer
         viewedPlayers={filteredPlayers}
+        setSelectedPlayer={(id: number) => {
+          setSelectedPlayer(id);
+          setEditDialogOpen(true);
+        }}
         page={page}
         setPage={setPage}
       />
@@ -495,6 +502,13 @@ const AdminBoardNFL = () => {
         optionedPlayersCount={optionedPlayersCount}
         onConfirm={handleFilterPlayers}
         onCancel={handleDialogClose}
+      />
+
+      <EditModal
+        open={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+        type={PlayType.NFL}
+        id={selectedPlayer}
       />
     </Paper>
   );

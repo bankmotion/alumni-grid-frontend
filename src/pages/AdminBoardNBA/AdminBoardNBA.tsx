@@ -32,6 +32,7 @@ import NBAOptionTableContainer from "../../components/NBAOptionTableContainer/NB
 import { AllPlayer, PlayerOption } from "../../models/interface";
 import { ActiveStatus, Difficulty, PlayType } from "../../constant/const";
 import { useAppDispatch } from "../../app/hooks";
+import EditModal from "../../components/EditModal/EditModal";
 
 const AdminBoardNBA = () => {
   const { classes } = useStyles();
@@ -51,10 +52,13 @@ const AdminBoardNBA = () => {
   );
 
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [optionedPlayersCount, setOptionedPlayersCount] = useState(0);
 
   const [filteredPlayers, setFilteredPlayers] = useState(allPlayerList);
   const [activeViewId, setActiveViewId] = useState<number | null>(null);
+
+  const [selectedPlayer, setSelectedPlayer] = useState<number>(null);
 
   const [statusFilter, setStatusFilter] = useState<
     "All" | "Active" | "Inactive" | "Selected" | "Deselected" | "None"
@@ -466,6 +470,10 @@ const AdminBoardNBA = () => {
 
       <NBAPlayerTableContainer
         viewedPlayers={filteredPlayers}
+        setSelectedPlayer={(id: number) => {
+          setSelectedPlayer(id);
+          setEditDialogOpen(true);
+        }}
         page={page}
         setPage={setPage}
       />
@@ -475,6 +483,13 @@ const AdminBoardNBA = () => {
         optionedPlayersCount={optionedPlayersCount}
         onConfirm={handleFilterPlayers}
         onCancel={handleDialogClose}
+      />
+
+      <EditModal
+        open={editDialogOpen}
+        onClose={() => setEditDialogOpen(false)}
+        type={PlayType.NBA}
+        id={selectedPlayer}
       />
     </Paper>
   );

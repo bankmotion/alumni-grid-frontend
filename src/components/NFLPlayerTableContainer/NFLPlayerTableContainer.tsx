@@ -17,7 +17,6 @@ import { NFLAllPlayer } from "../../models/interface";
 import { ActiveStatus, DifficultyName, PlayType } from "../../constant/const";
 import {
   getNFLAllPlayers,
-  handleChangeImageLinkAction,
   updateActiveStatus,
   updateNFLAllPlayerList,
 } from "../../reducers/game.slice";
@@ -25,12 +24,14 @@ import { useAppDispatch } from "../../app/hooks";
 
 interface NFLPlayerTableContainerProps {
   viewedPlayers: NFLAllPlayer[];
+  setSelectedPlayer: (id: number) => void;
   page: number;
   setPage: (page: number) => void;
 }
 
 const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
   viewedPlayers,
+  setSelectedPlayer,
   page,
   setPage,
 }) => {
@@ -75,63 +76,80 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
     dispatch(updateNFLAllPlayerList({ id, checkStatus }));
   };
 
-  const handleChangeImageLink = (id: number, imageLink: string) => {
-    dispatch(
-      handleChangeImageLinkAction({ id, imageLink, playType: PlayType.NFL })
-    );
-  };
-
   const renderButtonGroup = (player: NFLAllPlayer) => {
-    return player.active === ActiveStatus.Actived ? (
+    return (
       <>
         <Button
           variant={"contained"}
           color={"info"}
-          onClick={() => handleUpdateActive(player.id, ActiveStatus.Inactived)}
+          onClick={() => setSelectedPlayer(player.id)}
         >
-          Deselect
+          Edit
         </Button>
-        <Button
-          variant={"outlined"}
-          color={"primary"}
-          onClick={() => handleUpdateActive(player.id, ActiveStatus.Canceled)}
-        >
-          Cancel
-        </Button>
-      </>
-    ) : player.active === ActiveStatus.Inactived ? (
-      <>
-        <Button
-          variant={"contained"}
-          color={"primary"}
-          onClick={() => handleUpdateActive(player.id, ActiveStatus.Actived)}
-        >
-          Select
-        </Button>
-        <Button
-          variant={"outlined"}
-          color={"primary"}
-          onClick={() => handleUpdateActive(player.id, ActiveStatus.Canceled)}
-        >
-          Cancel
-        </Button>
-      </>
-    ) : (
-      <>
-        <Button
-          variant={"contained"}
-          color={"primary"}
-          onClick={() => handleUpdateActive(player.id, ActiveStatus.Actived)}
-        >
-          Select
-        </Button>
-        <Button
-          variant={"contained"}
-          color={"info"}
-          onClick={() => handleUpdateActive(player.id, ActiveStatus.Inactived)}
-        >
-          Deselect
-        </Button>
+        {player.active === ActiveStatus.Actived ? (
+          <>
+            <Button
+              variant={"contained"}
+              color={"info"}
+              onClick={() =>
+                handleUpdateActive(player.id, ActiveStatus.Inactived)
+              }
+            >
+              Deselect
+            </Button>
+            <Button
+              variant={"outlined"}
+              color={"primary"}
+              onClick={() =>
+                handleUpdateActive(player.id, ActiveStatus.Canceled)
+              }
+            >
+              Cancel
+            </Button>
+          </>
+        ) : player.active === ActiveStatus.Inactived ? (
+          <>
+            <Button
+              variant={"contained"}
+              color={"primary"}
+              onClick={() =>
+                handleUpdateActive(player.id, ActiveStatus.Actived)
+              }
+            >
+              Select
+            </Button>
+            <Button
+              variant={"outlined"}
+              color={"primary"}
+              onClick={() =>
+                handleUpdateActive(player.id, ActiveStatus.Canceled)
+              }
+            >
+              Cancel
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              variant={"contained"}
+              color={"primary"}
+              onClick={() =>
+                handleUpdateActive(player.id, ActiveStatus.Actived)
+              }
+            >
+              Select
+            </Button>
+            <Button
+              variant={"contained"}
+              color={"info"}
+              onClick={() =>
+                handleUpdateActive(player.id, ActiveStatus.Inactived)
+              }
+            >
+              Deselect
+            </Button>
+          </>
+        )}
       </>
     );
   };
@@ -197,7 +215,6 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
               <TableCell>Experience</TableCell>
               <TableCell>Age</TableCell>
               <TableCell>Difficulty</TableCell>
-              <TableCell>Image Link</TableCell>
               <TableCell>Select</TableCell>
             </TableRow>
             <TableRow>
@@ -301,15 +318,6 @@ const NFLPlayerTableContainer: React.FC<NFLPlayerTableContainerProps> = ({
                   <TableCell>{player.experience}</TableCell>
                   <TableCell>{player.age}</TableCell>
                   <TableCell>{DifficultyName[player.difficulty]}</TableCell>
-                  <TableCell>
-                    <TextField
-                      value={player.imageLink}
-                      sx={{ "& input": { padding: 0 } }}
-                      onChange={(e) =>
-                        handleChangeImageLink(player.id, e.target.value)
-                      }
-                    />
-                  </TableCell>
                   <TableCell sx={{ display: "flex", gap: 1 }}>
                     {renderButtonGroup(player)}
                   </TableCell>

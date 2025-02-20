@@ -235,20 +235,22 @@ export const handleSaveDifficultyAction = createAsyncThunk(
   }
 );
 
-export const handleChangeImageLinkAction = createAsyncThunk(
-  "game/handleChangeImageLinkAction",
+export const handleUpdatePlayerDetail = createAsyncThunk(
+  "game/handleUpdatePlayerDetail",
   async (
     {
       id,
       imageLink,
+      college,
       playType,
-    }: { id: number; imageLink: string; playType: PlayType },
+    }: { id: number; imageLink: string; college: string; playType: PlayType },
     { rejectWithValue }
   ) => {
     try {
       await axios.put(`${SERVER_URL}/admin/image/${playType}`, {
         id,
         imageLink,
+        college,
       });
     } catch (err) {
       return rejectWithValue(err.message);
@@ -437,9 +439,9 @@ export const gameSlice = createSlice({
     );
     builder.addCase(handleSaveDifficultyAction.rejected, (state) => {});
 
-    builder.addCase(handleChangeImageLinkAction.pending, (state) => {});
-    builder.addCase(handleChangeImageLinkAction.fulfilled, (state) => {});
-    builder.addCase(handleChangeImageLinkAction.rejected, (state) => {});
+    builder.addCase(handleUpdatePlayerDetail.pending, (state) => {});
+    builder.addCase(handleUpdatePlayerDetail.fulfilled, (state) => {});
+    builder.addCase(handleUpdatePlayerDetail.rejected, (state) => {});
   },
 });
 
